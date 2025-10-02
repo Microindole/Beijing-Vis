@@ -1,0 +1,64 @@
+/* global.css - 使用 CSS 变量 (Custom Properties) 模拟 SCSS 变量功能 */
+
+/* 1. 全局变量定义（替换 _variables.scss 的内容）*/
+:root {
+    /* 颜色变量 */
+    --color-primary: #A30000;
+    --color-text: #333333;
+    --color-background-soft: #f8f8f8;
+    --color-background-mute: #ffffff;
+    --color-border-light: #cccccc; /* 新增一个计算后的颜色 */
+
+    /* 间距和字体 */
+    --spacing-s: 8px;
+    --spacing-m: 16px;
+    --spacing-l: 24px;
+    --spacing-xl: 40px;
+    --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --shadow-small: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* 2. 基础重置和全局样式 */
+* {
+    box-sizing: border-box;
+}
+
+#visualization-system {
+    font-family: var(--font-family); /* 使用 CSS 变量 */
+    min-height: 100vh;
+    background-color: var(--color-background-soft);
+    color: var(--color-text);
+    padding: var(--spacing-xl);
+}
+
+/* 3. App.vue 的布局样式（实现解耦）*/
+.app-header {
+    text-align: center;
+    /* 使用 CSS 变量 */
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.control-panel {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-l);
+    padding: var(--spacing-l) 0;
+    margin-bottom: var(--spacing-l);
+    background-color: var(--color-background-mute);
+    box-shadow: var(--shadow-small);
+}
+
+.task-views-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+.task-section h2 {
+    color: var(--color-primary); /* 使用 CSS 变量 */
+    margin-bottom: var(--spacing-m);
+}
+
+.final-narrative {
+    grid-column: 1 / -1;
+}
