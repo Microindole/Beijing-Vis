@@ -1,169 +1,226 @@
 // src/utils/dataExtractor.js
 
 /**
- * 提取气候指标。
- * 从长文本中用正则表达式查找温度和降水量。
- * @param {Array} climateRawData - 原始气候JSON数据。
- * @returns {Object} - 返回一个以朝代为键，包含温度和降水量的对象。
- * e.g., { "唐": { temp: 10.5, precip: 600 }, "元": { ... } }
+ * =================================================================================
+ * 核心工具函数：智能解析年份
+ * 从各种不规则的文本中提取公元年份。这是一个关键的辅助函数，被下面的所有处理函数使用。
+ * @param {...string} textSources - 一个或多个可能包含年份的字符串。
+ * @returns {number|null} - 返回一个4位数的年份数字，如果找不到则返回null。
+ * =================================================================================
  */
-export function extractClimateMetrics(climateRawData) {
-  const metricsByDynasty = {};
-  
-  // 正则表达式，用于匹配 "平均气温xx℃" 和 "降水量xx毫米"
-  const tempRegex = /平均气温\s*(\d+(\.\d+)?)\s*℃/g;
-  const precipRegex = /降水量\s*(\d+(\.\d+)?)\s*毫米/g;
+function parseYear(...textSources) {
+  // 匹配(1234)或[1234]或【1234】中的年份，优先级最高
+  const bracketYearRegex = /[\[【(（](\d{4})[\]】)）]/;
+  // 匹配YYYY年
+  const standardYearRegex = /(\d{4})\s*年/;
+  // 匹配任意4位数字，作为最后的备用方案
+  const fallbackYearRegex = /(\d{4})/;
 
-  for (const entry of climateRawData) {
-    const dynasty = entry['时期'];
-    if (!dynasty || !entry['原文']) continue;
+  for (const text of textSources) {
+    if (!text || typeof text !== 'string') continue;
 
-    if (!metricsByDynasty[dynasty]) {
-      metricsByDynasty[dynasty] = {};
-    }
+    let match = text.match(bracketYearRegex);
+    if (match) return parseInt(match[1], 10);
 
-    let match;
-    // 提取温度
-    while ((match = tempRegex.exec(entry['原文'])) !== null) {
-      metricsByDynasty[dynasty].temp = parseFloat(match[1]);
-    }
-    // 提取降水量
-    while ((match = precipRegex.exec(entry['原文'])) !== null) {
-      metricsByDynasty[dynasty].precip = parseFloat(match[1]);
-    }
+    match = text.match(standardYearRegex);
+    if (match) return parseInt(match[1], 10);
+    
+    match = text.match(fallbackYearRegex);
+    if (match) return parseInt(match[1], 10);
   }
-  return metricsByDynasty;
+  return null;
+}
+
+// --- 以下是为每一个JSON文件定制的数据处理函数 ---
+
+/**
+ * [文件 02] 处理水系数据
+ */
+export function processWaterData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    river: item['河流\/水系名称'] || '未知',
+    type: item['类型'] || '记录',
+    description: item['水系总体描述的原文'],
+    source: item['出处'],
+  })).filter(item => item.description);
 }
 
 /**
- * 提取植被覆盖率。
- * @param {Array} vegetationRawData - 原始植被JSON数据。
- * @returns {Object} - 返回一个以朝代为键，包含覆盖率的对象。
- * e.g., { "唐": { coverage: 35 }, "元": { ... } }
+ * [文件 03] 处理气候数据
  */
-export function extractVegetationMetrics(vegetationRawData) {
-  const metricsByDynasty = {};
-  const coverageRegex = /森林覆盖率.*?(\d+(\.\d+)?)\s*%/g;
-
-  for (const entry of vegetationRawData) {
-    const dynasty = entry['时期'];
-    if (!dynasty || !entry['原文']) continue;
-    
-    if (!metricsByDynasty[dynasty]) {
-      metricsByDynasty[dynasty] = {};
-    }
-
-    let match;
-    while ((match = coverageRegex.exec(entry['原文'])) !== null) {
-      metricsByDynasty[dynasty].coverage = parseFloat(match[1]);
-    }
-  }
-  return metricsByDynasty;
+export function processClimateData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['灾害时间'], item['时期']),
+    dynasty: item['时期'],
+    type: item['灾害类型'] || '气候现象',
+    description: item['灾害总体描述原文'],
+    impact: item['灾害后果、影响'],
+    source: item['出处'],
+  })).filter(item => item.year && item.description);
 }
-
 
 /**
- * 从水系数据原文中提取关键事件。
- * @param {Array} waterData - 原始水系JSON数据。
- * @returns {Object} - 按朝代分类的水系事件, e.g., { '元': [{ river: '通惠河', event: '开凿', ... }] }
+ * [文件 04] 处理植被数据
  */
-export function extractWaterSystemEvents(waterData) {
-  const keywords = ['改道', '淤塞', '决口', '开凿', '疏浚', '断流', '合流', '废弃', '湮废'];
-  const eventsByDynasty = {};
-
-  for (const entry of waterData) {
-    if (!entry['时期'] || entry['时期'].includes('?')) continue;
-
-    const dynasty = entry['时期'];
-    const river = entry['河流\/水系名称'] || '未知水系';
-    
-    if (!eventsByDynasty[dynasty]) {
-      eventsByDynasty[dynasty] = [];
-    }
-
-    const foundKeywords = new Set();
-    if (entry['原文']) {
-      keywords.forEach(keyword => {
-        if (entry['原文'].includes(keyword)) {
-          foundKeywords.add(keyword);
-        }
-      });
-    }
-    // 也检查 "类型" 字段
-    if (entry['类型'] && keywords.includes(entry['类型'])) {
-        foundKeywords.add(entry['类型']);
-    }
-
-
-    if (foundKeywords.size > 0) {
-       eventsByDynasty[dynasty].push({
-        river: river,
-        event: Array.from(foundKeywords).join(', '),
-        description: entry['原文'] || '无详细描述',
-        source: entry['出处']
-      });
-    }
-  }
-  return eventsByDynasty;
+export function processVegetationData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    location: item['植被分布'],
+    type: item['植被类型'],
+    density: item['植被疏密情况'],
+    description: item['植被总体描述原文'],
+    source: item['出处'],
+  })).filter(item => item.description);
 }
 
-// 人口和建制沿革的数据提取函数 (与上次相同，但为了完整性再次提供)
-export function extractPopulationMetrics(populationData) {
-  const dynastyData = {};
-  const populationRegex = /(\d+(\.\d+)?)\s*万户\s*(\d+(\.\d+)?)\s*万人/g;
-  const simplePopulationRegex = /(\d+(\.\d+)?)\s*万(人|户)/g;
-
-  for (const entry of populationData) {
-    const dynasty = entry['时期'];
-    if (!dynastyData[dynasty]) {
-      dynastyData[dynasty] = { a: dynasty, b: 0, c: 0, sources: new Set() };
-    }
-    
-    let match;
-    while ((match = populationRegex.exec(entry['原文'])) !== null) {
-      const households = parseFloat(match[1]) * 10000;
-      const people = parseFloat(match[3]) * 10000;
-      if (people > dynastyData[dynasty].b) dynastyData[dynasty].b = Math.round(people);
-      if (households > dynastyData[dynasty].c) dynastyData[dynasty].c = Math.round(households);
-    }
-
-    while ((match = simplePopulationRegex.exec(entry['原文'])) !== null) {
-      const value = parseFloat(match[1]) * 10000;
-      if (match[3] === '人' && value > dynastyData[dynasty].b) {
-        dynastyData[dynasty].b = Math.round(value);
-      }
-      if (match[3] === '户' && value > dynastyData[dynasty].c) {
-        dynastyData[dynasty].c = Math.round(value);
-      }
-    }
-    dynastyData[dynasty].sources.add(entry['出处']);
-  }
-
-  return Object.values(dynastyData)
-    .map(d => ({ ...d, sources: Array.from(d.sources) }))
-    .filter(d => d.b > 0 || d.c > 0);
+/**
+ * [文件 05] 处理灾害数据
+ */
+export function processDisasterData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['灾害时间'], item['时期']),
+    dynasty: item['时期'],
+    type: item['灾害类型'] || '未知灾害',
+    description: item['灾害总体描述原文'],
+    impact: item['灾害后果、影响'],
+    source: item['出处'],
+  })).filter(item => item.year && item.description);
 }
 
-export function extractAdminDivisionCounts(adminData) {
-  const counts = {};
-  const regexMap = {
-    states: /(\d+)\s*(州)/g,
-    prefectures: /(\d+)\s*(郡|府)/g,
-    counties: /(\d+)\s*(县)/g,
-  };
+/**
+ * [文件 07] 处理建制沿革数据
+ */
+export function processAdminHistoryData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    change: item['行政划分'] || item['建制沿革总体描述原文'],
+    description: item['建制沿革总体描述原文'],
+    source: item['出处'],
+  })).filter(item => item.change);
+}
 
-  for (const entry of adminData) {
-    const dynasty = entry['时期'];
-    const text = entry['行政划分'] || '';
-    
-    if (!counts[dynasty]) {
-      counts[dynasty] = { a: dynasty, b: 0, c: 0, d: 0 };
-    }
-    let match;
-    while ((match = regexMap.states.exec(text)) !== null) { counts[dynasty].b += parseInt(match[1], 10); }
-    while ((match = regexMap.prefectures.exec(text)) !== null) { counts[dynasty].c += parseInt(match[1], 10); }
-    while ((match = regexMap.counties.exec(text)) !== null) { counts[dynasty].d += parseInt(match[1], 10); }
-  }
+/**
+ * [文件 09 & 10] 处理建筑数据 (重点建筑和其他建筑)
+ */
+export function processBuildingData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期'], item['建成时间']),
+    dynasty: item['时期'],
+    name: item['建筑名称'],
+    category: item['建筑类别'],
+    description: item['建筑描述原文'] || item['城市建筑总体描述'],
+    source: item['出处'],
+  })).filter(item => item.name && item.description);
+}
 
-  return Object.values(counts).filter(d => d.b > 0 || d.c > 0 || d.d > 0);
+/**
+ * [文件 11] 处理人口数据
+ */
+export function processPopulationData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    description: item['原文'],
+    source: item['出处'],
+  })).filter(item => item.description);
+}
+
+/**
+ * [文件 13] 处理文化数据 (新增)
+ */
+export function processCultureData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    description: item['原文'],
+    source: item['出处'],
+  })).filter(item => item.description);
+}
+
+/**
+ * [文件 14] 处理商业手工业数据
+ */
+export function processCommerceData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    type: item['商业手工业类型'],
+    description: item['原文'],
+    source: item['出处'],
+  })).filter(item => item.type && item.description);
+}
+
+/**
+ * [文件 15] 处理物产数据
+ */
+export function processProductData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    type: item['物产类型'],
+    description: item['原文'],
+    source: item['出处'],
+  })).filter(item => item.type && item.description);
+}
+
+/**
+ * [文件 16] 处理交通数据
+ */
+export function processTrafficData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['时期']),
+    dynasty: item['时期'],
+    route: item['交通要道'],
+    vehicle: item['交通工具'],
+    description: item['原文'],
+    source: item['出处'],
+  })).filter(item => item.year && item.description);
+}
+
+/**
+ * [文件 17] 处理大事件数据
+ */
+export function processEventData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['公元纪年']),
+    dynasty: item['朝代'],
+    name: item['事件概括'],
+    location: item['事件地点'],
+    people: item['事件涉及的人物'],
+    description: item['事件原文'],
+    source: item['出处'],
+  })).filter(item => item.year && item.name);
+}
+
+/**
+ * [文件 18] 处理战争数据
+ */
+export function processWarData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['战争时间']),
+    dynasty: item['时期'],
+    name: item['战争名称'] || '未命名军事行动',
+    location: item['战争地点'],
+    parties: item['交战双方'],
+    description: item['战争描述原文'],
+    source: item['出处'],
+  })).filter(item => item.year && item.description);
+}
+
+/**
+ * [文件 19] 处理人物数据
+ */
+export function processPeopleData(rawData) {
+  return rawData.map(item => ({
+    year: parseYear(item['生年'], item['时期']), // 尝试从生年或时期获取一个关联年份
+    dynasty: item['时期'],
+    name: item['姓名'],
+    title: item['身份'],
+    bio: item['人物介绍'] || item['该人物在北京的活动'],
+    source: item['出处'],
+  })).filter(item => item.name && item.bio);
 }
