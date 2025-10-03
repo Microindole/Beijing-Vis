@@ -1,79 +1,68 @@
+// src/utils/dataProcessor.js
+
+// 1. 导入所有原始数据文件
+import populationRaw from '@/assets/data/11人口 - 总数据和各朝代数据.json';
+import waterSystemsRaw from '@/assets/data/02水系 - 总数据和各朝代数据.json';
+import adminDivisionsRaw from '@/assets/data/07建制沿革 - 总数据和各朝代数据.json';
+import climateRaw from '@/assets/data/03气候 - 总数据和各朝代数据.json';
+import vegetationRaw from '@/assets/data/04植被 - 总数据和各朝代数据.json';
+import disastersRaw from '@/assets/data/05灾害 - 总数据和各朝代数据.json';
+import eventsRaw from '@/assets/data/17事件 - 总数据和各朝代数据.json';
+import warsRaw from '@/assets/data/18战争 - 总数据和各朝代数据.json';
+import peopleRaw from '@/assets/data/19人物 - 总数据和各朝代数据.json';
+
+// 2. 导入我们的数据提取器函数
+import {
+  extractPopulationMetrics,
+  extractWaterSystemEvents,
+  extractAdminDivisionCounts,
+  extractClimateMetrics,
+  extractVegetationMetrics,
+} from './dataExtractor.js';
+
 /**
- * @file dataProcessor.js
- * @description 统一加载和处理项目所需的所有JSON数据。
+ * 辅助函数：统一数据格式，为冲击事件数据添加'type'字段。
  */
-
-// 定义数据文件到程序中使用的键名(key)的映射
-// 这样做的好处是，即使文件名改变，我们也只需要修改这里一处。
-const DATA_FILES_MAP = {
-  waterSystems: '02水系 - 总数据和各朝代数据.json',
-  climate: '03气候 - 总数据和各朝代数据.json',
-  vegetation: '04植被 - 总数据和各朝代数据.json',
-  disasters: '05灾害 - 总数据和各朝代数据.json',
-  governance: '07建制沿革 - 总数据和各朝代数据.json',
-  keyBuildings: '09重点建筑 - 总数据和各朝代数据.json',
-  otherBuildings: '10其他建筑 - 总数据和各朝代数据.json',
-  population: '11人口 - 总数据和各朝代数据.json',
-  culture: '13文化 - 总数据和各朝代数据.json',
-  commerce: '14商业手工业 -总数据和各朝代数据.json',
-  products: '15物产 - 总数据和各朝代数据.json',
-  transport: '16交通 - 总数据和各朝代数据.json',
-  events: '17事件 - 总数据和各朝代数据.json',
-  wars: '18战争 - 总数据和各朝代数据.json',
-  people: '19人物 - 总数据和各朝代数据.json',
-};
+function processEvents(eventArray, type) {
+  return eventArray.map(item => ({ ...item, type }));
+}
 
 /**
- * 异步加载所有定义好的数据文件。
- * @returns {Promise<Object>} 一个包含所有数据的对象，键为 DATA_FILES_MAP 中定义的键。
+ * 异步加载并处理所有项目所需的数据。
+ * @returns {Promise<Object|null>} 返回一个包含所有结构化数据的对象。
  */
 export async function loadAllData() {
-  console.log('Data Processor: Starting to load all datasets...');
-  
-  const dataEntries = Object.entries(DATA_FILES_MAP);
-  
   try {
-    const fetchPromises = dataEntries.map(([key, fileName]) => 
-      fetch(`/json/${fileName}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
-          }
-          return response.json();
-        })
-        .catch(error => {
-            console.error(error);
-            return []; // 如果某个文件加载失败，返回空数组，避免整个流程中断
-        })
-    );
+    // 3. 对原始数据进行处理和转换
+    const population = extractPopulationMetrics(populationRaw);
+    const waterSystemEvents = extractWaterSystemEvents(waterSystemsRaw);
+    const adminDivisionCounts = extractAdminDivisionCounts(adminDivisionsRaw);
+    const climate = extractClimateMetrics(climateRaw);
+    const vegetation = extractVegetationMetrics(vegetationRaw);
 
-    const results = await Promise.all(fetchPromises);
+    const ecology = {
+        climate,
+        vegetation,
+        waterSystemEvents, // 将处理后的水系事件也放入ecology对象，方便组件调用
+    };
 
-    const allData = {};
-    dataEntries.forEach(([key], index) => {
-      allData[key] = results[index];
-    });
+    // 合并所有冲击事件
+    const processedDisasters = processEvents(disastersRaw, 'disaster');
+    const processedWars = processEvents(warsRaw, 'war');
+    const processedEvents = processEvents(eventsRaw, 'event');
+    const impactEvents = [...processedDisasters, ...processedWars, ...processedEvents];
 
-    console.log('Data Processor: All datasets loaded successfully!', allData);
-    
-    // 在这里可以进行一些全局的预处理
-    // 例如，统一给灾害、战争、事件数据加上类型标识
-    allData.disasters = allData.disasters.map(d => ({ ...d, type: 'disaster' }));
-    allData.wars = allData.wars.map(w => ({ ...w, type: 'war' }));
-    allData.events = allData.events.map(e => ({ ...e, type: 'event' }));
-
-    // 合并冲击性事件为一个数组，方便使用
-    allData.impactEvents = [
-        ...allData.disasters,
-        ...allData.wars,
-        ...allData.events
-    ];
-
-    return allData;
-
+    // 4. 返回一个包含所有【结构化】数据的对象
+    return {
+      population,
+      ecology, // 包含所有处理过的生态数据
+      adminDivisionCounts,
+      impactEvents,
+      people: peopleRaw,
+      wars: warsRaw, // 保留原始战争数据以供NarrativeGraph使用
+    };
   } catch (error) {
-    console.error('Data Processor: A critical error occurred during data loading.', error);
-    // 在实际项目中，这里可能需要更复杂的错误处理逻辑
+    console.error("数据加载或处理失败 (Data loading or processing failed):", error);
     return null;
   }
 }

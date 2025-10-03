@@ -1,18 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-import ImpactEventView from '../views/ImpactEventView.vue'
+import HistoryExplorerView from '../views/HistoryExplorerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: '/impact-events' 
+      redirect: '/history-explorer' 
     },
     {
-      path: '/impact-events', 
-      name: 'impact-events',
-      component: ImpactEventView 
+      path: '/history-explorer', 
+      name: 'history-explorer',
+      component: HistoryExplorerView 
     }
   ]
 })

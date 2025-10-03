@@ -2,20 +2,13 @@
 
 /* 1. 全局变量定义（替换 _variables.scss 的内容）*/
 :root {
-    /* 颜色变量 */
-    --color-primary: #A30000;
-    --color-text: #333333;
-    --color-background-soft: #f8f8f8;
-    --color-background-mute: #ffffff;
-    --color-border-light: #cccccc; /* 新增一个计算后的颜色 */
-
-    /* 间距和字体 */
-    --spacing-s: 8px;
-    --spacing-m: 16px;
-    --spacing-l: 24px;
-    --spacing-xl: 40px;
-    --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --shadow-small: 0 1px 3px rgba(0,0,0,0.12);
+  --main-bg-color: #F6F3ED;
+  --panel-bg-color: #FFFFFF;
+  --primary-text-color: #4D4130;
+  --secondary-text-color: #756A5B;
+  --border-color: #DCD7CC;
+  --header-bg-color: #4D4130;
+  --header-text-color: #F6F3ED;
 }
 
 /* 2. 基础重置和全局样式 */
@@ -61,4 +54,9 @@
 
 .final-narrative {
     grid-column: 1 / -1;
+}
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

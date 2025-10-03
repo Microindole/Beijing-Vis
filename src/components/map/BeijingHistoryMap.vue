@@ -5,6 +5,10 @@
 <script setup>
 import { onMounted, watch } from 'vue';
 import * as echarts from 'echarts';
+// 从 assets 直接导入 JSON 数据
+import beijingJson from '@/assets/data/beijing.json';
+
+const emit = defineEmits(['event-click']);
 
 const props = defineProps({
   events: Array,
@@ -20,11 +24,17 @@ const eventColors = {
 
 onMounted(async () => {
   const chartDom = document.getElementById('map-chart');
-  const beijingJson = await fetch('/json/beijing.json').then(res => res.json());
   echarts.registerMap('beijing', beijingJson);
   myChart = echarts.init(chartDom);
   myChart.setOption({
-    title: { text: '北京历史重大事件空间分布', left: 'center', top: 10 },
+    title: { 
+      text: '北京历史重大事件空间分布', 
+      left: 'center', 
+      top: 10,
+      textStyle: {
+        color: '#4D4130'
+      }
+    },
     tooltip: {
       trigger: 'item',
       formatter: (params) => {
@@ -40,6 +50,13 @@ onMounted(async () => {
       map: 'beijing', roam: true, emphasis: { focus: 'self', itemStyle: { areaColor: '#a5dff0' } }
     },
     series: []
+  });
+  myChart.on('click', (params) => {
+    // 确保点击的是系列上的数据点
+    if (params.componentType === 'series' && params.data) {
+      // 通过 emit 将点击的事件数据发送给父组件
+      emit('event-click', params.data);
+    }
   });
   window.addEventListener('resize', () => myChart?.resize());
 });
