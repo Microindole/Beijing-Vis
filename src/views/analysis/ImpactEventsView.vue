@@ -1,7 +1,7 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue';
 import {useDataStore} from '@/stores/useDataStore';
-import EvolutionMap from '@/components/analysis/EvolutionMap.vue';
+import EvolutionMap from '@/components/analysis/ImpactEventsMap.vue';
 import DynastyTimeline from '@/components/analysis/DynastyTimeline.vue';
 // 确保您已经创建了这个组件
 import EventCharts from '@/components/analysis/EventCharts.vue';

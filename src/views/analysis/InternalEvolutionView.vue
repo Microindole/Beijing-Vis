@@ -6,7 +6,7 @@
     <template v-else>
       <div class="main-content-grid">
         <div class="map-container card">
-          <EvolutionMap />
+          <EvolutionMap :events="combinedData" />
         </div>
         <div class="charts-container card">
           <DataCharts />
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue'; // 引入 computed
 import { useDataStore } from '@/stores/useDataStore';
 import EvolutionMap from '@/components/analysis/EvolutionMap.vue';
 import DataCharts from '@/components/analysis/DataCharts.vue';
@@ -28,8 +28,24 @@ import DynastyTimeline from '@/components/analysis/DynastyTimeline.vue';
 
 const dataStore = useDataStore();
 
+// --- 这是我们要补充的核心逻辑 ---
+// 创建一个计算属性，它会自动响应朝代变化
+const combinedData = computed(() => {
+  // 从 store 获取筛选好的交通和物产数据
+  const transportation = dataStore.filteredTransportation || [];
+  const products = dataStore.filteredProduct || [];
+
+  // 将两份数据合并成一个数组，并为每项添加一个 visualType 字段
+  // 地图组件将根据这个字段来决定用什么颜色和图例
+  return [
+    ...transportation.map(item => ({ ...item, visualType: 'transportation' })),
+    ...products.map(item => ({ ...item, visualType: 'product' }))
+  ];
+});
+// --- 补充逻辑结束 ---
+
+
 onMounted(() => {
-  // 仅在数据未加载时获取数据，避免重复加载
   if (dataStore.population.length === 0) {
     dataStore.fetchData();
   }
@@ -37,13 +53,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式部分保持不变 */
 .internal-evolution-view {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px; /* 添加间隙 */
+  gap: 16px;
 }
-
 .loading-overlay {
   width: 100%;
   height: 100%;
@@ -53,35 +69,26 @@ onMounted(() => {
   font-size: 1.5rem;
   color: var(--secondary-text-color);
 }
-
 .main-content-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* 地图占2/3，图表占1/3 */
+  grid-template-columns: 2fr 1fr;
   gap: 16px;
   flex-grow: 1;
   min-height: 0;
 }
-
-.timeline-container {
-  flex-shrink: 0;
-  height: 100px;
-  padding: 1rem;
-}
-
-.map-container, .charts-container {
-  height: 100%;
-  min-height: 0;
-  padding: 1rem;
-}
-
 .card {
-  background-color: var(--panel-bg-color);
+  background-color: var(--card-bg-color);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-color);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
+.map-container, .charts-container {
+  height: 100%;
+}
+.timeline-container {
+  height: 150px;
+  padding: 16px;
+}
 </style>
-
