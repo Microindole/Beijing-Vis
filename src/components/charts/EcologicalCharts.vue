@@ -1,115 +1,121 @@
 <template>
-  <div class="ecological-charts">
-    <h4 class="chart-title">生态环境演变</h4>
-    <div ref="chartRef" style="width: 100%; height: 250px;"></div>
-  </div>
+  <div ref="chart" class="chart-container"></div>
 </template>
 
-<script setup>
-import { ref, onMounted, watch } from 'vue';
+<script>
 import * as echarts from 'echarts';
 
-const props = defineProps({
-  ecologyData: Object, // 接收包含 climate, vegetation, waterSystemEvents 的整个对象
-  dynasty: String 
-});
+export default {
+  name: 'EcologicalCharts',
+  props: {
+    ecologyData: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      chart: null,
+    };
+  },
+  mounted() {
+    this.initChart();
+  },
+  watch: {
+    // 监听数据变化，如果数据是异步加载的，这很有用
+    ecologyData: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      }
+    }
+  },
+  methods: {
+    initChart() {
+      this.chart = echarts.init(this.$refs.chart);
+      this.updateChart();
+    },
+    updateChart() {
+      if (!this.chart || !this.ecologyData || !this.ecologyData.water) {
+        return;
+      }
 
-const chartRef = ref(null);
-let myChart = null;
+      // 数据转换：将水系事件转换为ECharts散点图需要的数据格式
+      const data = this.ecologyData.water
+        .filter(event => event.year) // 过滤掉没有年份的事件
+        .map(event => ({
+          name: event.river,
+          // ECharts散点图格式: [x轴, y轴, size, ...其他信息]
+          value: [
+            event.year,
+            Math.random() * 100, // Y轴用随机数来散开点，便于观察
+            event.description,
+            event.type
+          ],
+        }));
 
-// 定义我们关心并希望在图表上展示的朝代顺序
-const dynasties = ['唐', '辽', '金', '元', '明', '清'];
+      const option = {
+        title: {
+          text: '北京历史水系事件',
+          left: 'center',
+          textStyle: { fontSize: 14 }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: (params) => {
+            const eventData = params.value;
+            return `<b>年份:</b> ${eventData[0]}<br/>` +
+                   `<b>河流:</b> ${params.name}<br/>` +
+                   `<b>事件类型:</b> ${eventData[3]}<br/>` +
+                   `<b>描述:</b> ${eventData[2]}`;
+          }
+        },
+        grid: {
+          left: '10%',
+          right: '10%',
+          bottom: '15%',
+          top: '20%',
+        },
+        xAxis: {
+          type: 'value',
+          name: '年份',
+          splitLine: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          show: false, // Y轴仅用于散开点，本身没有意义
+        },
+        series: [{
+          name: '水系事件',
+          type: 'scatter',
+          symbolSize: 10,
+          data: data,
+        }],
+        dataZoom: [ // 添加缩放/漫游组件
+          {
+            type: 'slider',
+            start: 0,
+            end: 100,
+            xAxisIndex: [0],
+          }
+        ],
+      };
 
-onMounted(() => {
-  if (chartRef.value) {
-    myChart = echarts.init(chartRef.value);
-    updateChart();
+      this.chart.setOption(option);
+    },
+  },
+  beforeDestroy() {
+    if (this.chart) {
+      this.chart.dispose();
+    }
   }
-});
-
-watch(() => props.ecologyData, updateChart, { deep: true, immediate: true });
-
-function updateChart() {
-  if (!myChart || !props.ecologyData) return;
-
-  // 安全地获取数据，如果不存在则使用空对象
-  const climateData = props.ecologyData.climate || {};
-  const vegetationData = props.ecologyData.vegetation || {};
-  const waterData = props.ecologyData.waterSystemEvents || {};
-
-  // 根据朝代顺序生成图表系列数据
-  const tempData = dynasties.map(d => climateData[d]?.temp ?? null); // 使用 ?? null 让ECharts知道这是空数据
-  const precipData = dynasties.map(d => climateData[d]?.precip ?? null);
-  const coverageData = dynasties.map(d => vegetationData[d]?.coverage ?? null);
-  const waterEventCount = dynasties.map(d => waterData[d]?.length ?? 0); // 统计水系事件数量
-
-  myChart.setOption({
-    tooltip: { trigger: 'axis' },
-    legend: { 
-      data: ['平均气温', '降水量', '森林覆盖率', '水系事件数'],
-      textStyle: { color: 'var(--primary-text-color)' }
-    },
-    grid: { left: '15%', right: '15%', bottom: '10%' },
-    xAxis: { 
-      type: 'category', 
-      data: dynasties,
-      axisLine: { lineStyle: { color: 'var(--secondary-text-color)' } }
-    },
-    yAxis: [
-      {
-        type: 'value',
-        name: '温度(℃) / 覆盖率(%)',
-        position: 'left',
-        axisLine: { show: true, lineStyle: { color: '#5470c6' } },
-        axisLabel: { formatter: '{value}' }
-      },
-      {
-        type: 'value',
-        name: '降水量(mm) / 事件数(件)',
-        position: 'right',
-        axisLine: { show: true, lineStyle: { color: '#91cc75' } },
-        axisLabel: { formatter: '{value}' }
-      }
-    ],
-    series: [
-      {
-        name: '平均气温',
-        type: 'line',
-        yAxisIndex: 0,
-        data: tempData,
-        itemStyle: { color: '#c23531' }
-      },
-      {
-        name: '森林覆盖率',
-        type: 'line',
-        yAxisIndex: 0,
-        data: coverageData,
-        itemStyle: { color: '#61a0a8' }
-      },
-      {
-        name: '降水量',
-        type: 'bar',
-        yAxisIndex: 1,
-        data: precipData,
-        itemStyle: { color: '#5470c6' }
-      },
-      {
-        name: '水系事件数',
-        type: 'bar',
-        yAxisIndex: 1,
-        data: waterEventCount,
-        itemStyle: { color: '#91cc75' }
-      }
-    ]
-  });
-}
+};
 </script>
 
 <style scoped>
-.chart-title {
-  margin: 0 0 10px 0;
-  font-size: 1em;
-  font-weight: 500;
-  color: var(--primary-text-color);
+.chart-container {
+  width: 100%;
+  height: 100%;
+  min-height: 250px; /* 确保图表有一个最小高度 */
 }
 </style>

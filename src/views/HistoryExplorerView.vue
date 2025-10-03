@@ -1,197 +1,179 @@
 <template>
-  <div class="history-explorer-view">
-    <template v-if="!isLoading">
-      <main class="main-content-grid">
-        <div class="left-panel">
-          <div class="tabs">
-            <button @click="activeTab = 'impact'" :class="{ active: activeTab === 'impact' }">冲击事件</button>
-            <button @click="activeTab = 'ecology'" :class="{ active: activeTab === 'ecology' }">生态变迁</button>
-            <button @click="activeTab = 'social'" :class="{ active: activeTab === 'social' }">社会发展</button>
-          </div>
-          <div v-if="activeTab === 'impact'" class="tab-content">
-            <CorrelationCharts 
-              :events="eventsForMap" 
-              :dynasty="activeDynasty"
-              :population="allData.population" 
-            />
-            <InfoPanel :selected-item="selectedEvent" />
-          </div>
-          <div v-if="activeTab === 'ecology'" class="tab-content">
-            <EcologicalCharts :ecology-data="allData.ecology" :dynasty="activeDynasty" />
-          </div>
-          <div v-if="activeTab === 'social'" class="tab-content">
-            <PopulationChart :population-data="allData.population" :dynasty="activeDynasty" />
-          </div>
+  <div class="history-explorer">
+    <header class="main-header">
+      <h1>析城观史 - 北京历史时空演变可视分析</h1>
+    </header>
+
+    <main class="main-content" v-if="isDataLoaded">
+      <div class="left-panel">
+        <section class="chart-section">
+          <h2>生态环境演变</h2>
+          <EcologicalCharts :ecologyData="allData.ecology" />
+        </section>
+        <section class="chart-section">
+          <h2>内部驱动因素</h2>
+          <PopulationChart :populationData="allData.internalDynamics.population" />
+        </section>
+      </div>
+      
+      <div class="center-panel">
+        <BeijingHistoryMap 
+          :map-data-source="beijingGeoJson" 
+          :event-data="allData.impactEvents"
+          :current-year="currentYear"
+        />
+        <TimelineControl 
+          :min-year="timeRange.min" 
+          :max-year="timeRange.max"
+          @year-change="handleYearChange"
+        />
+      </div>
+
+      <div class="right-panel">
+        <section class="chart-section">
+          <h2>重大冲击事件</h2>
+          <CorrelationCharts :impactData="allData.impactEvents" />
+        </section>
+        <section class="chart-section">
+          <h2>历史叙事图谱</h2>
+          <NarrativeGraph :narrativeData="allData.impactEvents" />
+        </section>
         </div>
-        <div class="right-panel">
-          <BeijingHistoryMap 
-            :events="eventsForMap" 
-            :highlighted-event-name="highlightedEventName"
-            @event-click="handleEventClick"
-          />
-        </div>
-      </main>
-      <footer class="footer-controls">
-        <TimelineControl @timeline-change="handleTimelineChange" :current-dynasty="activeDynasty" />
-      </footer>
-    </template>
-    <div v-else class="loading-indicator">
-      <p>正在加载北京历史时空数据...</p>
+    </main>
+    
+    <div class="loading-overlay" v-else>
+      <p>正在加载北京数千年历史数据，请稍候...</p>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue';
-// 1. 导入我们的新工具
+<script>
+// 1. 导入新的数据加载器和所有组件
 import { loadAllData } from '@/utils/dataProcessor.js';
-
+import EcologicalCharts from '@/components/charts/EcologicalCharts.vue';
+import CorrelationCharts from '@/components/charts/CorrelationCharts.vue';
+import PopulationChart from '@/components/charts/PopulationChart.vue';
+import NarrativeGraph from '@/components/charts/NarrativeGraph.vue';
 import BeijingHistoryMap from '@/components/map/BeijingHistoryMap.vue';
 import TimelineControl from '@/components/controls/TimelineControl.vue';
-import CorrelationCharts from '@/components/charts/CorrelationCharts.vue';
 import InfoPanel from '@/components/common/InfoPanel.vue';
-import EcologicalCharts from '@/components/charts/EcologicalCharts.vue';
-import PopulationChart from '@/components/charts/PopulationChart.vue'; // 导入新组件
 
-const activeTab = ref('social');
+// 导入北京地图的GeoJSON数据
+import beijingGeoJson from '@/assets/data/beijing.json';
 
-const isLoading = ref(true);
-const allData = ref({}); // 2. 用一个对象来存储所有加载的数据
-const activeDynasty = ref('');
-const highlightedEventName = ref('');
-const selectedEvent = ref(null);
+export default {
+  name: 'HistoryExplorerView',
+  components: {
+    EcologicalCharts,
+    CorrelationCharts,
+    PopulationChart,
+    NarrativeGraph,
+    BeijingHistoryMap,
+    TimelineControl,
+    InfoPanel,
+  },
+  data() {
+    return {
+      isDataLoaded: false,
+      allData: {}, // 将用来存储所有处理好的数据
+      beijingGeoJson: null, // 存储地图数据
+      currentYear: 0,
+      timeRange: { min: 0, max: 2020 },
+      selectedFeature: null,
+    };
+  },
+  async created() {
+    // 2. 在组件创建时调用新的数据加载函数
+    const loadedData = await loadAllData();
+    if (loadedData) {
+      this.allData = loadedData;
+      this.beijingGeoJson = beijingGeoJson;
 
-onMounted(async () => {
-  // 3. onMounted 变得非常简洁
-  const loadedData = await loadAllData();
-  if (loadedData) {
-    allData.value = loadedData;
-  }
-  isLoading.value = false;
-  activeDynasty.value = '元'; // 在数据加载完毕后设定初始朝代
-});
+      // 3. 计算时间轴的范围
+      // 我们从冲击事件数据中找到最早和最晚的年份
+      const years = this.allData.impactEvents
+        .map(e => e.year)
+        .filter(y => y !== null);
+      
+      this.timeRange.min = Math.min(...years);
+      this.timeRange.max = Math.max(...years);
+      this.currentYear = this.timeRange.min; // 默认显示最早的年份
 
-// 计算属性现在从 allData.impactEvents 中获取数据
-const eventsForMap = computed(() => {
-  if (!activeDynasty.value || !allData.value.impactEvents) return [];
-  return allData.value.impactEvents.filter(e => e['时期'] === activeDynasty.value);
-});
-
-function handleEventClick(eventData) {
-  selectedEvent.value = eventData;
-  highlightedEventName.value = eventData.name; // 同时高亮该事件
-}
-
-function handleTimelineChange(dynasty) {
-  activeDynasty.value = dynasty;
-  highlightedEventName.value = '';
-  selectedEvent.value = null; // 切换朝代时，清空选择
-}
-
-function handleNodeClick(nodeData) {
-  if (nodeData.dynasty) {
-    activeDynasty.value = nodeData.dynasty;
-  }
-  const eventInAllData = allData.value.impactEvents?.find(e => e['名称'] === nodeData.name);
-  if (eventInAllData) {
-      highlightedEventName.value = nodeData.name;
-      // 模拟地图点击，填充详情面板
-      selectedEvent.value = {
-          name: eventInAllData['名称'],
-          value: [eventInAllData['经度'], eventInAllData['纬度'], eventInAllData.type, eventInAllData['时期']]
-      };
-  } else {
-      highlightedEventName.value = '';
-      selectedEvent.value = null;
-  }
-}
+      this.isDataLoaded = true;
+      console.log('所有数据已加载并注入Vue应用:', this.allData);
+    } else {
+      console.error('关键数据加载失败，请检查dataProcessor.js和网络连接。');
+    }
+  },
+  methods: {
+    // 4. 定义处理时间轴变化的方法
+    handleYearChange(newYear) {
+      this.currentYear = newYear;
+    },
+    // 处理图表/地图的点击事件（可选，用于InfoPanel）
+    handleFeatureSelect(feature) {
+      this.selectedFeature = feature;
+    }
+  },
+};
 </script>
 
 <style scoped>
-.history-explorer-view {
+/* 增加一些基本的布局样式 */
+.history-explorer {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  background-color: #f4f4f9;
+}
+.main-header {
+  text-align: center;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+}
+.main-content {
+  display: flex;
+  flex-grow: 1;
+  padding: 10px;
+  gap: 10px;
+}
+.left-panel, .right-panel {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.center-panel {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.chart-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.chart-section h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  /* 从原来的 #f4f7f9 改为透明，以显示 body 的背景色 */
-  background-color: transparent; 
-}
-
-.main-content-grid {
-  flex-grow: 1;
-  display: grid;
-  grid-template-columns: 35% 65%;
-  gap: 12px; /* 稍微增大间距 */
-  padding: 12px;
-  min-height: 0;
-}
-.left-panel {
-  padding: 0;
-  display: flex; /* 改为 flex 布局 */
-  flex-direction: column;
-}
-
-.tabs {
-  display: flex;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border-color);
-}
-.tabs button {
-  padding: 10px 15px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-size: 1em;
-  color: var(--secondary-text-color);
-}
-.tabs button.active {
-  color: var(--primary-text-color);
-  border-bottom: 2px solid var(--header-bg-color);
-}
-
-.tab-content {
-  flex-grow: 1;
-  padding: 15px;
-  overflow: auto;
-}
-
-.chart-container, .info-container {
-  padding: 15px;
-  border-bottom: 1px solid var(--border-color);
-  overflow: auto;
-}
-.info-container {
-  border-bottom: none;
-}
-
- .right-panel {
-  background: var(--panel-bg-color); /* 应用面板背景色 */
-  border-radius: 8px; /* 圆角更大一些，更柔和 */
-  border: 1px solid var(--border-color); /* 添加边框 */
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 添加细微阴影 */
-}
-
-.left-panel {
-  padding: 15px;
-  gap: 15px;
-}
-
-.loading-indicator {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  font-size: 1.2em;
-  color: var(--secondary-text-color); /* 应用次要文字颜色 */
-}
-
-.footer-controls {
-  flex-shrink: 0;
-  height: 80px;
-  padding: 0 20px;
-  border-top: 1px solid var(--border-color); /* 应用边框色 */
-  background-color: var(--panel-bg-color); /* 应用面板背景色 */
+  background-color: rgba(255, 255, 255, 0.8);
+  font-size: 1.5em;
 }
 </style>

@@ -1,6 +1,6 @@
 // src/utils/dataProcessor.js
 
-// 1. 导入所有原始数据文件
+// 1. 导入所有原始数据文件 (这部分保持不变)
 import waterSystemsRaw from '@/assets/data/02水系 - 总数据和各朝代数据.json';
 import climateRaw from '@/assets/data/03气候 - 总数据和各朝代数据.json';
 import vegetationRaw from '@/assets/data/04植被 - 总数据和各朝代数据.json';
@@ -17,14 +17,16 @@ import eventsRaw from '@/assets/data/17事件 - 总数据和各朝代数据.json
 import warsRaw from '@/assets/data/18战争 - 总数据和各朝代数据.json';
 import peopleRaw from '@/assets/data/19人物 - 总数据和各朝代数据.json';
 
-// 2. 导入所有新的数据处理函数
+// 2. 【关键修正】导入所有一一对应的、最新的数据处理函数
 import {
   processWaterData,
-  processClimateAndDisasterData,
+  processClimateData,       // <-- 修正点 1：导入 processClimateData
   processVegetationData,
+  processDisasterData,      // <-- 修正点 2：导入 processDisasterData
   processAdminHistoryData,
   processBuildingData,
   processPopulationData,
+  processCultureData,
   processCommerceData,
   processProductData,
   processTrafficData,
@@ -42,15 +44,15 @@ export async function loadAllData() {
   try {
     // 任务一：生态环境
     const water = processWaterData(waterSystemsRaw);
-    const climate = processClimateAndDisasterData(climateRaw); // 气候和灾害数据结构相同
+    const climate = processClimateData(climateRaw); // <-- 修正点 3：调用 processClimateData
     const vegetation = processVegetationData(vegetationRaw);
     const ecology = { water, climate, vegetation };
 
     // 任务二 & 五：冲击事件与整合叙事
-    const disasters = processClimateAndDisasterData(disastersRaw).map(d => ({ ...d, category: '灾害' }));
+    const disasters = processDisasterData(disastersRaw).map(d => ({ ...d, category: '灾害' })); // <-- 修正点 4：调用 processDisasterData
     const wars = processWarData(warsRaw).map(w => ({ ...w, category: '战争' }));
     const events = processEventData(eventsRaw).map(e => ({ ...e, category: '事件' }));
-    const impactEvents = [...disasters, ...wars, ...events].sort((a, b) => a.year - b.year);
+    const impactEvents = [...disasters, ...wars, ...events].sort((a, b) => (a.year || 0) - (b.year || 0));
 
     // 任务三：城市内部驱动
     const population = processPopulationData(populationRaw);
@@ -65,7 +67,7 @@ export async function loadAllData() {
     const governanceAndEconomy = { adminHistory, buildings, commerce };
     
     // 附加数据
-    const culture = processPopulationData(cultureRaw); // 文化数据结构与人口类似，主要是描述
+    const culture = processCultureData(cultureRaw);
     const people = processPeopleData(peopleRaw);
 
     // 返回一个按任务划分的、结构清晰的总数据对象
