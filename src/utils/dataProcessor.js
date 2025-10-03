@@ -10,7 +10,9 @@ import disastersRaw from '@/assets/data/05灾害 - 总数据和各朝代数据.j
 import eventsRaw from '@/assets/data/17事件 - 总数据和各朝代数据.json';
 import warsRaw from '@/assets/data/18战争 - 总数据和各朝代数据.json';
 import peopleRaw from '@/assets/data/19人物 - 总数据和各朝代数据.json';
-
+//物产和交通数据导入
+import productsRaw from '@/assets/data/15物产 - 总数据和各朝代数据.json';
+import transportationRaw from '@/assets/data/16交通 - 总数据和各朝代数据.json';
 // 2. 导入我们的数据提取器函数
 import {
   extractPopulationMetrics,
@@ -60,6 +62,9 @@ export async function loadAllData() {
       impactEvents,
       people: peopleRaw,
       wars: warsRaw, // 保留原始战争数据以供NarrativeGraph使用
+      // 需要特定的处理的数据（如地理编码）
+      transportation: transportationRaw,
+      products: productsRaw,
     };
   } catch (error) {
     console.error("数据加载或处理失败 (Data loading or processing failed):", error);
