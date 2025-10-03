@@ -17,11 +17,12 @@ let resizeObserver;
 function renderCharts() {
   if (!lineChart || !pieChart) return;
 
-  // --- 1. 人口历史记录数折线图 ---
+  // --- 1. 人口历史记录数柱状图 ---
+  // 添加 .filter(item => item.count > 0) 来筛选掉没有数据的朝代
   const populationByDynasty = dataStore.dynasties.map(dynasty => ({
       dynasty,
       count: dataStore.population.filter(p => p.时期 === dynasty).length,
-  }));
+  })).filter(item => item.count > 0);
 
   const populationOption = {
     title: { text: '各朝代人口相关记载数量', textStyle: { fontSize: 16, fontWeight: 'normal' } },
@@ -76,13 +77,17 @@ function renderCharts() {
   }));
 
   const pieOption = {
-    title: { text: `${dataStore.activeDynasty} 物产记载分布`, textStyle: { fontSize: 16, fontWeight: 'normal' } },
+    title: { 
+      text: `${dataStore.activeDynasty} 物产记载分布`, 
+      textStyle: { fontSize: 16, fontWeight: 'normal' },
+      top: '2%'
+    },
     tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
     legend: { type: 'scroll', orient: 'vertical', left: 'left', top: 'middle', textStyle: { fontSize: 12 } },
     series: [{
       type: 'pie',
       radius: ['45%', '75%'],
-      center: ['65%', '50%'],
+      center: ['50%', '60%'],
       avoidLabelOverlap: false,
       itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
       label: { show: false },

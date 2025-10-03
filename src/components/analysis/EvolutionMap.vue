@@ -91,7 +91,7 @@ function renderChart() {
   if (!myChart || !dataStore.beijingGeo) return;
 
 
-// 此处修改：直接使用来自 Pinia Store 的、经过预处理的真实数据
+// 直接使用来自 Pinia Store 的、经过预处理的真实数据
 
   const transportationData = dataStore.filteredTransportation;
 
@@ -105,7 +105,7 @@ function renderChart() {
 
       text: `${dataStore.activeDynasty} 时期: 交通与物产分布`,
 
-// 此处修改：移除“演示用途”的副标题
+// 移除“演示用途”的副标题
 
       left: 'center',
 
@@ -116,7 +116,14 @@ function renderChart() {
       }
 
     },
-
+    // 添加全局 tooltip 配置，解决悬浮框显示不全和不换行的问题
+    tooltip: {
+      trigger: 'item',
+      // 关键属性：将 tooltip 限制在图表容器内，防止被截断
+      confine: true,
+      // 关键样式：为 tooltip 设置固定宽度并启用自动换行
+      extraCssText: 'width: 250px; white-space: normal; word-wrap: break-word; text-align: left;'
+    },
     geo: {
 
       map: 'BJ',
@@ -145,7 +152,7 @@ function renderChart() {
 
     },
 
-    tooltip: { trigger: 'item' },
+    // tooltip: { trigger: 'item' },
 
     legend: {
 
@@ -167,7 +174,7 @@ function renderChart() {
 
     series: [
 
-// 此处修改：配置交通线路图层，使用预处理后的 lineCoords
+// 配置交通线路图层，使用预处理后的 lineCoords
 
       {
 
@@ -183,7 +190,7 @@ function renderChart() {
 
 // 在提示框中显示原文
 
-          tooltip: { formatter: `交通: ${item['原文'] || item['交通要道']}` }
+          tooltip: { formatter: `<b>交通:</b><br/>${item['原文'] || item['交通要道']}` }
 
         })),
 
@@ -193,7 +200,7 @@ function renderChart() {
 
       },
 
-// 此处修改：配置物产散点图层，使用预处理后的 coordinate
+// 配置物产散点图层，使用预处理后的 coordinate
 
       {
 
@@ -211,7 +218,7 @@ function renderChart() {
 
 // 在提示框中显示原文
 
-          tooltip: { formatter: `物产 (${item['物产类型']}): ${item['原文']}` }
+          tooltip: { formatter: `<b>物产 (${item['物产类型']}):</b><br/>${item['原文']}` }
 
         })),
 
