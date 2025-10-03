@@ -1,169 +1,136 @@
 <template>
-  <div class="map-wrapper">
-    <!-- 移除顶部的提示信息 -->
-    <div id="evolution-map-chart" style="width: 100%; height: 100%;"></div>
-  </div>
+  <div ref="mapContainer" style="width: 100%; height: 100%;"></div>
 </template>
 
 <script setup>
-import { onMounted, watch, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import * as echarts from 'echarts';
+// Import the data store to get the GeoJSON data
 import { useDataStore } from '@/stores/useDataStore';
 
+const props = defineProps({
+  scatterData: {
+    type: Array,
+    default: () => []
+  }
+});
+
+const mapContainer = ref(null);
+let myChart = null;
+
+// ==================== 1. Get data store instance ====================
 const dataStore = useDataStore();
-let myChart;
-let resizeObserver;
-// 移除 getDemoData 函数，因为我们现在使用真实数据
-// // 创建示例性的占位数据
-// // 原因：您的JSON数据是文本描述，没有经纬度，无法直接在地图上绘制。
-// const getDemoData = (dynasty) => {
-//     // 简单地根据朝代名称的哈希值来生成一些伪随机数据
-//     let hash = 0;
-//     for (let i = 0; i < dynasty.length; i++) {
-//         hash = dynasty.charCodeAt(i) + ((hash << 5) - hash);
-//     }
-//     const rand = (seed) => {
-//         const x = Math.sin(seed++) * 10000;
-//         return x - Math.floor(x);
-//     };
 
-//     const products = [
-//         { name: '粮食', value: [116.4 + rand(hash) * 0.3 - 0.15, 39.9 + rand(hash+1) * 0.2 - 0.1, 100] },
-//         { name: '铁器', value: [116.3 + rand(hash+2) * 0.2 - 0.1, 40.0 + rand(hash+3) * 0.2 - 0.1, 80] },
-//         { name: '盐', value: [116.5 + rand(hash+4) * 0.2 - 0.1, 39.8 + rand(hash+5) * 0.2 - 0.1, 120] },
-//     ];
+const setupMap = () => {
+  // If the component is destroyed before map is ready, exit.
+  if (!mapContainer.value) return;
 
-//     const lines = [
-//         { coords: [[116.2, 39.8], [116.4 + rand(hash+6) * 0.1, 40.1 + rand(hash+7) * 0.1]] },
-//         { coords: [[116.6, 39.9], [116.3 + rand(hash+8) * 0.1, 39.8 + rand(hash+9) * 0.1]] },
-//     ];
+  // ==================== 2. The CRUCIAL FIX ====================
+  // Check if beijingGeo data is loaded. If not, don't initialize the map.
+  if (!dataStore.beijingGeo) {
+    console.error("Beijing GeoJSON data is not available yet.");
+    return;
+  }
 
-//     return { products, lines };
-// };
+  // Before initializing the chart, register the map
+  echarts.registerMap('beijing', dataStore.beijingGeo);
+  // =============================================================
 
-
-function renderChart() {
-  if (!myChart || !dataStore.beijingGeo) return;
-  
-  // 此处修改：直接使用来自 Pinia Store 的、经过预处理的真实数据
-  const transportationData = dataStore.filteredTransportation;
-  const productData = dataStore.filteredProduct;
+  // Dispose the old chart instance if it exists
+  if (myChart) {
+    myChart.dispose();
+  }
+  myChart = echarts.init(mapContainer.value);
 
   const option = {
-    title: {
-        text: `${dataStore.activeDynasty} 时期: 交通与物产分布`,
-        // 此处修改：移除“演示用途”的副标题
-        left: 'center',
-        textStyle: {
-            color: 'var(--primary-text-color)'
-        }
-    },
     geo: {
-      map: 'BJ',
+      map: 'beijing', // Now ECharts knows what 'beijing' is
       roam: true,
+      zoom: 1.1,
+      center: [116.4074, 39.9042],
       itemStyle: {
-        areaColor: '#E6E6E6',
-        borderColor: '#ADADAD'
+        areaColor: '#e0e0e0',
+        borderColor: '#666',
       },
       emphasis: {
-          focus: 'self',
-          itemStyle: {
-              areaColor: '#D4D4D4'
-          }
+        itemStyle: {
+          areaColor: '#c4c4c4'
+        }
       }
     },
-    tooltip: { trigger: 'item' },
-    legend: {
-        data: ['交通', '物产'],
-        orient: 'vertical',
-        left: 'left',
-        top: 'bottom',
-        textStyle: {
-            color: 'var(--secondary-text-color)'
-        }
-    },
     series: [
-      // 此处修改：配置交通线路图层，使用预处理后的 lineCoords
       {
-        name: '交通',
-        type: 'lines',
-        coordinateSystem: 'geo',
-        data: transportationData.map(item => ({
-            coords: item.lineCoords,
-            // 在提示框中显示原文
-            tooltip: { formatter: `交通: ${item['原文'] || item['交通要道']}` }
-        })),
-        effect: { show: true, symbol: 'arrow', symbolSize: 6, trailLength: 0.1 },
-        lineStyle: { color: '#008000', width: 2, opacity: 0.6, curveness: 0.2 }
-      },
-      // 此处修改：配置物产散点图层，使用预处理后的 coordinate
-      {
-        name: '物产',
         type: 'scatter',
         coordinateSystem: 'geo',
-        data: productData.map(item => ({
-            name: item['物产类型'],
-            value: item.coordinate,
-            // 在提示框中显示原文
-            tooltip: { formatter: `物产 (${item['物产类型']}): ${item['原文']}` }
-        })),
-        symbolSize: 15,
-        label: { show: true, formatter: '{b}', position: 'right' }
-      },
-    ]
+        symbolSize: 10,
+        itemStyle: {
+          opacity: 0.8,
+        },
+        // The data mapping logic from the previous answer
+        data: props.scatterData.map(item => ({
+          name: item.location || item.summary,
+          value: item.coordinate ? [...item.coordinate, 1] : [],
+          itemStyle: {
+            color: item.visualType === 'disaster' ? '#f44336' :
+                item.visualType === 'war' ? '#2196F3' :
+                    item.visualType === 'event' ? '#4CAF50' : '#9E9E9E'
+          },
+          ...item
+        }))
+      }
+    ],
+    tooltip: {
+      formatter: function (params) {
+        const data = params.data;
+        if (data && data.source_data) {
+          let tooltipHtml = `<strong>${data.eventType}</strong><br/>`;
+          tooltipHtml += `时期: ${data.dynasty || '未知'}<br/>`;
+          tooltipHtml += `时间: ${data.time_display || '未知'}<br/>`;
+          tooltipHtml += `地点: ${data.location || '未知'}<br/>`;
+          tooltipHtml += `摘要: ${data.summary || '无'}<br/>`;
+          return tooltipHtml;
+        }
+        return params.name;
+      }
+    }
   };
 
-  myChart.setOption(option, true);
-}
+  myChart.setOption(option);
+  window.addEventListener('resize', myChart.resize);
+};
 
 onMounted(() => {
-  const chartDom = document.getElementById('evolution-map-chart');
-  myChart = echarts.init(chartDom);
-  
-  const setupChart = () => {
-    if (dataStore.beijingGeo) {
-      echarts.registerMap('BJ', dataStore.beijingGeo);
-      renderChart();
+  // Add a watch to ensure map is set up only after beijingGeo is loaded
+  watch(() => dataStore.beijingGeo, (newGeoData) => {
+    if (newGeoData && !myChart) {
+      setupMap();
     }
-  };
-
-  setupChart();
-
-  watch(() => dataStore.beijingGeo, (newGeo) => {
-    if (newGeo && !echarts.getMap('BJ')) {
-        setupChart();
-    }
-  });
-
-  // 当朝代或数据变化时，重新渲染图表
-  watch(() => [dataStore.activeDynasty, dataStore.transportation, dataStore.products], renderChart, { deep: true });
-  
-  resizeObserver = new ResizeObserver(() => myChart?.resize());
-  resizeObserver.observe(chartDom);
+  }, {immediate: true}); // immediate: true will run the watcher once on mount
 });
 
 onUnmounted(() => {
-  resizeObserver?.disconnect();
-  myChart?.dispose();
+  if (myChart) {
+    window.removeEventListener('resize', myChart.resize);
+    myChart.dispose();
+  }
 });
+
+watch(() => props.scatterData, () => {
+  if (myChart) {
+    myChart.setOption({
+      series: [{
+        data: props.scatterData.map(item => ({
+          name: item.location || item.summary,
+          value: item.coordinate ? [...item.coordinate, 1] : [],
+          itemStyle: {
+            color: item.visualType === 'disaster' ? '#f44336' :
+                item.visualType === 'war' ? '#2196F3' :
+                    item.visualType === 'event' ? '#4CAF50' : '#9E9E9E'
+          },
+          ...item
+        }))
+      }]
+    });
+  }
+}, {deep: true});
 </script>
-
-<style scoped>
-.map-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.data-warning {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  border: 1px solid #ccc;
-  max-width: 250px;
-}
-</style>
-

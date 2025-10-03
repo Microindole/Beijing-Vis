@@ -8,8 +8,9 @@ import { RouterLink, RouterView } from 'vue-router'
       <h1>析城观史 - 北京历史时空演变可视分析</h1>
       <!--在标题下方添加了导航栏，以便于在不同分析视图间切换 -->
       <nav class="app-nav">
-        <RouterLink to="/history-explorer">时空历史总览</RouterLink>
-        <RouterLink to="/analysis/internal-evolution">内部演进分析</RouterLink>
+        <RouterLink to="/history-explorer">总览</RouterLink>
+        <RouterLink to="/analysis/internal-evolution">城市内部演进</RouterLink>
+        <RouterLink to="/analysis/impact-events">冲击事件分析</RouterLink><
       </nav>
     </header>
     <main class="app-main-content">
