@@ -1,5 +1,5 @@
 {
-  "name": "china_vis2025",
+  "name": "Beijing-Vis",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +14,7 @@
     "@antv/g6": "^4.8.25",
     "3d-force-graph": "^1.77.0",
     "cesium": "^1.129.0",
-    "china_vis2025": "file:",
+    "Beijing-Vis": "file:",
     "copy-webpack-plugin": "^13.0.0",
     "d3": "^7.9.0",
     "echarts": "^5.6.0",
