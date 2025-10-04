@@ -10,6 +10,7 @@ import { RouterLink, RouterView } from 'vue-router'
       <nav class="app-nav">
         <RouterLink to="/history-explorer">总览</RouterLink>
         <RouterLink to="/analysis/internal-evolution">城市内部演进</RouterLink>
+        <RouterLink to="/history-zhou">朝代历史轴</RouterLink>
         <RouterLink to="/analysis/impact-events">冲击事件分析</RouterLink><
       </nav>
     </header>

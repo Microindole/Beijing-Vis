@@ -9,10 +9,10 @@
             <button @click="activeTab = 'social'" :class="{ active: activeTab === 'social' }">社会发展</button>
           </div>
           <div v-if="activeTab === 'impact'" class="tab-content">
-            <CorrelationCharts 
-              :events="eventsForMap" 
+            <CorrelationCharts
+              :events="eventsForMap"
               :dynasty="activeDynasty"
-              :population="allData.population" 
+              :population="allData.population"
             />
             <InfoPanel :selected-item="selectedEvent" />
           </div>
@@ -24,8 +24,8 @@
           </div>
         </div>
         <div class="right-panel">
-          <BeijingHistoryMap 
-            :events="eventsForMap" 
+          <BeijingHistoryMap
+            :events="eventsForMap"
             :highlighted-event-name="highlightedEventName"
             @event-click="handleEventClick"
           />
@@ -113,7 +113,7 @@ function handleNodeClick(nodeData) {
   flex-direction: column;
   height: 100%;
   /* 从原来的 #f4f7f9 改为透明，以显示 body 的背景色 */
-  background-color: transparent; 
+  background-color: transparent;
 }
 
 .main-content-grid {

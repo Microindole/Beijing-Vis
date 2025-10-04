@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HistoryExplorerView from '../views/HistoryExplorerView.vue'
 import InternalEvolutionView from '../views/analysis/InternalEvolutionView.vue'
 import ImpactEventsView from '../views/analysis/ImpactEventsView.vue'
+import HistoryZhouView from '../views/HistoryZhouView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -18,6 +19,11 @@ const router = createRouter({
       path: '/analysis/internal-evolution',
       name: 'internalEvolution',
       component: InternalEvolutionView,
+    },
+    {
+      path: '/history-zhou',
+      name: 'history-zhou',
+      component: HistoryZhouView
     },
     {
       path: '/analysis/impact-events',
