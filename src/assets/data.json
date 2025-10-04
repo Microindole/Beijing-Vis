@@ -1,0 +1,44 @@
+{
+  "landmarks": [
+    {
+      "id": "forbidden-city",
+      "name": "故宫",
+      "description": "明清两代的皇家宫殿",
+      "timeline": [
+        {"year": 1406, "event": "开始建造", "description": "明成祖朱棣下令建造"},
+        {"year": 1420, "event": "建成", "description": "基本建成并成为皇宫"},
+        {"year": 1644, "event": "清朝入主", "description": "李自成攻入北京，明朝灭亡，后清朝入主"},
+        {"year": 1912, "event": "末代皇帝退位", "description": "溥仪退位，故宫结束作为皇宫的历史"},
+        {"year": 1925, "event": "故宫博物院成立", "description": "正式对公众开放"}
+      ],
+      "relatedFigures": ["朱棣", "溥仪", "李自成"],
+      "relatedEvents": ["明朝建立", "清朝建立", "辛亥革命"]
+    },
+    {
+      "id": "temple-of-heaven",
+      "name": "天坛",
+      "description": "明清皇帝祭天之地",
+      "timeline": [
+        {"year": 1420, "event": "始建", "description": "明永乐年间与故宫同期建造"},
+        {"year": 1530, "event": "扩建", "description": "增建圜丘坛"},
+        {"year": 1889, "event": "祈年殿重建", "description": "遭雷击焚毁后重建"},
+        {"year": 1918, "event": "对公众开放", "description": "改为公园"}
+      ],
+      "relatedFigures": ["朱棣", "嘉靖皇帝"],
+      "relatedEvents": ["明朝迁都北京", "天坛申遗成功"]
+    },
+    {
+      "id": "summer-palace",
+      "name": "颐和园",
+      "description": "清朝皇家园林",
+      "timeline": [
+        {"year": 1750, "event": "始建", "description": "乾隆皇帝为母亲祝寿而建"},
+        {"year": 1860, "event": "被毁", "description": "第二次鸦片战争中被英法联军焚毁"},
+        {"year": 1888, "event": "重建", "description": "慈禧太后挪用海军经费重建"},
+        {"year": 1924, "event": "开放", "description": "作为公园对公众开放"}
+      ],
+      "relatedFigures": ["乾隆", "慈禧太后"],
+      "relatedEvents": ["第二次鸦片战争", "戊戌变法"]
+    }
+  ]
+}
