@@ -95,16 +95,15 @@
     <!-- 子路由渲染区 -->
     <router-view />
 
-    <footer class="portal-footer">
-      <p>发现更多：<a href="#">推荐探索路线</a> | <a href="#">更多发现</a></p>
-      <p class="copyright">© 2023 北京历史文化遗产数字平台</p>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 
 <script>
+import AppFooter from '@/components/AppFooter.vue';
 export default {
   name: "BeihaiPark",
+  components: {AppFooter},
   props: {
     landmarkId: {
       type: String,
@@ -463,33 +462,6 @@ export default {
   background: linear-gradient(135deg, #e0b87a 0%, #9c5a29 100%);
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
-}
-
-.portal-footer {
-  text-align: center;
-  padding: 30px 20px;
-  background: linear-gradient(135deg, #8b4513 0%, #5a2c0b 100%);
-  color: #f5f5f5;
-  font-size: 0.9em;
-  margin-top: auto;
-}
-
-.portal-footer a {
-  color: #ffd54f;
-  text-decoration: none;
-  margin: 0 10px;
-  transition: color 0.3s ease;
-  font-weight: 500;
-}
-
-.portal-footer a:hover {
-  color: #fff8e1;
-  text-decoration: underline;
-}
-
-.portal-footer .copyright {
-  margin-top: 15px;
-  opacity: 0.8;
 }
 
 @media (max-width: 1200px) {
