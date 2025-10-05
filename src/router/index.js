@@ -2,13 +2,15 @@ import { createRouter, createWebHistory } from "vue-router";
 import homeRoutes from "./routes/home";
 import landmarkRoutes from "./routes/landmarks";
 import notFoundRoute from "./routes/notFound";
+import aboutRoutes from './routes/about';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     ...homeRoutes,
     ...landmarkRoutes,
-    ...notFoundRoute
+    ...notFoundRoute,
+      ...aboutRoutes
   ],
   scrollBehavior(to, from, savedPosition) {
     return savedPosition || { top: 0 };

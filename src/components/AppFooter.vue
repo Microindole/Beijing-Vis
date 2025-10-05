@@ -5,10 +5,10 @@
 <template>
   <footer class="portal-footer">
     <div class="portal-footer-content">
-      <a href="#about">项目简介</a>
-      <a href="#team">团队成员</a>
-      <a href="#data">数据来源</a>
-      <a href="#tech">技术栈</a>
+      <router-link :to="{ name: 'ProjectIntro' }">项目简介</router-link>
+      <router-link :to="{ name: 'TeamMembers' }">团队成员</router-link>
+      <router-link :to="{ name: 'DataSource' }">数据来源</router-link>
+      <router-link :to="{ name: 'TechStack' }">技术栈</router-link>
     </div>
     <div class="copyright">
       北京地标建筑可视化挑战赛 · 课堂展示项目 · 2025
