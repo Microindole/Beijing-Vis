@@ -13,8 +13,8 @@
   "dependencies": {
     "@antv/g6": "^4.8.25",
     "3d-force-graph": "^1.77.0",
-    "cesium": "^1.129.0",
     "Beijing-Vis": "file:",
+    "cesium": "^1.129.0",
     "copy-webpack-plugin": "^13.0.0",
     "d3": "^7.9.0",
     "echarts": "^5.6.0",

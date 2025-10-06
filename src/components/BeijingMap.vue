@@ -1,5 +1,4 @@
 <template>
-  <!-- 主页面的北京地图 -->
   <div class="map-container">
     <svg ref="mapSvg" width="100%" height="100%" viewBox="0 0 800 600">
       <defs>
@@ -25,66 +24,118 @@
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+
+        <filter id="parchment-texture" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="10" result="turbulence"/>
+
+          <feDiffuseLighting in="turbulence" lighting-color="#d4a76a" surfaceScale="3" result="lit">
+            <feDistantLight azimuth="45" elevation="50"/>
+          </feDiffuseLighting>
+
+          <feComposite in="lit" in2="SourceAlpha" operator="in" result="textured"/>
+
+          <feBlend in="SourceGraphic" in2="textured" mode="multiply" />
+        </filter>
+        <filter id="terrain-texture" x="-20%" y="-20%" width="140%" height="140%">
+          <!-- 创建噪声基础 -->
+          <feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="4" seed="2" result="noise"/>
+
+          <!-- 添加光照效果，模拟地形起伏 -->
+          <feDiffuseLighting in="noise" lighting-color="#d4a76a" surfaceScale="2" result="terrain">
+            <feDistantLight azimuth="45" elevation="60"/>
+          </feDiffuseLighting>
+
+          <!-- 混合到原图形 -->
+          <feComposite in="terrain" in2="SourceAlpha" operator="in" result="textured"/>
+          <feBlend in="SourceGraphic" in2="textured" mode="multiply" />
+        </filter>
+
+        <!-- ========== 新增：细腻纸张纹理 ========== -->
+        <filter id="paper-grain" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="turbulence" baseFrequency="0.9" numOctaves="4" result="grain"/>
+          <feColorMatrix in="grain" type="saturate" values="0" result="desaturated"/>
+          <feComponentTransfer in="desaturated" result="grain2">
+            <feFuncA type="table" tableValues="0 0.05"/>
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="grain2" mode="multiply"/>
+        </filter>
+
+        <!-- ========== 新增：组合纹理（地形+纸张） ========== -->
+        <filter id="combined-texture" x="-20%" y="-20%" width="140%" height="140%">
+          <!-- 先应用地形纹理 -->
+          <feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="4" seed="2" result="noise"/>
+          <feDiffuseLighting in="noise" lighting-color="#d4a76a" surfaceScale="2" result="terrain">
+            <feDistantLight azimuth="45" elevation="60"/>
+          </feDiffuseLighting>
+          <feComposite in="terrain" in2="SourceAlpha" operator="in" result="textured"/>
+
+          <!-- 再添加纸张颗粒 -->
+          <feTurbulence type="turbulence" baseFrequency="0.9" numOctaves="3" result="grain"/>
+          <feColorMatrix in="grain" type="saturate" values="0" result="grain-gray"/>
+          <feComponentTransfer in="grain-gray" result="grain-final">
+            <feFuncA type="table" tableValues="0 0.03"/>
+          </feComponentTransfer>
+
+          <!-- 混合所有效果 -->
+          <feBlend in="SourceGraphic" in2="textured" mode="multiply" result="step1"/>
+          <feBlend in="step1" in2="grain-final" mode="multiply"/>
+        </filter>
       </defs>
 
-      <!-- 地图区域 -->
       <g class="map-layer"></g>
 
-      <!-- 连接线层 -->
       <g class="connectors-layer" v-if="projection">
         <path
-          v-for="landmark in landmarks"
-          :key="'connector-' + landmark.id"
-          class="connector-line"
-          :d="getConnectorPath(landmark)"
+            v-for="landmark in landmarks"
+            :key="'connector-' + landmark.id"
+            class="connector-line"
+            :d="getConnectorPath(landmark)"
         />
       </g>
 
-      <!-- 景点标记 -->
       <g class="landmarks-layer" v-if="projection">
         <g
-          v-for="landmark in landmarks"
-          :key="landmark.id"
-          class="landmark-marker"
-          :transform="`translate(${projection(landmark.position)[0]}, ${
+            v-for="landmark in landmarks"
+            :key="landmark.id"
+            class="landmark-marker"
+            :transform="`translate(${projection(landmark.position)[0]}, ${
             projection(landmark.position)[1]
           })`"
         >
           <circle
-            class="marker-dot"
-            r="4"
-            :class="{ highlight: landmark.id === activeLandmarkId }"
-            @mouseenter="showTooltip(landmark, $event)"
-            @mouseleave="hideTooltip"
-            @click="handleLandmarkClick(landmark)"
+              class="marker-dot"
+              r="4"
+              :class="{ highlight: landmark.id === activeLandmarkId }"
+              @mouseenter="showTooltip(landmark, $event)"
+              @mouseleave="hideTooltip"
+              @click="handleLandmarkClick(landmark)"
           />
         </g>
       </g>
 
-      <!-- 外置标签 -->
       <g class="labels-layer" v-if="projection">
         <g
-          v-for="landmark in landmarks"
-          :key="'label-' + landmark.id"
-          :transform="`translate(${getLabelPosition(landmark)[0]}, ${
+            v-for="landmark in landmarks"
+            :key="'label-' + landmark.id"
+            :transform="`translate(${getLabelPosition(landmark)[0]}, ${
             getLabelPosition(landmark)[1]
           })`"
         >
           <rect
-            class="label-bg"
-            x="-55"
-            y="-14"
-            width="110"
-            height="28"
-            rx="6"
-            @mouseenter="showTooltip(landmark, $event)"
-            @mouseleave="hideTooltip"
-            @click="handleLandmarkClick(landmark)"
+              class="label-bg"
+              x="-55"
+              y="-14"
+              width="110"
+              height="28"
+              rx="6"
+              @mouseenter="showTooltip(landmark, $event)"
+              @mouseleave="hideTooltip"
+              @click="handleLandmarkClick(landmark)"
           />
           <text
-            class="label-text"
-            text-anchor="middle"
-            dominant-baseline="middle"
+              class="label-text"
+              text-anchor="middle"
+              dominant-baseline="middle"
           >
             {{ landmark.name }}
           </text>
@@ -92,9 +143,9 @@
       </g>
     </svg>
     <div
-      v-if="activeTooltip"
-      class="tooltip"
-      :style="{
+        v-if="activeTooltip"
+        class="tooltip"
+        :style="{
         left: tooltipPosition.x + 'px',
         top: tooltipPosition.y + 'px',
       }"
@@ -127,6 +178,7 @@ export default {
       tooltipPosition: { x: 0, y: 0 },
       highlightedLandmark: null,
       tooltipTimer: null,
+      textureIntensity: 'medium', // 'low', 'medium', 'high'
     };
   },
   computed: {
@@ -134,8 +186,8 @@ export default {
       // 根据缩放级别决定显示哪些标记
       return this.landmarks.filter((landmark) => {
         return (
-          this.zoomLevel > 0.5 ||
-          ["forbiddenCity", "templeOfHeaven", "greatWall"].includes(landmark.id)
+            this.zoomLevel > 0.5 ||
+            ["forbiddenCity", "templeOfHeaven", "greatWall"].includes(landmark.id)
         );
       });
     },
@@ -143,7 +195,7 @@ export default {
   async mounted() {
     this.svg = d3.select(this.$refs.mapSvg);
     const geoJson = await d3.json(
-      "./beijing_geojson_filer/北京市区geojson地图文件/北京.json"
+        "./beijing_geojson_filer/北京市区geojson地图文件/北京.json"
     );
     this.beijingFeatures = geoJson.features;
     this.initMap();
@@ -157,50 +209,65 @@ export default {
       });
       this.path = d3.geoPath().projection(this.projection);
       this.colorScale = d3
-        .scaleLinear()
-        .domain(this.colorScaleConfig.domain)
-        .range(this.colorScaleConfig.range);
+          .scaleLinear()
+          .domain(this.colorScaleConfig.domain)
+          .range(this.colorScaleConfig.range);
     },
     drawMap() {
       const mapLayer = this.svg.select(".map-layer");
       const dataMap = new Map(
-        this.mapData.map((item) => [item.name, item.value])
+          this.mapData.map((item) => [item.name, item.value])
       );
 
       const areas = mapLayer
-        .selectAll("path")
-        .data(this.beijingFeatures, (d) => d.properties.name);
+          .selectAll("path")
+          .data(this.beijingFeatures, (d) => d.properties.name);
 
       areas
-        .enter()
-        .append("path")
-        .attr("d", this.path)
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1)
-        .on("click", (event, d) => {
-          this.$emit("area-clicked", d.properties.name);
-        })
-        .merge(areas)
-        .attr("fill", (d) => {
-          const val = dataMap.get(d.properties.name);
-          return val !== undefined ? this.colorScale(val) : "#ccc";
-        });
+          .enter()
+          .append("path")
+          .attr("d", this.path)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 0.8)
+          .on("click", (event, d) => {
+            this.$emit("area-clicked", d.properties.name);
+          })
+          .merge(areas)
+          .attr("fill", (d) => {
+            const val = dataMap.get(d.properties.name);
+            return val !== undefined ? this.colorScale(val) : "#ccc";
+          })
+          // ========== 修改这里：使用组合纹理 ==========
+          .attr("filter", "url(#combined-texture)")
+          // ========== 添加鼠标悬停效果 ==========
+          .on("mouseenter", function() {
+            d3.select(this)
+                .attr("filter", "none")  // 悬停时移除纹理，显示清晰颜色
+                .attr("stroke", "#bd6b20")
+                .attr("stroke-width", 2);
+          })
+          .on("mouseleave", function() {
+            d3.select(this)
+                .attr("filter", "url(#combined-texture)")  // 恢复纹理
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 0.8);
+          });
 
       areas.exit().remove();
 
       // 区域名称标注
       const labels = mapLayer
-        .selectAll("text")
-        .data(this.beijingFeatures, (d) => d.properties.name);
+          .selectAll("text")
+          .data(this.beijingFeatures, (d) => d.properties.name);
       labels
-        .enter()
-        .append("text")
-        .attr("x", (d) => this.projection(d.properties.centroid)[0])
-        .attr("y", (d) => this.projection(d.properties.centroid)[1])
-        .attr("text-anchor", "middle")
-        .attr("font-size", "10px")
-        .text((d) => d.properties.name)
-        .merge(labels);
+          .enter()
+          .append("text")
+          .attr("x", (d) => this.projection(d.properties.centroid)[0])
+          .attr("y", (d) => this.projection(d.properties.centroid)[1])
+          .attr("text-anchor", "middle")
+          .attr("font-size", "10px")
+          .text((d) => d.properties.name)
+          .merge(labels);
     },
     handleLandmarkClick(landmark) {
       this.highlightMarker(landmark.id);
@@ -233,7 +300,7 @@ export default {
     getLandmarkDescription(id) {
       const descriptions = {
         forbiddenCity:
-          "明清两代的皇家宫殿，世界上现存规模最大、保存最完整的木质结构古建筑之一",
+            "明清两代的皇家宫殿，世界上现存规模最大、保存最完整的木质结构古建筑之一",
         templeOfHeaven: "明清两代帝王祭天、祈谷的场所，世界文化遗产",
         greatWall: "中国古代的军事防御工程，世界新七大奇迹之一",
         mingTombs: "明朝十三位皇帝的陵墓群，世界文化遗产",
@@ -247,8 +314,8 @@ export default {
     shouldShowLabel(landmark) {
       // 根据缩放级别决定是否显示标签
       return (
-        this.zoomLevel > 0.8 ||
-        ["forbiddenCity", "templeOfHeaven", "greatWall"].includes(landmark.id)
+          this.zoomLevel > 0.8 ||
+          ["forbiddenCity", "templeOfHeaven", "greatWall"].includes(landmark.id)
       );
     },
     getConnectorPath(landmark) {
@@ -301,23 +368,25 @@ export default {
   --marker-glow-color: #f8b350; /* 标记点发光色 */
 }
 
-/* 地图区域路径样式 */
+/* ==================== 修改：优化地图路径及交互样式 ==================== */
 .map-layer path {
-  fill: url(#mapGradient); /* 使用渐变填充 */
-  stroke: var(--secondary-color); /* 边框色 */
-  stroke-width: 0.5;
-  transition: all 0.3s ease-in-out;
-  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.15)); /* 柔和阴影 */
-  cursor: pointer; /* 区域可点击 */
+  cursor: pointer;
+  /* 平滑过渡所有属性，特别是滤镜和变换 */
+  transition: all 0.3s ease-in-out, filter 0.3s ease-in-out;
 }
 
 .map-layer path:hover {
-  fill: #e8c792; /* hover 时的填充色，更亮一些 */
-  stroke: var(--accent-color); /* hover 边框色 */
-  stroke-width: 1;
-  filter: drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.25)); /* 增强阴影 */
-  transform: translateY(-2px); /* 略微上浮效果 */
+  /* 当鼠标悬浮时，移除纹理滤镜，让颜色变得清晰，
+    同时描边变色加粗，并略微上浮和放大，提供清晰的视觉反馈
+  */
+  filter: none;
+  stroke: var(--accent-color);
+  stroke-width: 1.5;
+  transform: translateY(-2px) scale(1.01);
+  /* 使用一个更明亮的颜色来高亮，而不是原来的固定色 */
+  fill: #f0d8a8;
 }
+/* =================================================================== */
 
 /* 连接线层 */
 .connectors-layer {
@@ -344,7 +413,6 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  /* 确保地图容器背景是透明的，以便看到其父容器的背景 */
   background-color: transparent;
 }
 
@@ -424,14 +492,6 @@ export default {
   }
 }
 
-.connector-line {
-  stroke: #ff5722;
-  stroke-width: 1;
-  stroke-dasharray: 3, 2;
-  opacity: 0.6;
-  pointer-events: none;
-}
-
 .label-bg {
   fill: white;
   stroke: #ff5722;
@@ -449,15 +509,5 @@ export default {
   fill: #333;
   font-weight: bold;
   pointer-events: none;
-}
-
-.map-layer path {
-  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
-  transition: all 0.3s ease;
-}
-
-.map-layer path:hover {
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
-  transform: translateY(-1px);
 }
 </style>
