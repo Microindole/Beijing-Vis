@@ -580,32 +580,27 @@ export default {
         },
         xAxis: {
           type: "category",
-          // Keep x-axis data as raw numerical years
-          data: years,
+          data: years, // X轴数据是年份数组
+          boundaryGap: false,
+          axisTick: { alignWithLabel: true },
           axisLabel: {
-            // Format numerical year to "公元前" or "年" string for display
+            // 优化 “0年” 的显示
             formatter: function (value) {
-              const yearValue = parseInt(value); // value here is the number (e.g., -800, 1000)
+              const yearValue = parseInt(value);
+              if (yearValue === 0) return '公元元年';
               return yearValue < 0 ? `公元前${-yearValue}` : `${yearValue}年`;
             },
+            // 简化 interval 逻辑，让标签更稀疏、更规整
             interval: (index, value) => {
-              const yearValue = parseInt(value); // value is already the number
-              // Dynamically adjust interval based on year range
-              if (Math.abs(yearValue) > 1000) {
-                return yearValue % 500 === 0;
-              } else if (Math.abs(yearValue) > 500) {
-                return yearValue % 200 === 0;
-              } else if (Math.abs(yearValue) > 100) {
+              const yearValue = parseInt(value);
+              // 在北京建都史后的重要时期，每100年显示一个标签
+              if (yearValue >= 1200 && yearValue <= 2000) {
                 return yearValue % 100 === 0;
-              } else {
-                return index % 50 === 0; // For more recent times, show every 50 years
               }
+              // 其他的古代时期，每400年显示一个，避免过于拥挤
+              return yearValue % 400 === 0;
             },
-            rotate: 45, // Rotate labels to prevent overlap
-          },
-          boundaryGap: false, // Prevents gap at the beginning/end of the axis
-          axisTick: {
-            alignWithLabel: true,
+            rotate: 45
           },
         },
         yAxis: {
@@ -641,6 +636,44 @@ export default {
                 width: 4
               },
               symbolSize: 12
+            },
+            markArea: {
+              silent: true, // 让标记区域不响应鼠标事件
+              itemStyle: {
+                color: 'rgba(0,0,0,0.04)' // 默认的淡淡的背景色
+              },
+              data: [
+                [ { name: '前秦', xAxis: '-800', itemStyle: { color: 'rgba(255,225,180,0.1)' } }, { xAxis: '-221' } ],
+                // --- 秦汉时期 ---
+                [ { name: '秦', xAxis: '-221', itemStyle: { color: 'rgba(139, 101, 8, 0.1)' } }, { xAxis: '-206' } ],
+                [ { name: '汉', xAxis: '-206', itemStyle: { color: 'rgba(205, 133, 63, 0.1)' } }, { xAxis: '220' } ],
+                // --- 魏晋南北朝 ---
+                [ { name: '三国及两晋', xAxis: '220', itemStyle: { color: 'rgba(132, 112, 255, 0.1)' } }, { xAxis: '420' } ],
+                [ { name: '南北朝', xAxis: '420', itemStyle: { color: 'rgba(125, 158, 192, 0.1)' } }, { xAxis: '589' } ],
+                // --- 隋唐五代 ---
+                [ { name: '隋', xAxis: '581', itemStyle: { color: 'rgba(255, 165, 0, 0.1)' } }, { xAxis: '618' } ],
+                [ { name: '唐', xAxis: '618', itemStyle: { color: 'rgba(255, 127, 80, 0.15)' } }, { xAxis: '907' } ],
+                [ { name: '五代', xAxis: '907', itemStyle: { color: 'rgba(112, 128, 144, 0.15)' } }, { xAxis: '960' } ],
+                // --- 宋辽金元 ---
+                [ { name: '宋', xAxis: '960', itemStyle: { color: 'rgba(188, 143, 143, 0.15)' } }, { xAxis: '1279' } ],
+                [ { name: '辽', xAxis: '907', itemStyle: { color: 'rgba(159, 219, 144, 0.15)' } }, { xAxis: '1125' } ],
+                [ { name: '金', xAxis: '1115', itemStyle: { color: 'rgba(255, 236, 139, 0.2)' } }, { xAxis: '1234' } ],
+                [ { name: '元', xAxis: '1271', itemStyle: { color: 'rgba(135, 206, 235, 0.12)' } }, { xAxis: '1368' } ],
+                // --- 明清及民国 ---
+                [ { name: '明', xAxis: '1368', itemStyle: { color: 'rgba(255, 228, 181, 0.2)' } }, { xAxis: '1644' } ],
+                [ { name: '清', xAxis: '1644', itemStyle: { color: 'rgba(240, 128, 128, 0.12)' } }, { xAxis: '1912' } ],
+                [ { name: '民国', xAxis: '1912', itemStyle: { color: 'rgba(100, 149, 237, 0.15)' } }, { xAxis: '1949' } ],
+                [ { name: '现代', xAxis: '1949', itemStyle: { color: 'rgba(255,31,0,0.1)' } }, { xAxis: '2025' } ],
+
+
+              ],
+              label: {
+                color: '#777', // 标签文字颜色
+                fontSize: 14,
+                fontWeight: 'bold',
+                position: 'insideTop', // 标签显示在区域内部顶部
+                distance: 15     // 距离顶部的距离
+              }
             }
           },
           {
@@ -798,7 +831,7 @@ export default {
           force: {repulsion: 800, edgeLength: [200, 300], gravity: 0.1, friction: 0.6, layoutAnimation: true},
           label: {show: true, position: "right", formatter: "{b}", fontSize: 12, color: "#333"},
           lineStyle: {color: "#999", curveness: 0.3},
-          emphasis: {focus: "adjacency", lineStyle: {color: "#666"}},
+         /* emphasis: {focus: "adjacency", lineStyle: {color: "#666"}},*/
           tooltip: {
             trigger: "item",
             backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -827,45 +860,36 @@ export default {
       // 核心修改2：使用新的、正确的逻辑来绑定事件
       this.forceChart.on('mouseover', (params) => {
         if (params.dataType === 'node') {
-          // 获取当前悬停节点的名称
           const nodeName = params.name;
-          const styledLinks = this.getStyledLinks();
-
-          const finalLinks = styledLinks.map(link => {
-            // 第1步：无差别地将所有线都设置为灰色细线
-            link.lineStyle.color = '#ccc';
-            link.lineStyle.width = 1;
-
-            // 第2步：如果这条线与悬停的节点相连，则显示它的文字
-            if (link.source === nodeName || link.target === nodeName) {
-              link.label.show = true;
-            }
-
-            return link;
-          });
-
+          // 直接在现有配置上更新，效率更高
           this.forceChart.setOption({
             series: [{
-              links: finalLinks,
-              emphasis: { focus: 'none' }
+              links: this.getStyledLinks().map(link => {
+                // 如果线与悬停的节点相连
+                if (link.source === nodeName || link.target === nodeName) {
+                  // 就显示它的文字，并让线条加粗
+                  link.label.show = true;
+                  link.lineStyle.width = (link.value * 3 + 1) + 2;
+                }
+                return link;
+              })
             }]
           });
         }
       });
 
       this.forceChart.on('mouseout', (params) => {
-        // 当鼠标移出节点时
         if (params.dataType === 'node') {
-          // 将所有 links 恢复为默认的彩色样式
+          // 鼠标移出时，简单地恢复为默认样式即可
           this.forceChart.setOption({
             series: [{
-              links: this.getStyledLinks(),
-              // 恢复 focusNodeAdjacency
-              emphasis: { focus: 'adjacency' }
+              links: this.getStyledLinks()
             }]
           });
         }
       });
+
+
 
       this.forceChart.off('click'); // 先移除旧的监听，防止重复
       this.forceChart.on('click', (params) => {
