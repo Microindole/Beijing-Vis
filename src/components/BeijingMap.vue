@@ -27,30 +27,22 @@
 
         <filter id="parchment-texture" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="10" result="turbulence"/>
-
-          <feDiffuseLighting in="turbulence" lighting-color="#d4a76a" surfaceScale="3" result="lit">
+          <feDiffuseLighting in="turbulence" lighting-color="#ebe2d1" surfaceScale="3" result="lit">
             <feDistantLight azimuth="45" elevation="50"/>
           </feDiffuseLighting>
-
           <feComposite in="lit" in2="SourceAlpha" operator="in" result="textured"/>
-
           <feBlend in="SourceGraphic" in2="textured" mode="multiply" />
         </filter>
-        <filter id="terrain-texture" x="-20%" y="-20%" width="140%" height="140%">
-          <!-- 创建噪声基础 -->
-          <feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="4" seed="2" result="noise"/>
 
-          <!-- 添加光照效果，模拟地形起伏 -->
-          <feDiffuseLighting in="noise" lighting-color="#d4a76a" surfaceScale="2" result="terrain">
+        <filter id="terrain-texture" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="4" seed="2" result="noise"/>
+          <feDiffuseLighting in="noise" lighting-color="#ebe2d1" surfaceScale="2" result="terrain">
             <feDistantLight azimuth="45" elevation="60"/>
           </feDiffuseLighting>
-
-          <!-- 混合到原图形 -->
           <feComposite in="terrain" in2="SourceAlpha" operator="in" result="textured"/>
           <feBlend in="SourceGraphic" in2="textured" mode="multiply" />
         </filter>
 
-        <!-- ========== 新增：细腻纸张纹理 ========== -->
         <filter id="paper-grain" x="0%" y="0%" width="100%" height="100%">
           <feTurbulence type="turbulence" baseFrequency="0.9" numOctaves="4" result="grain"/>
           <feColorMatrix in="grain" type="saturate" values="0" result="desaturated"/>
@@ -60,23 +52,17 @@
           <feBlend in="SourceGraphic" in2="grain2" mode="multiply"/>
         </filter>
 
-        <!-- ========== 新增：组合纹理（地形+纸张） ========== -->
         <filter id="combined-texture" x="-20%" y="-20%" width="140%" height="140%">
-          <!-- 先应用地形纹理 -->
           <feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="4" seed="2" result="noise"/>
-          <feDiffuseLighting in="noise" lighting-color="#d4a76a" surfaceScale="2" result="terrain">
+          <feDiffuseLighting in="noise" lighting-color="#ebe2d1" surfaceScale="2" result="terrain">
             <feDistantLight azimuth="45" elevation="60"/>
           </feDiffuseLighting>
           <feComposite in="terrain" in2="SourceAlpha" operator="in" result="textured"/>
-
-          <!-- 再添加纸张颗粒 -->
           <feTurbulence type="turbulence" baseFrequency="0.9" numOctaves="3" result="grain"/>
           <feColorMatrix in="grain" type="saturate" values="0" result="grain-gray"/>
           <feComponentTransfer in="grain-gray" result="grain-final">
             <feFuncA type="table" tableValues="0 0.03"/>
           </feComponentTransfer>
-
-          <!-- 混合所有效果 -->
           <feBlend in="SourceGraphic" in2="textured" mode="multiply" result="step1"/>
           <feBlend in="step1" in2="grain-final" mode="multiply"/>
         </filter>
@@ -393,9 +379,9 @@ export default {
   pointer-events: none; /* 不响应鼠标事件 */
 }
 .connector-line {
-  stroke: #c19a6b; /* 日落主题的连接线颜色 */
-  stroke-width: 1.5; /* 稍微粗一点 */
-  stroke-dasharray: 4, 3; /* 点线 */
+  stroke: #b4850f; /* 日落主题的连接线颜色 */
+  stroke-width: 2; /* 稍微粗一点 */
+  stroke-dasharray: 5,3; /* 点线 */
   opacity: 0.7;
   animation: dashFlow 20s linear infinite; /* 流动动画 */
 }
