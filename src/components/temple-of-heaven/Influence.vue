@@ -171,7 +171,9 @@ const initCosmosChart = () => {
       legend: {
         top: "bottom",
         textStyle: {
-          color: "#5a4a42",
+          // color: "#5a4a42",
+          /* 将图例文字改为更亮的米色 */
+          color: "#b8a692",
         },
       },
       color: ["#8b4513", "#d4a76a", "#9c7c5c", "#b2967d"],
@@ -188,12 +190,16 @@ const initCosmosChart = () => {
             rich: {
               b: {
                 fontSize: 14,
-                color: "#5a4a42",
+                // color: "#5a4a42",
+                /* 将标签文字改为更亮的米色 */
+                color: "#b8a692",
                 lineHeight: 20,
               },
               c: {
                 fontSize: 16,
-                color: "#8b4513",
+                // color: "#8b4513",
+                /* 将百分比数字改为主题金色，更突出 */
+                color: "#d4a76a",
                 fontWeight: "bold",
               },
             },
@@ -529,11 +535,19 @@ onMounted(() => {
   margin-bottom: 1.5rem;
 }
 
-.philosophy-item {
+/* .philosophy-item {
   background: rgba(255, 248, 225, 0.8);
   border-radius: 6px;
   padding: 1rem;
   border: 1px solid #5d4b4b;
+} */
+ .philosophy-item {
+  
+  background: rgba(93, 75, 75, 0.3);
+  border-radius: 6px;
+  padding: 1rem;
+ 
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .icon-circle {
@@ -552,18 +566,33 @@ onMounted(() => {
   color: #fff8e1;
 }
 
-.philosophy-item h3 {
+/* .philosophy-item h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
   color: #5a4a42;
   text-align: center;
+} */
+ .philosophy-item h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  /* 标题文字改为亮金色 */
+  color: #d4a76a;
+  text-align: center;
 }
 
-.philosophy-item p {
+/* .philosophy-item p {
   margin: 0;
   color: #5a4a42;
   font-size: 0.9rem;
   line-height: 1.5;
+} */
+ .philosophy-item p {
+  margin: 0;
+  /* 提升颜色亮度并略微增加字重，使其更清晰 */
+  color: #5a4a42; 
+  font-weight: 300; /* 可选：增加一点字重 */
+  font-size: 0.9rem;
+  line-height: 1.6; /* 可选：略微增加行高，提升呼吸感 */
 }
 
 /* 图表容器 */
@@ -575,7 +604,9 @@ onMounted(() => {
 
 .cosmos-chart,
 .chart-container {
-  background: rgba(255, 248, 225, 0.8);
+  /* background: rgba(255, 248, 225, 0.8); */
+  /* 背景色统一为深灰褐色 */
+  background: rgba(42, 34, 34, 0.7);
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);

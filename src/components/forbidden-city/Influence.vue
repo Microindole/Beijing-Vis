@@ -552,11 +552,19 @@ onMounted(() => {
   margin-bottom: 1.5rem;
 }
 
-.philosophy-item {
+/* .philosophy-item {
   background: rgba(255, 248, 225, 0.8);
   border-radius: 6px;
   padding: 1rem;
   border: 1px solid #5d4b4b;
+} */
+ .philosophy-item {
+  
+  background: rgba(88, 44, 44, 0.75);
+  border-radius: 6px;
+  padding: 1rem;
+  
+  border: 1px solid rgba(224, 189, 140, 0.2);
 }
 
 .icon-circle {
@@ -575,7 +583,7 @@ onMounted(() => {
   color: #fff8e1;
 }
 
-.philosophy-item h3 {
+/* .philosophy-item h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
   color: #5a4a42;
@@ -587,6 +595,17 @@ onMounted(() => {
   color: #5a4a42;
   font-size: 0.9rem;
   line-height: 1.5;
+} */
+ .philosophy-item h3 {
+  
+  color: #e0d6c2;
+  text-align: center;
+}
+
+.philosophy-item p {
+  
+  color: #b8a692;
+  font-size: 0.9rem;
 }
 
 /* 图表容器 */
@@ -598,15 +617,28 @@ onMounted(() => {
 
 .cosmos-chart,
 .chart-container {
-  background: rgba(255, 248, 225, 0.8);
+  /* background: rgba(255, 248, 225, 0.8);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); */
+  background: rgba(88, 44, 44, 0.75);
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  
 }
 
-.metrics-card {
+/* .metrics-card {
   background: rgba(42, 34, 34, 0.7);
   border: 1px solid #5d4b4b;
+  border-radius: 6px;
+  padding: 1.5rem;
+} */
+ .metrics-card {
+  
+  background: rgba(88, 44, 44, 0.75); 
+  
+  border: 1px solid rgba(224, 189, 140, 0.2); 
   border-radius: 6px;
   padding: 1.5rem;
 }
@@ -644,9 +676,17 @@ onMounted(() => {
   color: #b8a692;
 }
 
-.impact-dimension {
+/* .impact-dimension {
   background: rgba(42, 34, 34, 0.7);
   border: 1px solid #5d4b4b;
+  border-radius: 6px;
+  padding: 1.5rem;
+} */
+ .impact-dimension {
+ 
+  background: rgba(88, 44, 44, 0.75);
+  
+  border: 1px solid rgba(224, 189, 140, 0.2);
   border-radius: 6px;
   padding: 1.5rem;
 }

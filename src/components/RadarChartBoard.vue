@@ -76,7 +76,8 @@ const toggleLandmark = (landmark) => {
 <style>
 h1 {
   text-align: center;
-  color: #8c4a2a;
+  /* color: #8c4a2a; */
+  color: #d4b483;
   margin-bottom: 30px;
   font-weight: normal;
   letter-spacing: 2px;
@@ -102,7 +103,8 @@ h1 {
 
 .antique-button {
   padding: 8px 16px;
-  background-color: #c23531;
+  /* background-color: #c23531; */
+  background-color: #582c2c;
   color: white;
   border: none;
   border-radius: 4px;
@@ -113,7 +115,8 @@ h1 {
 }
 
 .antique-button:hover {
-  background-color: #a52a2a;
+  /* background-color: #a52a2a; */
+  background-color: #8c4a2a;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
