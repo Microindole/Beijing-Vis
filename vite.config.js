@@ -24,10 +24,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  base:
-    process.env.NODE_ENV === "production"
-      ? "/ChinaVis/" // 把 "你的仓库名" 替換成你的實際 GitHub 倉庫名稱
-      : "/",
+  base: "/",
   // 構建選項 (可選，通常默認就行)
   build: {
     outDir: "dist", // 構建輸出目錄，默認就是 dist
