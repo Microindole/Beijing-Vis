@@ -20,7 +20,7 @@
               基于宗教、历史与艺术价值的多维度分析
             </p>
           </div>
-          <RadarChartBoard class="radar-container" />
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
 
         <div class="visualization-card philosophy-section">
@@ -454,7 +454,7 @@ onMounted(() => {
   initSpreadChart();
   initResearchChart();
   initPeaceChart();
-});
+});const currentLandmark = "法源寺"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>

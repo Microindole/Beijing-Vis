@@ -20,7 +20,7 @@
               基于历史、文化、商业和社区的多维度分析
             </p>
           </div>
-          <RadarChartBoard class="radar-container" />
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
 
         <div class="visualization-card philosophy-section">
@@ -508,6 +508,7 @@ onMounted(() => {
 //   if (cultureChart.value) echarts.getInstanceByDom(cultureChart.value)?.dispose();
 //   if (tourismChart.value) echarts.getInstanceByDom(tourismChart.value)?.dispose();
 // });
+const currentLandmark = "大栅栏"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>

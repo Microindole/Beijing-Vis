@@ -15,18 +15,7 @@
       <div class="charts-section" style="flex: 2; min-width: 340px">
         <div class="chart-card" style="height: 100%">
           <h3 class="chart-title">北京历史地标评估雷达图</h3>
-          <RadarChart
-            :selectedLandmarks="[
-              '故宫',
-              '天坛',
-              '长城',
-              '明十三陵',
-              '北海公园',
-              '法源寺',
-              '颐和园',
-              '大栅栏',
-            ]"
-          />
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
         <div class="charts-grid">
           <div class="chart-card">
@@ -344,6 +333,7 @@ onMounted(() => {
   initCultureChart();
   initTourismChart();
 });
+const currentLandmark = "长城"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>

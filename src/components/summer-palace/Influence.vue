@@ -18,7 +18,7 @@
             <div class="divider"></div>
             <p class="section-description">基于文化遗产价值的多维度分析</p>
           </div>
-          <RadarChartBoard class="radar-container" />
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
 
         <div class="visualization-card philosophy-section">
@@ -439,6 +439,7 @@ onMounted(() => {
   initCultureChart();
   initTourismChart();
 });
+const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>

@@ -43,6 +43,14 @@
 import { ref } from "vue";
 import RadarChart from "./RadarChart.vue";
 
+// 定义 props 来接收父组件传来的 currentLandmark
+const props = defineProps({
+  currentLandmark: {
+    type: String,
+    default: '' // 提供一个默认值
+  }
+});
+
 const allLandmarks = [
   "故宫",
   "天坛",
@@ -53,7 +61,9 @@ const allLandmarks = [
   "颐和园",
   "大栅栏",
 ];
-const selectedLandmarks = ref(["故宫", "长城", "颐和园"]); // 默认选中几个
+// const selectedLandmarks = ref(["故宫", "长城", "颐和园"]); // 默认选中几个
+// 将 selectedLandmarks 的初始值设置为一个只包含当前景点的数组
+const selectedLandmarks = ref([props.currentLandmark]);
 
 const selectAll = () => {
   selectedLandmarks.value = [...allLandmarks];

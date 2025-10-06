@@ -18,7 +18,7 @@
             <div class="divider"></div>
             <p class="section-description">基于文化遗产价值的多维度分析</p>
           </div>
-          <RadarChartBoard class="radar-container" />
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
 
         <!-- 宇宙哲学部分 -->
@@ -249,7 +249,7 @@ const initArchChart = () => {
           },
         },
         axisLabel: {
-          color: "#5a4a42",
+          color: "#D4A76A",
           rotate: 30,
         },
       },
@@ -257,7 +257,7 @@ const initArchChart = () => {
         type: "value",
         name: "影响指数",
         nameTextStyle: {
-          color: "#5a4a42",
+          color: "#D4A76A",
         },
         axisLine: {
           lineStyle: {
@@ -306,7 +306,7 @@ const initCultureChart = () => {
       legend: {
         data: ["论文数量", "研究项目"],
         textStyle: {
-          color: "#5a4a42",
+          color: "#D4A76A",
         },
         bottom: 0,
       },
@@ -330,7 +330,7 @@ const initCultureChart = () => {
         type: "value",
         name: "数量/项",
         nameTextStyle: {
-          color: "#5a4a42",
+          color: "#D4A76A",
         },
         axisLine: {
           lineStyle: {
@@ -390,6 +390,7 @@ onMounted(() => {
   initArchChart();
   initCultureChart();
 });
+const currentLandmark = "天坛"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>

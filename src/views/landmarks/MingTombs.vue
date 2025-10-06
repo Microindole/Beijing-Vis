@@ -153,7 +153,7 @@ export default {
           metrics: [
             { icon: "📅", value: "1409-1644年", label: "修建年代" },
             { icon: "👑", value: "13位", label: "明朝皇帝" },
-            { icon: "🌍", value: "世界文化遗产", label: "" },
+            { icon: "🌍", value: "世界文化遗产", label: "2003年列入" },
             { icon: "🏞️", value: "约40平方公里", label: "占地面积" },
           ],
         };

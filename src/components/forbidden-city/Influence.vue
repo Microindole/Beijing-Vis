@@ -18,7 +18,7 @@
             <div class="divider"></div>
             <p class="section-description">基于文化遗产价值的多维度分析</p>
           </div>
-          <RadarChartBoard class="radar-container" />
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
 
         <div class="visualization-card philosophy-section">
@@ -166,7 +166,7 @@ const initCosmosChart = () => {
       legend: {
         top: "bottom",
         textStyle: {
-          color: "#5a4a42",
+          color: "#D4A76A",
         },
       },
       color: ["#c09337", "#a06a20", "#e0bd8c", "#805c18"], // More golden/imperial colors
@@ -183,7 +183,7 @@ const initCosmosChart = () => {
             rich: {
               b: {
                 fontSize: 14,
-                color: "#5a4a42",
+                color: "#D4A76A",
                 lineHeight: 20,
               },
               c: {
@@ -238,7 +238,7 @@ const initArchChart = () => {
           },
         },
         axisLabel: {
-          color: "#5a4a42",
+          color: "#D4A76A",
           rotate: 30,
         },
       },
@@ -246,7 +246,7 @@ const initArchChart = () => {
         type: "value",
         name: "影响指数",
         nameTextStyle: {
-          color: "#5a4a42",
+          // color: "#ffffff",
         },
         axisLine: {
           lineStyle: {
@@ -295,7 +295,7 @@ const initCultureChart = () => {
       legend: {
         data: ["论文数量", "研究项目"],
         textStyle: {
-          color: "#5a4a42",
+          color: "#D4A76A",
         },
         bottom: 0,
       },
@@ -319,7 +319,7 @@ const initCultureChart = () => {
         type: "value",
         name: "数量/项",
         nameTextStyle: {
-          color: "#5a4a42",
+          color: "#D4A76A",
         },
         axisLine: {
           lineStyle: {
@@ -439,6 +439,7 @@ onMounted(() => {
   initCultureChart();
   initTourismChart();
 });
+const currentLandmark = "故宫"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>
