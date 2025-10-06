@@ -4,20 +4,20 @@
 
     <div class="chart-controls">
       <button
-          :class="{ active: currentChartType === 'timeline' }"
-          @click="currentChartType = 'timeline'"
+        :class="{ active: currentChartType === 'timeline' }"
+        @click="currentChartType = 'timeline'"
       >
         历史时间线
       </button>
       <button
-          :class="{ active: currentChartType === 'trend' }"
-          @click="currentChartType = 'trend'"
+        :class="{ active: currentChartType === 'trend' }"
+        @click="currentChartType = 'trend'"
       >
         兴建/消失趋势
       </button>
       <button
-          :class="{ active: currentChartType === 'force' }"
-          @click="currentChartType = 'force'"
+        :class="{ active: currentChartType === 'force' }"
+        @click="currentChartType = 'force'"
       >
         关系网络图
       </button>
@@ -43,10 +43,7 @@
     </div>
 
     <p class="viz-description">
-      切换图表类型以探索不同维度的地标关系。
-      <strong v-if="currentChartType === 'force'"
-      >提示：双击关系网络图可进入或退出全屏模式。</strong
-      >
+      此图集描绘了北京地标的兴衰变迁与内在脉络。您可以在时间线中回溯历史，在关系网中发现关联。请切换图表类型，开启探索之旅。
     </p>
   </div>
 </template>
@@ -59,9 +56,9 @@ export default {
   name: "LandmarkRelationsViz",
   data() {
     return {
-      selectedLegendTypes: null,
-      currentChartType: "timeline",
-      isFullScreen: false, // **新增：追踪全屏状态**
+      selectedLegendTypes: null, // 初始化为 null 或空对象
+      currentChartType: "timeline", // 默认显示时间线图
+      // 你的原始8个地标名称，用于高亮
       highlightedLandmarks: [
         "故宫",
         "大栅栏",
@@ -81,14 +78,9 @@ export default {
     this.initTrendChart();
     this.initForceChart();
     window.addEventListener("resize", this.resizeCharts);
-    // **新增：监听全屏状态变化，确保ESC键退出也能同步状态**
-    document.addEventListener("fullscreenchange", this.handleFullScreenChange);
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.resizeCharts);
-    // **新增：移除全屏状态监听器**
-    document.removeEventListener("fullscreenchange", this.handleFullScreenChange);
-
     if (this.timelineChart) {
       this.timelineChart.dispose();
     }
@@ -96,8 +88,12 @@ export default {
       this.trendChart.dispose();
     }
     if (this.forceChart) {
+      // 移除双击事件监听器
       this.forceChart.off("dblclick", this.handleChartDbClick);
       this.forceChart.dispose();
+      this.forceChart.off('mouseover');
+      this.forceChart.off('mouseout');
+      this.forceChart.off('click');
     }
   },
   watch: {
@@ -106,66 +102,97 @@ export default {
         this.resizeCharts();
       });
     },
-    // **新增：监听isFullScreen状态，并触发图表样式更新**
-    isFullScreen(isFull) {
-      this.updateForceChartForFullScreen(isFull);
-    }
   },
   methods: {
+    // ... initTimelineChart 和 initTrendChart 方法保持不变, 此处省略 ...
     initTimelineChart() {
       const chartDom = document.getElementById("timeline-chart");
       if (!chartDom) return;
+
+      // Dispose existing chart instance if it exists to prevent memory leaks and re-initialization issues
       if (this.timelineChart) {
         this.timelineChart.dispose();
       }
       this.timelineChart = echarts.init(chartDom);
+
+      // Define landmark type colors
       const typeColors = {
-        皇家建筑: "#8B4513",
-        市井文化: "#D2B48C",
-        皇家园林: "#556B2F",
-        军事防御: "#696969",
-        皇家陵寝: "#A0522D",
-        皇家祭祀: "#CD5C5C",
-        宗教建筑: "#BDB76B",
-        都城遗址: "#4682B4",
-        城门: "#6A5ACD",
-        现代建筑: "#2F4F4F",
-        报时建筑: "#D2691E",
-        牌楼: "#FFD700",
-        名人故居: "#BA55D3",
-        桥梁: "#8FBC8F",
-        水系: "#00BFFF",
-        胡同街区: "#CD853F",
+        皇家建筑: '#A6341B',
+        皇家园林: '#4A6C4B',
+        皇家祭祀: '#C77E22',
+        皇家陵寝: '#8B4513',
+        市井文化: '#D29E5A',
+        宗教建筑: '#E0C870',
+        军事防御: '#6C7A89',
+        城门: '#8C7B70',
+        都城遗址: '#4682B4',
+        现代建筑: '#2F4F4F',
+        报时建筑: '#C15E3A',
+        牌楼: '#B5651D',
+        名人故居: '#9B59B6',
+        桥梁: '#778899',
+        水系: '#5D9CEC',
+        胡同街区: '#CD853F',
       };
-      const allLandmarkTypes = [...new Set(this.landmarksData.map((d) => d.type))];
-      if (this.selectedLegendTypes === null || Object.keys(this.selectedLegendTypes).length === 0) {
+
+      // Extract all unique landmark types for legend data
+      const allLandmarkTypes = [
+        ...new Set(this.landmarksData.map((d) => d.type)),
+      ];
+
+      // Initialize selectedLegendTypes if it's null (first time loading)
+      // Ensure this.selectedLegendTypes is defined in your component's data()
+      if (
+        this.selectedLegendTypes === null ||
+        Object.keys(this.selectedLegendTypes).length === 0
+      ) {
         this.selectedLegendTypes = {};
         allLandmarkTypes.forEach((type) => {
-          this.selectedLegendTypes[type] = true;
+          this.selectedLegendTypes[type] = true; // Default all types to selected
         });
       }
+
+      // Ensure all landmark types have a color defined
       allLandmarkTypes.forEach((type) => {
         if (!typeColors[type]) {
-          console.warn(`Warning: Type "${type}" does not have a defined color. Using a default color.`);
-          typeColors[type] = "#999";
+          console.warn(
+            `Warning: Type "${type}" does not have a defined color. Using a default color.`
+          );
+          typeColors[type] = "#999"; // Default fallback color
         }
       });
+
       const option = {
+        animationEasing: 'cubicInOut',
+        animationDuration: 1000,
         title: {
           text: "北京地标历史时间线",
           subtext: "展示地标的建成与主要活跃年代",
           left: "center",
           top: 20,
-          textStyle: {color: "#333"},
-          subtextStyle: {color: "#666"}
+          textStyle: {
+            color: "#333",
+          },
+          subtextStyle: {
+            color: "#666",
+          },
         },
         tooltip: {
           trigger: "item",
           formatter: function (params) {
-            const data = params.data.value ? params.data.value[3] : params.data;
-            if (!data || !data.name) return "";
-            const statusText = data.status === "vanished" ? "（已消失）" : "（现存）";
-            return `<strong>${data.name} ${statusText}</strong><br/>类型: ${data.type}<br/>年代: ${data.era}<br/>重要性: ${data.importance}<br/>${data.description}`;
+            // params.data.value[3] contains the full landmark object
+            const data = params.data.value ? params.data.value[3] : params.data; // Handle both series types
+            if (!data || !data.name) return ""; // Safely handle undefined data
+
+            const statusText =
+              data.status === "vanished" ? "（已消失）" : "（现存）";
+            return `
+          <strong>${data.name} ${statusText}</strong><br/>
+          类型: ${data.type}<br/>
+          年代: ${data.era}<br/>
+          重要性: ${data.importance}<br/>
+          ${data.description}
+        `;
           },
         },
         dataZoom: [
@@ -175,134 +202,70 @@ export default {
             filterMode: "empty",
             start: 0,
             end: 100,
-            backgroundColor: "rgba(254, 251, 245, 0.95)", // 更柔和的背景色
-            dataBackground: {
-              lineStyle: {
-                color: "#bd6b20",
-                width: 2.5,
-                opacity: 0.9,
-              },
-              areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "rgba(212, 167, 106, 0.4)" },
-                  { offset: 1, color: "rgba(212, 167, 106, 0.1)" }
-                ]),
-                opacity: 1,
-              },
-            },
-            fillerColor: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: "rgba(189, 107, 32, 0.5)" },
-              { offset: 1, color: "rgba(212, 167, 106, 0.3)" }
-            ]),
-            borderColor: "#bd6b20",
-            borderWidth: 1,
-            handleStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: "#d4a76a" },
-                { offset: 1, color: "#bd6b20" }
-              ]),
-              borderColor: "#8B4513",
-              borderWidth: 2,
-              shadowBlur: 8,
-              shadowColor: "rgba(139, 69, 19, 0.4)",
-              shadowOffsetX: 2,
-              shadowOffsetY: 2,
-            },
-            textStyle: {
-              color: "#8B4513",
-              fontWeight: "500",
-            },
-            emphasis: {
-              handleStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "#e6c896" },
-                  { offset: 1, color: "#d4a76a" }
-                ]),
-                borderColor: "#8B4513",
-                shadowBlur: 12,
-                shadowColor: "rgba(139, 69, 19, 0.5)",
-              },
-            },
-            moveHandleSize: 8,
-            height: 30, // 增加高度使其更显眼
           },
-          { type: "inside", xAxisIndex: 0, filterMode: "empty" },
           {
-            type: "slider",
-            yAxisIndex: 0,
+            type: "inside",
+            xAxisIndex: 0,
             filterMode: "empty",
-            right: "1%",
-            width: 25, // 增加宽度
-            start: 0,
-            end: 50,
-            backgroundColor: "rgba(254, 251, 245, 0.95)",
-            dataBackground: {
-              lineStyle: {
-                color: "#bd6b20",
-                width: 2,
-                opacity: 0.9,
-              },
-              areaStyle: {
-                color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
-                  { offset: 0, color: "rgba(212, 167, 106, 0.4)" },
-                  { offset: 1, color: "rgba(212, 167, 106, 0.1)" }
-                ]),
-                opacity: 1,
-              },
-            },
-            fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
-              { offset: 0, color: "rgba(189, 107, 32, 0.5)" },
-              { offset: 1, color: "rgba(212, 167, 106, 0.3)" }
-            ]),
-            borderColor: "#bd6b20",
-            borderWidth: 1,
-            handleStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: "#d4a76a" },
-                { offset: 1, color: "#bd6b20" }
-              ]),
-              borderColor: "#8B4513",
-              borderWidth: 2,
-              shadowBlur: 8,
-              shadowColor: "rgba(139, 69, 19, 0.4)",
-            },
-            textStyle: {
-              color: "#8B4513",
-              fontWeight: "500",
-            },
-            emphasis: {
-              handleStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "#e6c896" },
-                  { offset: 1, color: "#d4a76a" }
-                ]),
-                borderColor: "#8B4513",
-                shadowBlur: 12,
-              },
-            },
           },
-          { type: "inside", yAxisIndex: 0, filterMode: "empty" },
+          {
+            type: 'slider',
+            yAxisIndex: 0,
+            filterMode: 'empty',
+            right: '1%',
+            width: 15,        // 滑块宽度
+            start: 0,         // 初始显示从顶部开始
+            end: 50,          // 显示50%的数据
+            handleSize: '100%',
+            showDataShadow: false,
+            textStyle: {
+              color: '#333'
+            }
+          },
+          {
+            type: 'inside',   // 内置型，支持鼠标滚轮
+            yAxisIndex: 0,
+            filterMode: 'empty'
+          }
         ],
-        grid: {left: "5%", right: "5%", top: "18%", bottom: "12%", containLabel: true},
+        grid: {
+          left: "5%",
+          right: "5%",
+          top: "18%", // Increased top space
+          bottom: "10%",
+          containLabel: true,
+        },
         xAxis: {
-          type: "value", name: "年份", min: -800, max: 2050, axisLabel: {
+          type: "value",
+          name: "年份",
+          min: -800,
+          max: 2050,
+          axisLabel: {
             formatter: function (value) {
               return value < 0 ? `公元前${-value}` : `${value}年`;
             },
-          }, splitLine: {show: true, lineStyle: {type: "dashed"}}
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              type: "dashed",
+            },
+          },
         },
         yAxis: {
           type: "category",
           data: this.landmarksData.map((d) => d.name),
           axisLabel: {
             show: true,
-            interval: 0,
+            interval: 0, // Let ECharts manage intervals
             rotate: 0,
             formatter: (name) => {
               const landmark = this.landmarksData.find((d) => d.name === name);
+              // Only show Y-axis label if its type is selected in the legend
               if (!landmark || !this.selectedLegendTypes[landmark.type]) {
-                return "";
+                return ""; // Hide Y-axis label for unselected types
               }
+
               if (this.highlightedLandmarks.includes(name)) {
                 return `{highlight|${name}}`;
               }
@@ -312,92 +275,154 @@ export default {
               return name;
             },
             rich: {
-              highlight: {fontWeight: "bold", color: "#8B4513", fontSize: 14},
-              vanished: {color: "#999", fontStyle: "italic"}
+              highlight: {
+                fontWeight: "bold",
+                color: "#8B4513",
+                fontSize: 14,
+              },
+              vanished: {
+                color: "#999",
+                fontStyle: "italic",
+              },
             },
             margin: 10,
           },
-          splitLine: {show: false}
+          splitLine: {
+            show: false,
+          },
         },
         series: [
           {
-            name: "地标活跃期",
+            name: "地标活跃期", // This name is internal, not for legend interaction directly
             type: "custom",
             renderItem: (params, api) => {
-              const data = api.value(3);
-              const isHighlighted = this.highlightedLandmarks.includes(data.name);
+              const data = api.value(3); // Get the original data item (landmark object)
+              const isHighlighted = this.highlightedLandmarks.includes(
+                data.name
+              );
               const isVanished = data.status === "vanished";
+
+              // **Crucial**: Check the selected state for the current type
+              // If the type is not selected, do not render this item
               if (!this.selectedLegendTypes[data.type]) {
-                return {type: "group"};
+                return { type: "group" }; // Return an empty group to not render anything
               }
-              const startPoint = api.coord([api.value(0), api.value(2)]);
-              const endPoint = api.coord([api.value(1), api.value(2)]);
-              const height = api.size([0, 1])[1] * 0.6;
+
+              const startPoint = api.coord([api.value(0), api.value(2)]); // x: startYear, y: index
+              const endPoint = api.coord([api.value(1), api.value(2)]); // x: endYear, y: index
+              const height = api.size([0, 1])[1] * 0.6; // Bar height
               const width = endPoint[0] - startPoint[0];
+
               return {
                 type: "rect",
-                shape: {x: startPoint[0], y: startPoint[1] - height / 2, width: width, height: height,},
+                shape: {
+                  x: startPoint[0],
+                  y: startPoint[1] - height / 2,
+                  width: width,
+                  height: height,
+                },
                 style: api.style({
-                  fill: isHighlighted ? this.getDarkerColor(typeColors[data.type]) : typeColors[data.type],
+                  fill: isHighlighted
+                    ? this.getDarkerColor(typeColors[data.type])
+                    : typeColors[data.type],
                   stroke: "#fff",
                   lineWidth: isHighlighted ? 2 : 1,
                   shadowBlur: isHighlighted ? 8 : 5,
-                  shadowColor: isHighlighted ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.2)",
+                  shadowColor: isHighlighted
+                    ? "rgba(0,0,0,0.4)"
+                    : "rgba(0,0,0,0.2)",
+                  // Dashed line for vanished landmarks
                   stroke_: isVanished ? "#999" : "#fff",
                   lineDash: isVanished ? [5, 5] : [],
                   lineWidth_: isVanished ? 2 : 1,
                 }),
               };
             },
-            encode: {x: [0, 1], y: 2, itemName: 3, tooltip: [0, 1, 2, 3]},
+            encode: {
+              x: [0, 1], // startYear, endYear
+              y: 2, // index (landmark's index on y-axis)
+              itemName: 3, // data.name (for tooltip)
+              tooltip: [0, 1, 2, 3], // Pass all necessary data for tooltip
+            },
             data: this.landmarksData.map((d, index) => {
-              return {value: [d.startYear, d.endYear, index, d]};
-            })
+              return {
+                value: [d.startYear, d.endYear, index, d], // Pass the full landmark object
+              };
+            }),
           },
+          // Scatter series for interactive points/tooltip
           {
-            name: "地标点",
+            name: "地标点", // This name is internal, not for legend interaction directly
             type: "scatter",
             symbolSize: 10,
-            itemStyle: {color: "rgba(0,0,0,0)"},
-            label: {show: false},
+            itemStyle: {
+              color: "rgba(0,0,0,0)", // Transparent symbol
+            },
+            label: {
+              show: false, // Label shown on yAxis
+            },
             data: this.landmarksData.map((d, index) => ({
-              name: d.name,
-              value: [d.startYear + (d.endYear - d.startYear) / 2, index],
+              name: d.name, // Used for tooltip
+              value: [d.startYear + (d.endYear - d.startYear) / 2, index], // Point in the middle of the time period
+              // Control symbol visibility based on legend selection
               symbol: this.selectedLegendTypes[d.type] ? "circle" : "none",
               tooltip: {
                 formatter: (params) => {
-                  const landmark = d;
-                  const statusText = landmark.status === "vanished" ? "（已消失）" : "（现存）";
-                  return `<strong>${landmark.name} ${statusText}</strong><br/>类型: ${landmark.type}<br/>年代: ${landmark.era}<br/>重要性: ${landmark.importance}<br/>${landmark.description}`;
+                  const landmark = d; // Use the direct landmark object
+                  const statusText =
+                    landmark.status === "vanished" ? "（已消失）" : "（现存）";
+                  return `
+                <strong>${landmark.name} ${statusText}</strong><br/>
+                类型: ${landmark.type}<br/>
+                年代: ${landmark.era}<br/>
+                重要性: ${landmark.importance}<br/>
+                ${landmark.description}
+              `;
                 },
               },
             })),
-            z: 10
+            z: 10, // Ensure scatter points are above custom bars for interaction
           },
         ],
         legend: {
           data: allLandmarkTypes.map((type) => ({
             name: type,
-            icon: "rect",
-            itemStyle: {color: typeColors[type]}
+            icon: "rect", // Or 'roundRect', 'circle', etc.
+            itemStyle: {
+              color: typeColors[type], // Color for the legend icon
+            },
           })),
           top: 80,
           left: "center",
           orient: "horizontal",
-          textStyle: {color: "#333"},
-          selected: this.selectedLegendTypes,
-          selectedMode: "multiple"
+          textStyle: {
+            color: "#333",
+          },
+          selected: this.selectedLegendTypes, // Initialize with the component's selected state
+          selectedMode: "multiple", // Allows multiple selections
         },
       };
+
       this.timelineChart.setOption(option);
-      this.timelineChart.off("legendselectchanged");
+
+      // Listen for legend select changed event
+      this.timelineChart.off("legendselectchanged"); // Remove previous listener to prevent duplicates
       this.timelineChart.on("legendselectchanged", (params) => {
+        // Update the Vue component's data property
         this.selectedLegendTypes = params.selected;
+
+        // Re-render the chart by setting the option again.
+        // This will trigger renderItem and yAxis.axisLabel formatter to re-evaluate based on new selectedLegendTypes.
+        // We don't need to rebuild `data` explicitly for `custom` series here,
+        // as `renderItem` will re-run based on `this.selectedLegendTypes`.
+        // However, for the scatter series' `symbol` to update, we need to update its data.
         this.timelineChart.setOption({
           yAxis: {
             axisLabel: {
               formatter: (name) => {
-                const landmark = this.landmarksData.find((d) => d.name === name);
+                const landmark = this.landmarksData.find(
+                  (d) => d.name === name
+                );
                 if (!landmark || !this.selectedLegendTypes[landmark.type]) {
                   return "";
                 }
@@ -408,92 +433,164 @@ export default {
                   return `{vanished|${name}}`;
                 }
                 return name;
-              }
-            }
+              },
+            },
           },
           series: [
-            {type: "custom"},
+            // Update the custom series (implicitly updates renderItem)
+            {
+              type: "custom",
+              // No need to update data directly here, renderItem depends on this.selectedLegendTypes
+            },
+            // Update the scatter series data to reflect symbol changes
             {
               type: "scatter",
               data: this.landmarksData.map((d, index) => ({
                 name: d.name,
                 value: [d.startYear + (d.endYear - d.startYear) / 2, index],
-                symbol: this.selectedLegendTypes[d.type] ? "circle" : "none",
+                symbol: this.selectedLegendTypes[d.type] ? "circle" : "none", // Dynamically set symbol
                 tooltip: {
                   formatter: (params) => {
+                    // Re-assign tooltip formatter for each data item
                     const landmark = d;
-                    const statusText = landmark.status === "vanished" ? "（已消失）" : "（现存）";
-                    return `<strong>${landmark.name} ${statusText}</strong><br/>类型: ${landmark.type}<br/>年代: ${landmark.era}<br/>重要性: ${landmark.importance}<br/>${landmark.description}`;
-                  }
-                }
-              }))
-            }
+                    const statusText =
+                      landmark.status === "vanished"
+                        ? "（已消失）"
+                        : "（现存）";
+                    return `
+                    <strong>${landmark.name} ${statusText}</strong><br/>
+                    类型: ${landmark.type}<br/>
+                    年代: ${landmark.era}<br/>
+                    重要性: ${landmark.importance}<br/>
+                    ${landmark.description}
+                  `;
+                  },
+                },
+              })),
+            },
           ],
         });
       });
     },
+
+    // 新增：历年地标兴建/消失趋势图
     initTrendChart() {
       const chartDom = document.getElementById("trend-chart");
       if (!chartDom) return;
+
+      // Dispose existing chart instance if it exists to prevent memory leaks
       if (this.trendChart) {
         this.trendChart.dispose();
       }
       this.trendChart = echarts.init(chartDom);
-      const buildDataMap = {};
-      const vanishDataMap = {};
+
+      const buildDataMap = {}; // 存储每年新建的地标名称列表
+      const vanishDataMap = {}; // 存储每年消失的地标名称列表
       const minYear = -800;
       const maxYear = 2025;
+
+      // 初始化所有年份的数据
       for (let i = minYear; i <= maxYear; i++) {
         buildDataMap[i] = [];
         vanishDataMap[i] = [];
       }
+
       this.landmarksData.forEach((d) => {
         if (d.startYear >= minYear && d.startYear <= maxYear) {
           buildDataMap[d.startYear].push(d.name);
         }
-        if (d.status === "vanished" && d.endYear >= minYear && d.endYear <= maxYear) {
+        if (
+          d.status === "vanished" &&
+          d.endYear >= minYear &&
+          d.endYear <= maxYear
+        ) {
           vanishDataMap[d.endYear].push(d.name);
         }
       });
-      const years = Object.keys(buildDataMap).map(Number).sort((a, b) => a - b);
+
+      const years = Object.keys(buildDataMap)
+        .map(Number)
+        .sort((a, b) => a - b);
       const buildCounts = years.map((year) => buildDataMap[year].length);
       const vanishCounts = years.map((year) => vanishDataMap[year].length);
+
       const option = {
         title: {
           text: "北京地标兴建/消失趋势",
           subtext: "历年地标数量变化概览",
           left: "center",
           top: 20,
-          textStyle: {color: "#333"},
-          subtextStyle: {color: "#666"}
+          textStyle: {
+            color: "#333",
+          },
+          subtextStyle: {
+            color: "#666",
+          },
         },
         tooltip: {
-          trigger: "axis", axisPointer: {type: "shadow"},
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+          },
           formatter: (params) => {
+            // params[0].name is the actual year number from xAxis.data
             const year = parseInt(params[0].name);
-            let tooltip = `<strong>${year < 0 ? `公元前${-year}` : `${year}年`}</strong><br/>`;
+            let tooltip = `<strong>${
+              year < 0 ? `公元前${-year}` : `${year}年`
+            }</strong><br/>`;
+
             const currentBuildLandmarks = buildDataMap[year] || [];
             const currentVanishLandmarks = vanishDataMap[year] || [];
+
             params.forEach((item) => {
               tooltip += `${item.marker}${item.seriesName}: ${item.value}<br/>`;
-              if (item.seriesName === "兴建地标数量" && currentBuildLandmarks.length > 0) {
-                tooltip += `&nbsp;&nbsp;&nbsp;&nbsp;地标: ${currentBuildLandmarks.join("、")}<br/>`;
-              } else if (item.seriesName === "消失地标数量" && currentVanishLandmarks.length > 0) {
-                tooltip += `&nbsp;&nbsp;&nbsp;&nbsp;地标: ${currentVanishLandmarks.join("、")}<br/>`;
+              if (
+                item.seriesName === "兴建地标数量" &&
+                currentBuildLandmarks.length > 0
+              ) {
+                tooltip += `&nbsp;&nbsp;&nbsp;&nbsp;地标: ${currentBuildLandmarks.join(
+                  "、"
+                )}<br/>`;
+              } else if (
+                item.seriesName === "消失地标数量" &&
+                currentVanishLandmarks.length > 0
+              ) {
+                tooltip += `&nbsp;&nbsp;&nbsp;&nbsp;地标: ${currentVanishLandmarks.join(
+                  "、"
+                )}<br/>`;
               }
             });
             return tooltip;
           },
         },
-        legend: {data: ["兴建地标数量", "消失地标数量"], top: 80, left: "center", textStyle: {color: "#333"}},
-        grid: {left: "5%", right: "5%", top: "25%", bottom: "15%", containLabel: true},
+        legend: {
+          data: ["兴建地标数量", "消失地标数量"],
+          top: 80,
+          left: "center",
+          textStyle: {
+            color: "#333",
+          },
+        },
+        grid: {
+          left: "5%",
+          right: "5%",
+          top: "25%",
+          bottom: "15%", // Adjust bottom to make space for dataZoom slider
+          containLabel: true,
+        },
         xAxis: {
-          type: "category", data: years, axisLabel: {
+          type: "category",
+          // Keep x-axis data as raw numerical years
+          data: years,
+          axisLabel: {
+            // Format numerical year to "公元前" or "年" string for display
             formatter: function (value) {
-              const yearValue = parseInt(value);
+              const yearValue = parseInt(value); // value here is the number (e.g., -800, 1000)
               return yearValue < 0 ? `公元前${-yearValue}` : `${yearValue}年`;
-            }, interval: (index, value) => {
-              const yearValue = parseInt(value);
+            },
+            interval: (index, value) => {
+              const yearValue = parseInt(value); // value is already the number
+              // Dynamically adjust interval based on year range
               if (Math.abs(yearValue) > 1000) {
                 return yearValue % 500 === 0;
               } else if (Math.abs(yearValue) > 500) {
@@ -501,69 +598,112 @@ export default {
               } else if (Math.abs(yearValue) > 100) {
                 return yearValue % 100 === 0;
               } else {
-                return index % 50 === 0;
+                return index % 50 === 0; // For more recent times, show every 50 years
               }
-            }, rotate: 45
-          }, boundaryGap: false, axisTick: {alignWithLabel: true}
+            },
+            rotate: 45, // Rotate labels to prevent overlap
+          },
+          boundaryGap: false, // Prevents gap at the beginning/end of the axis
+          axisTick: {
+            alignWithLabel: true,
+          },
         },
-        yAxis: {type: "value", name: "地标数量", minInterval: 1},
+        yAxis: {
+          type: "value",
+          name: "地标数量",
+          minInterval: 1, // Ensures Y-axis ticks are integers
+        },
         series: [
           {
             name: "兴建地标数量",
             type: "line",
-            smooth: true,
-            symbol: "circle",
+            smooth: true, // 平滑曲线
+            symbol: "circle", // 实心圆点
             symbolSize: 8,
-            itemStyle: {color: "#3CB371"},
-            lineStyle: {color: "#3CB371", width: 2},
+            itemStyle: {
+              color: "#D29E5A", // 翠绿色
+            },
+            lineStyle: {
+              color: "#D29E5A",
+              width: 2,
+            },
             areaStyle: {
               opacity: 0.8,
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: "rgba(60,179,113,0.3)"
-              }, {offset: 1, color: "rgba(60,179,113,0)"}])
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(210, 158, 90, 0.4)' },
+                { offset: 1, color: 'rgba(210, 158, 90, 0)' }
+              ]),
             },
-            data: buildCounts
+            data: buildCounts,
+            emphasis: {
+              focus: 'series', // 聚焦于当前系列
+              lineStyle: {
+                width: 4
+              },
+              symbolSize: 12
+            }
           },
           {
             name: "消失地标数量",
             type: "line",
-            smooth: true,
-            symbol: "diamond",
+            smooth: true, // 平滑曲线
+            symbol: "diamond", // 菱形点
             symbolSize: 8,
-            itemStyle: {color: "#DC143C"},
-            lineStyle: {color: "#DC143C", width: 2},
+            itemStyle: {
+              color: "#6C7A89", // 深红色
+            },
+            lineStyle: {
+              color: "#6C7A89",
+              width: 2,
+            },
             areaStyle: {
               opacity: 0.8,
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: "rgba(220,20,60,0.3)"
-              }, {offset: 1, color: "rgba(220,20,60,0)"}])
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(108, 122, 137, 0.4)' },
+                { offset: 1, color: 'rgba(108, 122, 137, 0)' }
+              ]),
             },
-            data: vanishCounts
+            data: vanishCounts,
+            emphasis: { // 【新增】悬停高亮状态
+              focus: 'series',
+              lineStyle: {
+                width: 4
+              },
+              symbolSize: 12
+            }
           },
         ],
+        // --- 新增 dataZoom 配置 ---
         dataZoom: [
           {
-            type: "slider",
-            xAxisIndex: 0,
-            filterMode: "empty",
-            start: 0,
-            end: 100,
-            bottom: 0,
-            height: 20,
-            textStyle: {color: "#666"},
-            handleIcon: "M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-9.1,0.4-9.1,0.4V2.7c0-0.3,0.1-0.4,0.3-0.5c0.2-0.1,0.5-0.1,0.7-0.1h15c0.3,0,0.5,0.1,0.7,0.1c0.2,0.1,0.3,0.2,0.3,0.5v9.6c0,0.2-0.1,0.4-0.3,0.5c-0.2,0.1-0.5,0.1-0.7,0.1h-1.3v-1.3H10.7zM4.9,4.3h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V4.5C5.1,4.4,5,4.3,4.9,4.3zM10.1,4.3h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V4.5C10.3,4.4,10.2,4.3,10.1,4.3zM15.3,4.3h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V4.5C15.5,4.4,15.4,4.3,15.3,4.3zM4.9,7.5h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V7.7C5.1,7.6,5,7.5,4.9,7.5zM10.1,7.5h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V7.7C10.3,7.6,10.2,7.5,10.1,7.5zM15.3,7.5h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V7.7C15.5,7.6,15.4,7.5,15.3,7.5zM4.9,10.7h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2v-0.8C5.1,10.8,5,10.7,4.9,10.7zM10.1,10.7h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2v-0.8C10.3,10.8,10.2,10.7,10.1,10.7zM15.3,10.7h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2v-0.8C15.5,10.8,15.4,10.7,15.3,10.7z",
-            handleSize: "110%",
+            type: "slider", // 滑动条型
+            xAxisIndex: 0, // 控制第一个（也是唯一一个）X轴
+            filterMode: "empty", // 缩放时只过滤数据，不影响轴范围
+            start: 0, // 初始显示数据的百分比起始位置
+            end: 100, // 初始显示数据的百分比结束位置
+            bottom: 0, // 放置在图表底部
+            height: 20, // 滑动条高度
+            textStyle: {
+              color: "#666",
+            },
+            handleIcon:
+              "M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-9.1,0.4-9.1,0.4V2.7c0-0.3,0.1-0.4,0.3-0.5c0.2-0.1,0.5-0.1,0.7-0.1h15c0.3,0,0.5,0.1,0.7,0.1c0.2,0.1,0.3,0.2,0.3,0.5v9.6c0,0.2-0.1,0.4-0.3,0.5c-0.2,0.1-0.5,0.1-0.7,0.1h-1.3v-1.3H10.7zM4.9,4.3h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V4.5C5.1,4.4,5,4.3,4.9,4.3zM10.1,4.3h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V4.5C10.3,4.4,10.2,4.3,10.1,4.3zM15.3,4.3h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V4.5C15.5,4.4,15.4,4.3,15.3,4.3zM4.9,7.5h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V7.7C5.1,7.6,5,7.5,4.9,7.5zM10.1,7.5h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V7.7C10.3,7.6,10.2,7.5,10.1,7.5zM15.3,7.5h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2V7.7C15.5,7.6,15.4,7.5,15.3,7.5zM4.9,10.7h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2v-0.8C5.1,10.8,5,10.7,4.9,10.7zM10.1,10.7h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2v-0.8C10.3,10.8,10.2,10.7,10.1,10.7zM15.3,10.7h-0.2c-0.1,0-0.2,0.1-0.2,0.2v0.8c0,0.1,0.1,0.2,0.2,0.2h0.2c0.1,0,0.2-0.1,0.2-0.2v-0.8C15.5,10.8,15.4,10.7,15.3,10.7z", // 滑动条手柄图标
+            handleSize: "110%", // 手柄大小
             handleStyle: {
               color: "#fff",
               shadowBlur: 3,
               shadowColor: "rgba(0, 0, 0, 0.6)",
               shadowOffsetX: 2,
-              shadowOffsetY: 2
-            }
+              shadowOffsetY: 2,
+            },
           },
-          {type: "inside", xAxisIndex: 0, filterMode: "empty", zoomOnMouseWheel: true, moveOnMouseMove: true}
+          {
+            type: "inside", // 内置型，支持鼠标滚轮和拖拽
+            xAxisIndex: 0,
+            filterMode: "empty",
+            zoomOnMouseWheel: true, // 开启鼠标滚轮缩放
+            moveOnMouseMove: true, // 鼠标移动漫游
+          },
         ],
       };
       this.trendChart.setOption(option);
@@ -573,6 +713,7 @@ export default {
       if (!chartDom) return;
 
       this.forceChart = echarts.init(chartDom);
+      // **核心改动1: 绑定双击事件**
       this.forceChart.on("dblclick", this.handleChartDbClick);
 
       const typeColors = {
@@ -589,47 +730,52 @@ export default {
         报时建筑: "#D2691E",
       };
       const nodes = this.landmarksData.map((d) => {
-        const nodeColor = typeColors[d.type] || '#999';
+        const isHighlighted = this.highlightedLandmarks.includes(d.name);
+        const isVanished = d.status === "vanished";
+
+        let nodeColor;
+        if (isVanished) {
+          nodeColor = "#999999";
+        } else if (isHighlighted) {
+          nodeColor = this.getDarkerColor(typeColors[d.type]);
+        } else {
+          nodeColor = typeColors[d.type];
+        }
+
         return {
-          name: d.name, value: d.importance, category: d.type, symbolSize: d.importance * 4 + 15,
+          name: d.name,
+          value: d.importance,
+          category: d.type,
+          symbolSize: d.importance * 4 + 15,
           label: {
             show: true,
-            position: "inside", // 默认在内部
-            fontSize: this.highlightedLandmarks.includes(d.name) ? 14 : 12,
-            color: this.highlightedLandmarks.includes(d.name) ? "#FFF" : "#EEE",
-            fontWeight: this.highlightedLandmarks.includes(d.name) ? "bolder" : "bold",
-            formatter: `{b}${d.status === "vanished" ? "\n(已消失)" : ""}`
+            // 核心修改 1: 将位置从 'inside' 改为 'right'
+            position: 'right',
+            // 核心修改 2: 固定文字颜色为深色，保证清晰
+            color: '#333',
+            fontSize: 12,
+            // 核心修改 3: 优化格式，使其在外部显示更美观
+            formatter: `{b}${isVanished ? " (已消失)" : ""}`
           },
           itemStyle: {
-            color: d.status === "vanished" ? "#999999" : this.highlightedLandmarks.includes(d.name) ? this.getDarkerColor(nodeColor) : nodeColor,
+            color: nodeColor,
             shadowBlur: 10,
             shadowColor: "rgba(0,0,0,0.3)"
           },
-        }
+          select: {
+            label: {
+              show: true, // 核心：确保标签在选中时依然显示
+              fontWeight: 'bold' //可以让字体加粗以示区别
+            },
+            itemStyle: {
+              borderColor: '#666', // 为选中的节点增加一个深色边框
+              borderWidth: 2
+            }
+          }
+        };
       });
       const categories = [...new Set(this.landmarksData.map((d) => d.type))].map((type) => ({name: type}));
-      const links = this.relationsData.map((r) => ({
-        source: r.source, target: r.target, value: r.value, relation: r.relation,
-        lineStyle: {
-          color: r.value > 0.8 ? "#A0522D" : r.value > 0.6 ? "#D2B48C" : "#E8D8C3",
-          width: r.value * 3 + 1,
-          opacity: 0.8,
-          curveness: 0.2
-        },
-        label: {
-          show: true,
-          formatter: r.relation,
-          fontSize: 10,
-          color: "#666",
-          backgroundColor: "rgba(255,255,255,0.7)",
-          padding: [2, 4],
-          borderRadius: 2
-        },
-        emphasis: {
-          lineStyle: {color: "#8B4513", width: r.value * 3 + 3},
-          label: {show: true, color: "#333", fontWeight: "bold"}
-        },
-      }));
+      const links = this.getStyledLinks();
       const option = {
         title: {
           text: "北京地标关系网络图：关联与强度",
@@ -675,183 +821,173 @@ export default {
         }],
       };
       this.forceChart.setOption(option);
+      this.forceChart.off('mouseover');
+      this.forceChart.off('mouseout');
+
+      // 核心修改2：使用新的、正确的逻辑来绑定事件
+      this.forceChart.on('mouseover', (params) => {
+        if (params.dataType === 'node') {
+          // 获取当前悬停节点的名称
+          const nodeName = params.name;
+          const styledLinks = this.getStyledLinks();
+
+          const finalLinks = styledLinks.map(link => {
+            // 第1步：无差别地将所有线都设置为灰色细线
+            link.lineStyle.color = '#ccc';
+            link.lineStyle.width = 1;
+
+            // 第2步：如果这条线与悬停的节点相连，则显示它的文字
+            if (link.source === nodeName || link.target === nodeName) {
+              link.label.show = true;
+            }
+
+            return link;
+          });
+
+          this.forceChart.setOption({
+            series: [{
+              links: finalLinks,
+              emphasis: { focus: 'none' }
+            }]
+          });
+        }
+      });
+
+      this.forceChart.on('mouseout', (params) => {
+        // 当鼠标移出节点时
+        if (params.dataType === 'node') {
+          // 将所有 links 恢复为默认的彩色样式
+          this.forceChart.setOption({
+            series: [{
+              links: this.getStyledLinks(),
+              // 恢复 focusNodeAdjacency
+              emphasis: { focus: 'adjacency' }
+            }]
+          });
+        }
+      });
+
+      this.forceChart.off('click'); // 先移除旧的监听，防止重复
+      this.forceChart.on('click', (params) => {
+        // 如果点击的是一个节点
+        if (params.dataType === 'node') {
+          const nodeName = params.name;
+          const styledLinks = this.getStyledLinks();
+
+          // 遍历所有线，如果线连接到了被点击的节点，就显示其文字
+          const finalLinks = styledLinks.map(link => {
+            if (link.source === nodeName || link.target === nodeName) {
+              link.label.show = true;
+            }
+            return link;
+          });
+          this.forceChart.setOption({ series: [{ links: finalLinks }] });
+        } else {
+          // 如果点击的不是节点（例如是空白区域）
+          // 则恢复所有线的默认状态（隐藏所有标签）
+          this.forceChart.setOption({ series: [{ links: this.getStyledLinks() }] });
+        }
+      });
+    },
+    getStyledLinks() {
+      return this.relationsData.map((r) => {
+        const originalColor = r.value > 0.8 ? "#A0522D" : r.value > 0.6 ? "#D2B48C" : "#E8D8C3";
+
+        return {
+          source: r.source, target: r.target, value: r.value, relation: r.relation,
+
+          // 1. 默认状态 (lineStyle): 设置为彩色
+          lineStyle: {
+            color: originalColor,
+            width: r.value * 3 + 1,
+            opacity: 0.8,
+            curveness: 0.2
+          },
+
+          label: {
+            show: false,
+            formatter: r.relation,
+            fontSize: 10,
+            color: "#666",
+            backgroundColor: "rgba(255,255,255,0.7)",
+            padding: [2, 4],
+            borderRadius: 2
+          },
+
+          // 2. 鼠标悬停状态 (emphasis): 这个会被事件覆盖，但我们先定义一个基础样式
+          emphasis: {
+            lineStyle: {
+              width: r.value * 3 + 3
+            },
+            label: { show: true, color: "#333", fontWeight: "bold" }
+          },
+
+          // 3. 点击选中状态 (select): 保持彩色且更粗
+          select: {
+            lineStyle: {
+              width: r.value * 3 + 5,
+              color: originalColor, // 选中时也使用彩色
+              opacity: 1
+            }
+          },
+
+          // 4. 虚化状态 (blur): 彩色但更透明
+          blur: {
+            lineStyle: {
+              color: originalColor,
+              opacity: 0.2
+            }
+          }
+        };
+      });
     },
 
     /**
-     * **核心改动：处理双击全屏的方法**
+     * **核心改动2: 新增处理双击全屏的方法**
      */
     handleChartDbClick() {
       const element = this.$refs.forceChartContainer;
       if (!element) return;
-      if (!this.isFullScreen) {
+
+      // 检查当前是否已处于全屏状态
+      if (
+          !document.fullscreenElement &&
+          !document.webkitFullscreenElement && // Safari
+          !document.mozFullScreenElement && // Firefox
+          !document.msFullscreenElement // IE11
+      ) {
+        // 进入全屏
         if (element.requestFullscreen) {
           element.requestFullscreen();
         } else if (element.webkitRequestFullscreen) {
+          /* Safari */
           element.webkitRequestFullscreen();
         } else if (element.mozRequestFullScreen) {
+          /* Firefox */
           element.mozRequestFullScreen();
         } else if (element.msRequestFullscreen) {
+          /* IE11 */
           element.msRequestFullscreen();
         }
       } else {
+        // 退出全屏
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
+          /* Safari */
           document.webkitExitFullscreen();
         } else if (document.mozCancelFullScreen) {
+          /* Firefox */
           document.mozCancelFullScreen();
         } else if (document.msExitFullscreen) {
+          /* IE11 */
           document.msExitFullscreen();
         }
       }
     },
 
-    /**
-     * **核心改动：监听原生全屏事件，同步状态**
-     */
-    handleFullScreenChange() {
-      this.isFullScreen = !!document.fullscreenElement;
-    },
-
-    updateForceChartForFullScreen(isFullScreen) {
-      if (!this.forceChart) return;
-
-      const option = isFullScreen ? {
-        // 全屏状态的"深空辉光"主题
-        backgroundColor: '#0d1117', // 深色背景
-        title: {
-          textStyle: { color: '#E0E6F1' },
-          subtextStyle: { color: '#A5B4C8' }
-        },
-        legend: {
-          textStyle: { color: '#E0E6F1' }
-        },
-        series: [{
-          name: '地标关系',
-          // **新增：优化全屏下的力引导布局参数，解决拥挤问题**
-          force: {
-            repulsion: 1500, // 增强节点间斥力
-            edgeLength: [250, 400], // 增加边的理想长度
-            gravity: 0.05, // 减小向心力
-          },
-          // 节点样式：增加辉光，标签移到外部
-          nodes: this.forceChart.getOption().series[0].data.map(node => ({
-            ...node,
-            label: { ...node.label, position: 'right', color: '#E0E6F1', textShadowBlur: 2, textShadowColor: '#000' },
-            itemStyle: {
-              ...node.itemStyle,
-              shadowBlur: 25, // 增强辉光
-              shadowColor: node.itemStyle.color, // 使用节点自身颜色作为辉光颜色
-            }
-          })),
-          // 连线样式：增加粒子效果
-          links: this.forceChart.getOption().series[0].links.map(link => ({
-            ...link,
-            lineStyle: {
-              ...link.lineStyle,
-              color: '#4A90E2', // 统一为科技蓝色
-              opacity: 0.7
-            },
-            // **新增：优化全屏下关系标签的样式，解决看不清的问题**
-            label: {
-              ...link.label,
-              show: true,
-              color: '#cde0ff',        // 使用更明亮的颜色
-              fontSize: 13,             // 增大字体
-              fontWeight: 'bold',       // 加粗
-              backgroundColor: 'rgba(13, 17, 23, 0.6)', // 半透明深色背景
-              textShadowBlur: 2,
-              textShadowColor: '#000',
-            },
-          })),
-          // 高亮样式
-          emphasis: {
-            lineStyle: { color: '#26D0FF', width: 4 },
-            // **新增：优化高亮时标签的显示**
-            label: {
-              show: true,
-              color: '#FFF',
-              fontSize: 14
-            }
-          },
-          // 增加连线上的粒子特效
-          edgeSymbol: ['none', 'arrow'],
-          edgeSymbolSize: 8,
-          effect: {
-            show: true,
-            period: 4,
-            trailLength: 0.1,
-            symbol: 'circle',
-            symbolSize: 3,
-            color: '#FFF'
-          }
-        }]
-      } : {
-        // 恢复为普通模式的默认样式
-        backgroundColor: 'transparent',
-        title: {
-          textStyle: { color: '#333' },
-          subtextStyle: { color: '#666' }
-        },
-        legend: {
-          textStyle: { color: '#333' }
-        },
-        series: [{
-          name: '地标关系',
-          // **新增：恢复默认的力引导布局参数**
-          force: {
-            repulsion: 800,
-            edgeLength: [200, 300],
-            gravity: 0.1,
-          },
-          // 恢复节点样式
-          nodes: this.forceChart.getOption().series[0].data.map(node => ({
-            ...node,
-            label: { ...node.label, position: 'inside', color: this.highlightedLandmarks.includes(node.name) ? '#FFF' : '#EEE', textShadowBlur: 0 },
-            itemStyle: {
-              ...node.itemStyle,
-              shadowBlur: 10,
-              shadowColor: "rgba(0,0,0,0.3)",
-            }
-          })),
-          // 恢复连线样式
-          links: this.forceChart.getOption().series[0].links.map(link => ({
-            ...link,
-            lineStyle: {
-              ...link.lineStyle,
-              color: link.value > 0.8 ? "#A0522D" : link.value > 0.6 ? "#D2B48C" : "#E8D8C3",
-              opacity: 0.8
-            },
-            // **新增：恢复默认的标签样式**
-            label: {
-              ...link.label,
-              show: true,
-              formatter: link.relation,
-              fontSize: 10,
-              color: '#666',
-              fontWeight: 'normal',
-              backgroundColor: "rgba(255,255,255,0.7)",
-              textShadowBlur: 0,
-            }
-          })),
-          emphasis: {
-            lineStyle: { color: '#8B4513' },
-            label: {
-              show: true,
-              color: '#333',
-              fontWeight: "bold"
-            }
-          },
-          effect: {
-            show: false
-          }
-        }]
-      };
-
-      this.forceChart.setOption(option);
-    },
-
     resizeCharts() {
+      // 确保在 nextTick 中执行，等待 v-show 完成切换
       this.$nextTick(() => {
         if (this.timelineChart && this.currentChartType === 'timeline') {
           this.timelineChart.resize();
@@ -879,7 +1015,7 @@ export default {
 </script>
 
 <style scoped>
-/* 样式部分保持不变 */
+/* 样式部分与您提供的文件保持一致，无需修改 */
 .relations-viz-container {
   width: 100%;
   height: 100%;
@@ -1050,7 +1186,7 @@ export default {
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  background-color: transparent;
+  background-color: #fefcf7;
 }
 
 .viz-description {
@@ -1127,3 +1263,4 @@ export default {
   }
 }
 </style>
+
