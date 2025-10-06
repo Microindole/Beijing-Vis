@@ -287,36 +287,36 @@ const initTourismChart = () => {
   if (tourismChart.value) {
     const chart = echarts.init(tourismChart.value);
     chart.setOption({
-      tooltip: { trigger: "item", formatter: "{b}: {c} ({d}%)" },
+      tooltip: { trigger: "item", formatter: "{b}: {d}%" },
       legend: {
-        orient: "vertical",
-        right: 10,
-        top: "center",
+        /* 此处修改: 图例移至底部水平排列 */
+        top: 'bottom',
+        left: 'center',
         textStyle: { color: "#5a4a42" },
       },
       color: [
-        "#8b4513",
-        "#d4a76a",
-        "#9c7c5c",
-        "#b2967d",
-        "#c8b49c",
-        "#f6c177",
-        "#e6b800",
-        "#bfa46f",
-        "#a67c52",
+        "#8b4513", "#d4a76a", "#9c7c5c", "#b2967d", "#c8b49c",
+        "#f6c177", "#e6b800", "#bfa46f", "#a67c52",
       ],
       series: [
         {
           name: "游客来源",
           type: "pie",
-          radius: ["40%", "70%"],
-          center: ["40%", "50%"],
+          /* 此处修改: 恢复半径并居中 */
+          radius: ["35%", "60%"],
+          center: ["50%", "45%"],
           avoidLabelOverlap: false,
-          label: { show: true, formatter: "{b}: {d}%" },
-          emphasis: {
-            label: { show: true, fontSize: "18", fontWeight: "bold" },
+          label: { 
+            show: true, 
+            formatter: "{b}: {d}%",
+            color: '#5a4a42', // 确保标签文字清晰
+            fontSize: 12,
           },
-          labelLine: { show: true },
+          labelLine: { 
+            show: true,
+            length: 10,
+            length2: 15,
+          },
           data: [
             { value: 22, name: "北京" },
             { value: 14, name: "河北" },
@@ -612,7 +612,9 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 }
 .text-section {
   flex: 1.2;
-  background: rgba(255, 248, 225, 0.8);
+  /* background: rgba(255, 248, 225, 0.8); */
+  /* 背景改为优雅的深棕色 */
+  background: rgba(60, 48, 38, 0.85);
   border-radius: 16px;
   padding: 32px 28px;
   box-shadow: 0 4px 16px rgba(139, 69, 19, 0.06); /* 恢复轻微阴影 */
@@ -627,36 +629,46 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 }
 .section-title h2 {
   font-size: 1.3em;
+  /* color: #fc9a07; */
   color: #fc9a07;
   margin-bottom: 8px;
 }
 .divider {
   width: 60px;
   height: 4px;
-  background: linear-gradient(to right, #d4a76a, #8b4513);
+  /* background: linear-gradient(to right, #d4a76a, #8b4513); */
+  background: linear-gradient(to right, #D4AF37, #8B4513);
   margin: 0 0 18px 0;
   border-radius: 2px;
 }
 .philosophy-item {
-  background: #ffecc3; /* 比 #fff8e1 更深一点的浅黄 */
+  /* background: #ffecc3;  */
+  /* 卡片背景改为更深的半透明棕色 */
+  background: rgba(80, 65, 55, 0.7);
   border-radius: 12px;
   padding: 18px 16px;
   margin-bottom: 18px;
-  color: #4a2c13;
+  /* color: #4a2c13; */
+  color: #e0d6c2;
   box-shadow: 0 2px 8px rgba(74, 44, 19, 0.04);
-  border: 1px solid #f1e0c2;
+  /* border: 1px solid #f1e0c2; */
+  border: 1px solid rgba(212, 175, 55, 0.2);
 }
 .philosophy-item:last-child {
   margin-bottom: 0;
 }
 .philosophy-item h3 {
   font-size: 1.1em;
-  color: #8b4513;
+  /* color: #8b4513; */
+  /* 卡片内标题改为更亮的暖金色 */
+  color: #EAC674;
   margin-bottom: 6px;
 }
 .philosophy-item p,
 .philosophy-item ul {
-  color: #4a2c13;
+  /* color: #4a2c13; */
+  /* 正文文字颜色调亮，保证清晰度 */
+  color: #D7C6B5;
   font-size: 1em;
   margin: 0 0 0 0;
   line-height: 1.7;
@@ -717,7 +729,8 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   border-radius: 15px;
   padding: 25px;
   transition: all 0.3s ease;
-  border: 1px solid rgba(139, 69, 19, 0.15);
+  /* border: 1px solid rgba(139, 69, 19, 0.15); */
+  border: 1px solid rgba(212, 175, 55, 0.2);
 }
 .impact-item:hover {
   transform: translateY(-5px);

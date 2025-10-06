@@ -261,7 +261,7 @@ const initArchChart = () => {
       title: {
         text: "大栅栏城市更新与保护投入",
         left: "center",
-        top: "5%",
+        top: "2%",
         textStyle: {
           color: "#4a4a4a",
           fontSize: 20,
@@ -280,7 +280,7 @@ const initArchChart = () => {
         textStyle: { color: "#5a4a42" },
       },
       grid: {
-        left: "3%",
+        left: "8%",
         right: "4%",
         bottom: "15%",
         containLabel: true,
