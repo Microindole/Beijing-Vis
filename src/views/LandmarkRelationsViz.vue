@@ -103,7 +103,6 @@ export default {
     },
   },
   methods: {
-    // ... initTimelineChart 和 initTrendChart 方法保持不变, 此处省略 ...
     initTimelineChart() {
       const chartDom = document.getElementById("timeline-chart");
       if (!chartDom) return;
@@ -167,41 +166,115 @@ export default {
             filterMode: "empty",
             start: 0,
             end: 100,
-            backgroundColor: "rgba(249, 243, 230, 0.5)",
+            backgroundColor: "rgba(254, 251, 245, 0.95)", // 更柔和的背景色
             dataBackground: {
-              lineStyle: {color: "#D4A76A", width: 2, opacity: 0.8,},
-              areaStyle: {color: "rgba(212, 167, 106, 0.2)", opacity: 0.8,},
+              lineStyle: {
+                color: "#bd6b20",
+                width: 2.5,
+                opacity: 0.9,
+              },
+              areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "rgba(212, 167, 106, 0.4)" },
+                  { offset: 1, color: "rgba(212, 167, 106, 0.1)" }
+                ]),
+                opacity: 1,
+              },
             },
-            fillerColor: "rgba(212, 167, 106, 0.4)",
-            borderColor: "#D4A76A",
+            fillerColor: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: "rgba(189, 107, 32, 0.5)" },
+              { offset: 1, color: "rgba(212, 167, 106, 0.3)" }
+            ]),
+            borderColor: "#bd6b20",
+            borderWidth: 1,
             handleStyle: {
-              color: "#bd6b20",
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: "#d4a76a" },
+                { offset: 1, color: "#bd6b20" }
+              ]),
               borderColor: "#8B4513",
               borderWidth: 2,
-              shadowBlur: 5,
-              shadowColor: "rgba(139, 69, 19, 0.3)",
+              shadowBlur: 8,
+              shadowColor: "rgba(139, 69, 19, 0.4)",
               shadowOffsetX: 2,
               shadowOffsetY: 2,
             },
-            textStyle: {color: "#8B4513"},
-            emphasis: {handleStyle: {color: "#D4A76A", borderColor: "#8B4513",},},
+            textStyle: {
+              color: "#8B4513",
+              fontWeight: "500",
+            },
+            emphasis: {
+              handleStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "#e6c896" },
+                  { offset: 1, color: "#d4a76a" }
+                ]),
+                borderColor: "#8B4513",
+                shadowBlur: 12,
+                shadowColor: "rgba(139, 69, 19, 0.5)",
+              },
+            },
+            moveHandleSize: 8,
+            height: 30, // 增加高度使其更显眼
           },
-          {type: "inside", xAxisIndex: 0, filterMode: "empty"},
+          { type: "inside", xAxisIndex: 0, filterMode: "empty" },
           {
             type: "slider",
             yAxisIndex: 0,
             filterMode: "empty",
             right: "1%",
-            width: 20,
+            width: 25, // 增加宽度
             start: 0,
             end: 50,
-            borderColor: "#D4A76A",
-            handleStyle: {color: "#bd6b20", borderColor: "#8B4513"},
-            textStyle: {color: "#8B4513"},
+            backgroundColor: "rgba(254, 251, 245, 0.95)",
+            dataBackground: {
+              lineStyle: {
+                color: "#bd6b20",
+                width: 2,
+                opacity: 0.9,
+              },
+              areaStyle: {
+                color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                  { offset: 0, color: "rgba(212, 167, 106, 0.4)" },
+                  { offset: 1, color: "rgba(212, 167, 106, 0.1)" }
+                ]),
+                opacity: 1,
+              },
+            },
+            fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+              { offset: 0, color: "rgba(189, 107, 32, 0.5)" },
+              { offset: 1, color: "rgba(212, 167, 106, 0.3)" }
+            ]),
+            borderColor: "#bd6b20",
+            borderWidth: 1,
+            handleStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: "#d4a76a" },
+                { offset: 1, color: "#bd6b20" }
+              ]),
+              borderColor: "#8B4513",
+              borderWidth: 2,
+              shadowBlur: 8,
+              shadowColor: "rgba(139, 69, 19, 0.4)",
+            },
+            textStyle: {
+              color: "#8B4513",
+              fontWeight: "500",
+            },
+            emphasis: {
+              handleStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "#e6c896" },
+                  { offset: 1, color: "#d4a76a" }
+                ]),
+                borderColor: "#8B4513",
+                shadowBlur: 12,
+              },
+            },
           },
-          {type: "inside", yAxisIndex: 0, filterMode: "empty"},
+          { type: "inside", yAxisIndex: 0, filterMode: "empty" },
         ],
-        grid: {left: "5%", right: "5%", top: "18%", bottom: "10%", containLabel: true},
+        grid: {left: "5%", right: "5%", top: "18%", bottom: "12%", containLabel: true},
         xAxis: {
           type: "value", name: "年份", min: -800, max: 2050, axisLabel: {
             formatter: function (value) {
