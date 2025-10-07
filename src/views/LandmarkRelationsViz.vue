@@ -296,46 +296,64 @@ export default {
             name: "地标活跃期", // This name is internal, not for legend interaction directly
             type: "custom",
             renderItem: (params, api) => {
-              const data = api.value(3); // Get the original data item (landmark object)
-              const isHighlighted = this.highlightedLandmarks.includes(
-                data.name
-              );
-              const isVanished = data.status === "vanished";
+              // --- 第1步：获取基础数据 ---
+              const landmarkData = api.value(3); // 完整的地标数据对象
+              const landmarkYIndex = api.value(2); // 地标在Y轴上的位置索引
 
-              // **Crucial**: Check the selected state for the current type
-              // If the type is not selected, do not render this item
-              if (!this.selectedLegendTypes[data.type]) {
-                return { type: "group" }; // Return an empty group to not render anything
+              // 如果图例被取消勾选，则不渲染
+              if (!this.selectedLegendTypes[landmarkData.type]) {
+                return;
               }
 
-              const startPoint = api.coord([api.value(0), api.value(2)]); // x: startYear, y: index
-              const endPoint = api.coord([api.value(1), api.value(2)]); // x: endYear, y: index
-              const height = api.size([0, 1])[1] * 0.6; // Bar height
-              const width = endPoint[0] - startPoint[0];
+              // --- 第2步：获取地标长条【完整】的起止像素坐标 ---
+              // 即使起点或终点在屏幕外，api.coord也能计算出它应该在的像素位置
+              const startPoint = api.coord([landmarkData.startYear, landmarkYIndex]);
+              const endPoint = api.coord([landmarkData.endYear, landmarkYIndex]);
+
+              // --- 第3步：获取当前图表可见区域的像素范围 ---
+              // params.coordSys 提供了绘图区域（grid）的像素信息 { x, y, width, height }
+              const gridRect = params.coordSys;
+              const viewMinPx = gridRect.x;
+              const viewMaxPx = gridRect.x + gridRect.width;
+
+              // --- 第4步：判断长条是否与可见区域有交集 ---
+              // 如果长条的终点在可见区开始之前，或者起点在可见区结束之后，则不渲染
+              if (endPoint[0] < viewMinPx || startPoint[0] > viewMaxPx) {
+                return;
+              }
+
+              // --- 第5步：手动“裁剪”出在视图内部分的像素起止点 ---
+              const visibleStartPx = Math.max(startPoint[0], viewMinPx);
+              const visibleEndPx = Math.min(endPoint[0], viewMaxPx);
+
+              // --- 第6步：计算最终要绘制的矩形的参数 ---
+              const height = api.size([0, 1])[1] * 0.6;
+              const width = Math.max(0, visibleEndPx - visibleStartPx); // 宽度是裁剪后的像素差
+              const x = visibleStartPx; // 矩形的X坐标就是裁剪后的像素起点
+
+              const isHighlighted = this.highlightedLandmarks.includes(landmarkData.name);
+              // (此处的 typeColors 变量会从 initTimelineChart 的外部作用域继承，无需在此重新定义)
 
               return {
-                type: "rect",
-                shape: {
-                  x: startPoint[0],
-                  y: startPoint[1] - height / 2,
-                  width: width,
-                  height: height,
-                },
+                type: 'rect',
+                shape: { x: x, y: startPoint[1] - height / 2, width: width, height: height },
+                // ** 使用了您之前版本的、包含完整样式的 style 模块 **
                 style: api.style({
+                  // 基础填充色
                   fill: isHighlighted
-                    ? this.getDarkerColor(typeColors[data.type])
-                    : typeColors[data.type],
+                      ? this.getDarkerColor(typeColors[landmarkData.type] || '#999')
+                      : (typeColors[landmarkData.type] || '#999'),
+
+                  // 恢复：边框、阴影和高亮效果
                   stroke: "#fff",
                   lineWidth: isHighlighted ? 2 : 1,
                   shadowBlur: isHighlighted ? 8 : 5,
                   shadowColor: isHighlighted
-                    ? "rgba(0,0,0,0.4)"
-                    : "rgba(0,0,0,0.2)",
-                  // Dashed line for vanished landmarks
-                  stroke_: isVanished ? "#999" : "#fff",
-                  lineDash: isVanished ? [5, 5] : [],
-                  lineWidth_: isVanished ? 2 : 1,
-                }),
+                      ? "rgba(0,0,0,0.4)"
+                      : "rgba(0,0,0,0.2)",
+
+                  lineDash: landmarkData.status === "vanished" ? [5, 5] : [],
+                })
               };
             },
             encode: {
