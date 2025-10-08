@@ -663,25 +663,52 @@ export default {
               data: [
                 [ { name: '前秦', xAxis: '-800', itemStyle: { color: 'rgba(255,225,180,0.1)' } }, { xAxis: '-221' } ],
                 // --- 秦汉时期 ---
-                [ { name: '秦', xAxis: '-221', itemStyle: { color: 'rgba(139, 101, 8, 0.1)' } }, { xAxis: '-206' } ],
+                [ { name: '秦', xAxis: '-221', itemStyle: { color: 'rgba(139, 101, 8, 0.1)' },
+                  label: {
+                    position: 'insideBottom',
+                    distance: 170
+                  }
+                  }, { xAxis: '-206' } ],
                 [ { name: '汉', xAxis: '-206', itemStyle: { color: 'rgba(205, 133, 63, 0.1)' } }, { xAxis: '220' } ],
                 // --- 魏晋南北朝 ---
                 [ { name: '三国及两晋', xAxis: '220', itemStyle: { color: 'rgba(132, 112, 255, 0.1)' } }, { xAxis: '420' } ],
-                [ { name: '南北朝', xAxis: '420', itemStyle: { color: 'rgba(125, 158, 192, 0.1)' } }, { xAxis: '589' } ],
+                [ { name: '南北朝', xAxis: '420', itemStyle: { color: 'rgba(125, 158, 192, 0.1)' },
+                  label: {
+                    position: 'insideBottom',
+                    distance: 170
+                  }
+                  }, { xAxis: '589' } ],
                 // --- 隋唐五代 ---
                 [ { name: '隋', xAxis: '581', itemStyle: { color: 'rgba(255, 165, 0, 0.1)' } }, { xAxis: '618' } ],
                 [ { name: '唐', xAxis: '618', itemStyle: { color: 'rgba(255, 127, 80, 0.15)' } }, { xAxis: '907' } ],
-                [ { name: '五代', xAxis: '907', itemStyle: { color: 'rgba(112, 128, 144, 0.15)' } }, { xAxis: '960' } ],
+                [ { name: '五代十国', xAxis: '907', itemStyle: { color: 'rgba(112, 128, 144, 0.15)' },
+                  label: {
+                    position: 'insideBottom',
+                    distance: 170
+                  }
+                },
+                  { xAxis: '960' } ],
                 // --- 宋辽金元 ---
                 [ { name: '宋', xAxis: '960', itemStyle: { color: 'rgba(188, 143, 143, 0.15)' } }, { xAxis: '1279' } ],
                 [ { name: '辽', xAxis: '907', itemStyle: { color: 'rgba(159, 219, 144, 0.15)' } }, { xAxis: '1125' } ],
                 [ { name: '金', xAxis: '1115', itemStyle: { color: 'rgba(255, 236, 139, 0.2)' } }, { xAxis: '1234' } ],
-                [ { name: '元', xAxis: '1271', itemStyle: { color: 'rgba(135, 206, 235, 0.12)' } }, { xAxis: '1368' } ],
+                [ { name: '元', xAxis: '1271', itemStyle: { color: 'rgba(135, 206, 235, 0.12)' },
+                  label: {
+                    position: 'insideBottom',
+                    distance: 170
+                  }
+                  }, { xAxis: '1368' } ],
                 // --- 明清及民国 ---
                 [ { name: '明', xAxis: '1368', itemStyle: { color: 'rgba(255, 228, 181, 0.2)' } }, { xAxis: '1644' } ],
                 [ { name: '清', xAxis: '1644', itemStyle: { color: 'rgba(240, 128, 128, 0.12)' } }, { xAxis: '1912' } ],
                 [ { name: '民国', xAxis: '1912', itemStyle: { color: 'rgba(100, 149, 237, 0.15)' } }, { xAxis: '1949' } ],
-                [ { name: '现代', xAxis: '1949', itemStyle: { color: 'rgba(255,31,0,0.1)' } }, { xAxis: '2025' } ],
+                [  { name: '现代', xAxis: '1949', itemStyle: { color: 'rgba(255,31,0,0.1)' },
+                  label: {
+                    position: 'insideBottom',
+                    distance: 170
+                  }
+                },
+                  { xAxis: '2025' } ],
 
 
               ],
@@ -846,10 +873,25 @@ export default {
           categories: categories,
           roam: true,
           draggable: true,
-          force: {repulsion: 800, edgeLength: [200, 300], gravity: 0.1, friction: 0.6, layoutAnimation: true},
+          force: {repulsion: 800, edgeLength: [200, 300], gravity: 0.01, friction: 0.6, layoutAnimation: true},
           label: {show: true, position: "right", formatter: "{b}", fontSize: 12, color: "#333"},
           lineStyle: {color: "#999", curveness: 0.3},
-         /* emphasis: {focus: "adjacency", lineStyle: {color: "#666"}},*/
+          emphasis: {
+            focus: 'adjacency',
+            lineStyle: {
+              color: '#8B4513',
+              width: 4
+            },
+            label: {
+              show: true,
+              color: '#333',
+              fontWeight: 'bold',
+              fontSize: 11,
+              backgroundColor: 'rgba(255,255,255,0.8)',
+              padding: [3, 5],
+              borderRadius: 3
+            }
+          },
           tooltip: {
             trigger: "item",
             backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -1057,78 +1099,41 @@ export default {
 </script>
 
 <style scoped>
-/* 样式部分与您提供的文件保持一致，无需修改 */
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap');
+
+/* ===== 整体容器：调整为更有质感的宣纸/画卷背景 ===== */
 .relations-viz-container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
   padding: 30px;
   box-sizing: border-box;
-  background: linear-gradient(145deg, #fefbf5 0%, #f9f3e6 100%);
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
-  border: 1px solid #d4a76a;
+  /* 使用更有质感的米黄色作为背景 */
+  background: #fdfaf2;
+  border-radius: 8px;
+  border: 1px solid #e0d9ce;
+  box-shadow: 0 10px 35px rgba(139, 69, 19, 0.1);
   position: relative;
   overflow: hidden;
 }
 
-.relations-viz-container::before {
-  content: "";
-  position: absolute;
-  top: -50px;
-  left: -50px;
-  width: 150px;
-  height: 150px;
-  background-color: rgba(209, 155, 97, 0.1);
-  border-radius: 50%;
-  filter: blur(40px);
-  z-index: 0;
-  animation: float1 10s infinite ease-in-out alternate;
-}
-
+/* 移除之前的动画背景，保持简洁 */
+.relations-viz-container::before,
 .relations-viz-container::after {
-  content: "";
-  position: absolute;
-  bottom: -70px;
-  right: -70px;
-  width: 180px;
-  height: 180px;
-  background-color: rgba(183, 138, 86, 0.1);
-  border-radius: 50%;
-  filter: blur(50px);
-  z-index: 0;
-  animation: float2 12s infinite ease-in-out alternate-reverse;
+  display: none;
 }
 
-@keyframes float1 {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  100% {
-    transform: translate(20px, 30px) rotate(10deg);
-  }
-}
-
-@keyframes float2 {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  100% {
-    transform: translate(-20px, -20px) rotate(-10deg);
-  }
-}
-
+/* ===== 标题：使用引入的书法字体 ===== */
 .relations-viz-container h2 {
-  color: #8b4513;
-  margin-bottom: 25px;
-  font-size: 32px;
+  font-family: 'ZCOOL XiaoWei', cursive; /* 应用书法字体 */
+  color: #6a3906; /* 更深的棕色，如木刻印章 */
+  margin-bottom: 30px;
+  font-size: 36px;
   text-align: center;
-  font-weight: bold;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: normal; /* 书法字体通常不需要额外加粗 */
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 1;
 }
@@ -1136,173 +1141,83 @@ export default {
 .relations-viz-container h2::after {
   content: "";
   position: absolute;
-  bottom: -5px;
+  bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(to right, #d4a76a, #bd6b20, #d4a76a);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(to right, #d4a76a, #bd6b20);
   border-radius: 2px;
 }
 
+
+/* ===== 控制按钮：设计为“印章”或“牌匾”风格 ===== */
 .chart-controls {
   margin-bottom: 30px;
   display: flex;
-  gap: 18px;
-  align-items: center;
+  gap: 20px;
   justify-content: center;
-  flex-wrap: wrap;
   z-index: 1;
 }
 
 .chart-controls button {
-  padding: 12px 25px;
-  font-size: 17px;
-  border: 2px solid #d4a76a;
-  border-radius: 25px;
-  background-color: #fef8f0;
-  color: #8b4513;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-family: 'ZCOOL XiaoWei', cursive; /* 按钮也使用书法字体 */
+  border: 2px solid #c8a87e; /* 边框颜色 */
+  border-radius: 6px; /* 稍微带一点圆角，像牌匾 */
+  background-color: transparent; /* 透明背景 */
+  color: #8b5a2b; /* 文字颜色 */
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 140px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
+  min-width: 160px;
+  box-shadow: none; /* 移除阴影，追求更古典的平面感 */
 }
 
 .chart-controls button:hover {
-  background-color: #f5eedf;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.chart-controls button.active {
-  background: linear-gradient(45deg, #bd6b20, #d19b61);
-  color: #fff;
+  background-color: rgba(212, 167, 106, 0.1);
   border-color: #bd6b20;
-  box-shadow: 0 8px 20px rgba(189, 107, 32, 0.4);
-  transform: translateY(-5px);
-  position: relative;
-  overflow: hidden;
+  color: #6a3906;
+  transform: translateY(-2px); /* 轻微上浮效果 */
 }
 
-.chart-controls button.active::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: skewX(-30deg);
-  animation: shine 1.5s infinite;
+/* 激活状态：模拟“印章”盖下的效果 */
+.chart-controls button.active {
+  background-color: #8B4513; /* 经典的“印泥”棕红色 */
+  color: #fdfaf2; /* 文字变为背景的米白色 */
+  border-color: #6a3906;
+  transform: translateY(0);
+  box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.2); /* 轻微的内阴影，模拟按下的感觉 */
+  animation: none; /* 移除之前的光效动画 */
 }
 
-@keyframes shine {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
+/* ===== 图表区域：模拟画卷纸张 ===== */
 .charts-display-area {
   flex-grow: 1;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
   min-height: 450px;
-  overflow: hidden;
-  border-radius: 12px;
-  background-color: #fefcf7;
-  box-shadow: inset 0 2px 10px rgba(139, 69, 19, 0.05);
-  border: 1px solid #e8dfd1;
+  border-radius: 4px;
+  background-color: #fff; /* 保持图表区域的干净白色背景 */
+  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.08);
+  border: 1px solid #e0d9ce;
 }
 
 .chart-instance {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
-  background-color: #fefcf7;
+  background-color: #fefcf7; /* 图表实例背景透明，以显示父容器颜色 */
 }
 
 .viz-description {
   font-size: 16px;
-  color: #7a6b64;
+  color: #8c7b70; /* 文字颜色调整为更柔和的棕灰色 */
   text-align: center;
-  max-width: 800px;
+  max-width: 1200px;
   line-height: 1.7;
-  margin-top: 35px;
-  margin-bottom: 0;
-  opacity: 0.9;
+  margin-top: 30px;
   position: relative;
   z-index: 1;
 }
-
-@media (max-width: 768px) {
-  .relations-viz-container {
-    padding: 20px 15px;
-    border-radius: 8px;
-  }
-
-  .relations-viz-container h2 {
-    font-size: 26px;
-    margin-bottom: 20px;
-  }
-
-  .chart-controls {
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 25px;
-  }
-
-  .chart-controls button {
-    padding: 10px 20px;
-    font-size: 16px;
-    min-width: unset;
-    width: 85%;
-    border-radius: 20px;
-  }
-
-  .charts-display-area {
-    min-height: 350px;
-    border-radius: 10px;
-  }
-
-  .viz-description {
-    font-size: 14px;
-    margin-top: 25px;
-  }
-}
-
-@media (max-width: 480px) {
-  .relations-viz-container {
-    padding: 15px 10px;
-  }
-
-  .relations-viz-container h2 {
-    font-size: 22px;
-  }
-
-  .chart-controls button {
-    font-size: 14px;
-    padding: 8px 15px;
-    width: 90%;
-  }
-
-  .charts-display-area {
-    min-height: 300px;
-  }
-
-  .viz-description {
-    font-size: 13px;
-    margin-top: 20px;
-  }
-}
 </style>
-

@@ -32,7 +32,7 @@
         <div class="map-controls">
           <div class="controls-group">
             <button @click="toggleView" class="control-button primary">
-              <span class="button-icon">{{ currentView === "map" ? "🔗" : "🗺️" }}</span>
+              <span class="button-icon">{{ currentView === "map" ? "" : "" }}</span>
               <span class="button-text">{{ currentView === "map" ? "地标关系图" : "地图视图" }}</span>
               <span class="button-ripple"></span>
             </button>
