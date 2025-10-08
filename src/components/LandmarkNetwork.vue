@@ -59,17 +59,20 @@ const initGraph = () => {
         edgeStrength: 0.1,
       },
       defaultNode: {
-        size: 30,
+        size: 30, // 节点尺寸可以保持小巧
         style: {
           fill: "#f3e9d2",
           stroke: "#8b5a2b",
           lineWidth: 2,
         },
         labelCfg: {
+
+          position: 'bottom',
+          offset: 5,
           style: {
             fontSize: 12,
             fill: "#5c3a21",
-            fontFamily: "KaiTi, serif",
+            fontFamily: "sans-serif",
           },
         },
       },
