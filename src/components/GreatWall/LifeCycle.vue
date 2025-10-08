@@ -445,11 +445,11 @@ watch(activeIndex, (newIndex) => {
       seriesIndex: 0,
       dataIndex: newIndex,
     });
-    chartInstance.dispatchAction({
+    /*chartInstance.dispatchAction({
       type: "showTip",
       seriesIndex: 0,
       dataIndex: newIndex,
-    });
+    });*/
   }
   if (typeChartInstance) {
     typeChartInstance.dispatchAction({

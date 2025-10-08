@@ -506,7 +506,7 @@ const initTombConstructionChart = () => {
           const data = params[0].data; // 获取当前柱子数据
           return `${data.name} (${data.emperor}陵)<br/>
                             营建时期：${data.start}年 - ${data.end}年<br/>
-                            **工期：${data.value}年**`;
+                               工期：${data.value}年`;
         },
         backgroundColor: "rgba(255,255,255,0.9)",
         borderColor: "#bcaaa4",
@@ -588,7 +588,7 @@ const initArchitecturalEvolutionChart = () => {
       tooltip: {
         trigger: "axis",
         formatter: function (params) {
-          let str = `**${params[0].name}**<br/>`;
+          let str = `${params[0].name}<br/>`;
           params.forEach((item) => {
             str += `${item.marker} ${item.seriesName}: ${item.value}%<br/>`;
           });
@@ -674,7 +674,7 @@ const initProtectionEventsChart = () => {
       tooltip: {
         trigger: "axis",
         formatter: function (params) {
-          let str = `**${params[0].name}**<br/>`;
+          let str = `${params[0].name}<br/>`;
           params.forEach((item) => {
             if (item.seriesType === "line") {
               str += `${item.marker} ${item.seriesName}: ${item.value}次<br/>`;
@@ -806,11 +806,11 @@ watch(activeIndex, (newIndex) => {
       dataIndex: newIndex, // 当前年份的索引
     });
     // 显示当前年份的tooltip
-    chartInstance2.dispatchAction({
+   /* chartInstance2.dispatchAction({
       type: "showTip",
       seriesIndex: 0, // 随便一个系列即可，目的是触发tooltip
       dataIndex: newIndex,
-    });
+    });*/
   }
 
   // 对于第三个图 (主要保护修缮事件)，高亮对应年份的点
@@ -825,11 +825,11 @@ watch(activeIndex, (newIndex) => {
       seriesIndex: 0,
       dataIndex: newIndex,
     });
-    chartInstance3.dispatchAction({
+   /* chartInstance3.dispatchAction({
       type: "showTip",
       seriesIndex: 0,
       dataIndex: newIndex,
-    });
+    });*/
   }
 });
 

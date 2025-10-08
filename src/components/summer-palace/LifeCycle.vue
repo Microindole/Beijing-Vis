@@ -445,9 +445,24 @@ const initTypeChart = () => {
         axisPointer: {
           type: "shadow",
         },
+        formatter: function (params) {
+          // 1. 获取标题，例如 "1888年"
+          let tooltipString = `${params[0].name}年<br/>`;
+
+          // 2. 创建一个反转后的数组，用于生成列表
+          const reversedParams = [...params].reverse();
+
+          // 3. 遍历反转后的数组，拼接每一行的内容
+          for (const param of reversedParams) {
+            tooltipString += `${param.marker} ${param.seriesName}: ${param.value}%<br/>`;
+          }
+
+          // 4. 返回最终生成的字符串
+          return tooltipString;
+        }
       },
       legend: {
-        data: typeData.value.types.map((item) => item.name),
+        data: typeData.value.types.map((item) => item.name).reverse(),
         textStyle: {
           color: "#5a4a42",
         },
@@ -496,6 +511,7 @@ const initTypeChart = () => {
           focus: "series",
         },
         data: type.data,
+        // 注意：这里的颜色数组也需要反转，以确保颜色和数据项能正确对应
         itemStyle: {
           color: ["#d4a76a", "#8b4513", "#9c7c5c", "#5a4a42"][index],
         },
@@ -586,11 +602,11 @@ watch(activeIndex, (newIndex) => {
       dataIndex: newIndex,
     });
 
-    chartInstance.dispatchAction({
+  /*  chartInstance.dispatchAction({
       type: "showTip",
       seriesIndex: 0,
       dataIndex: newIndex,
-    });
+    });*/
   }
 
   if (typeChartInstance) {
