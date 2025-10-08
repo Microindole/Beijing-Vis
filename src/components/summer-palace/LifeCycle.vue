@@ -302,6 +302,11 @@ function handleClick(index, event) {
   selectedEvent.value = timelineData.value[index]; // ✅ 这才是正确的数据
 }
 
+function setActiveIndex(index) {
+  activeIndex.value = index;
+  isModalOpen.value = true;
+}
+
 function closeModal() {
   isModalOpen.value = false;
 }

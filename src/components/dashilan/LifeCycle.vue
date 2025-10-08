@@ -337,6 +337,10 @@ function handleClick(index, event) {
   isModalOpen.value = true;
   selectedEvent.value = timelineData.value[index]; // ✅ 这才是正确的数据
 }
+function setActiveIndex(index) {
+  activeIndex.value = index;
+  isModalOpen.value = true;
+}
 
 function closeModal() {
   isModalOpen.value = false;
@@ -486,7 +490,7 @@ const initBusinessEvolutionChart = () => {
         trigger: "axis",
         axisPointer: { type: "shadow" },
         formatter: function (params) {
-          let str = `**${params[0].name}**<br/>`;
+          let str = `${params[0].name}年<br/>`;
           params.forEach((item) => {
             str += `${item.marker} ${item.seriesName}: ${item.value}%<br/>`;
           });
@@ -639,7 +643,7 @@ const initOldBrandAndEventsChart = () => {
       tooltip: {
         trigger: "axis",
         formatter: function (params) {
-          let str = `**${params[0].name}**<br/>`;
+          let str = `${params[0].name}年<br/>`;
           params.forEach((item) => {
             if (item.seriesType === "line") {
               str += `${item.marker} ${item.seriesName}: ${item.value}家<br/>`;
