@@ -612,9 +612,9 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 }
 .text-section {
   flex: 1.2;
-  /* background: rgba(255, 248, 225, 0.8); */
-  /* 背景改为优雅的深棕色 */
-  background: rgba(60, 48, 38, 0.85);
+  /* 侧边栏整体背景颜色调整为深蓝灰色 */
+  /* background: #2c3e50; */
+  background: rgba(255, 248, 225, 0.8);
   border-radius: 16px;
   padding: 32px 28px;
   box-shadow: 0 4px 16px rgba(139, 69, 19, 0.06); /* 恢复轻微阴影 */
@@ -629,46 +629,42 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 }
 .section-title h2 {
   font-size: 1.3em;
-  /* color: #fc9a07; */
-  color: #fc9a07;
+  /* 标题颜色改为清晰的白色 */
+  color: #6495ed;
   margin-bottom: 8px;
 }
 .divider {
   width: 60px;
   height: 4px;
-  /* background: linear-gradient(to right, #d4a76a, #8b4513); */
-  background: linear-gradient(to right, #D4AF37, #8B4513);
+  /* 分割线颜色与新主题协调 */
+  background: linear-gradient(to right, #6495ed, #4682b4);
   margin: 0 0 18px 0;
   border-radius: 2px;
 }
 .philosophy-item {
-  /* background: #ffecc3;  */
-  /* 卡片背景改为更深的半透明棕色 */
-  background: rgba(80, 65, 55, 0.7);
+  background: #4682b4;
   border-radius: 12px;
   padding: 18px 16px;
   margin-bottom: 18px;
-  /* color: #4a2c13; */
-  color: #e0d6c2;
-  box-shadow: 0 2px 8px rgba(74, 44, 19, 0.04);
-  /* border: 1px solid #f1e0c2; */
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  /* 卡片文字颜色改为浅色 */
+  color: #e0e6ec;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* 边框颜色调整 */
+  border: 1px solid rgba(100, 149, 237, 0.2);
 }
 .philosophy-item:last-child {
   margin-bottom: 0;
 }
 .philosophy-item h3 {
   font-size: 1.1em;
-  /* color: #8b4513; */
-  /* 卡片内标题改为更亮的暖金色 */
-  color: #EAC674;
+  /* 卡片内标题颜色改为更亮的白色 */
+  color: #ffffff;
   margin-bottom: 6px;
 }
 .philosophy-item p,
 .philosophy-item ul {
-  /* color: #4a2c13; */
-  /* 正文文字颜色调亮，保证清晰度 */
-  color: #D7C6B5;
+  /* 正文文字颜色调整 */
+  color: #d7e0e8;
   font-size: 1em;
   margin: 0 0 0 0;
   line-height: 1.7;
@@ -707,14 +703,16 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   margin: 60px auto 0 auto;
   max-width: 1200px;
   padding: 40px;
-  background: linear-gradient(135deg, #ffffff 0%, #f9f5ed 100%);
+  /* 底部总结区背景改为与按钮匹配的蓝灰色 */
+  background: #6495ed;
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(101, 67, 33, 0.15);
   text-align: center;
 }
 .global-impact h2 {
   font-size: 1.3em;
-  color: #8b4513;
+  /* 标题颜色改为白色 */
+  color: #ffffff;
   margin-bottom: 30px;
   position: relative;
 }
@@ -725,12 +723,13 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   margin-top: 30px;
 }
 .impact-item {
-  background: rgba(212, 167, 106, 0.2);
+  /* 内部卡片背景改为半透明白色，形成对比 */
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 15px;
   padding: 25px;
   transition: all 0.3s ease;
-  /* border: 1px solid rgba(139, 69, 19, 0.15); */
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  /* 边框颜色调整 */
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .impact-item:hover {
   transform: translateY(-5px);
@@ -740,12 +739,14 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 .impact-value {
   font-size: 2rem;
   font-weight: bold;
-  color: #8b4513;
+  /* 数字颜色改为白色 */
+  color: #ffffff;
   margin-bottom: 10px;
 }
 .impact-label {
   font-size: 1em;
-  color: #5a4a42;
+  /* 标签文字颜色改为半透明白色 */
+  color: rgba(255, 255, 255, 0.9);
 }
 .influence-footer {
   text-align: center;

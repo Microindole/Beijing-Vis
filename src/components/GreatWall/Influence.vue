@@ -424,33 +424,30 @@ const currentLandmark = "长城"; // 定义当前页面的景点名称
   border-radius: 2px;
 }
 .philosophy-item {
-  /* 背景改为深沉的烽燧褐色 */
-  background: rgba(88, 73, 60, 0.75);
+  /* 背景改为与按钮匹配的青灰色 */
+  background: #607d8b;
   border-radius: 12px;
   padding: 18px 16px;
   margin-bottom: 18px;
-  /* 默认文字颜色改为浅米色 */
-  color: #e0d6c2;
+  /* 默认文字颜色改为白色以保证清晰度 */
+  color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   /* 边框颜色与背景协调 */
-  border: 1px solid rgba(224, 189, 140, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .philosophy-item:last-child {
   margin-bottom: 0;
 }
 .philosophy-item h3 {
   font-size: 1.1em;
-  /* color: #8b4513; */
-  /* 改为更亮的古铜金色 */
-  color: #DAA520;
+  /* 标题颜色改为白色 */
+  color: #ffffff;
   margin-bottom: 6px;
 }
 .philosophy-item p,
 .philosophy-item ul {
-  /* color: #4a2c13;
-  font-size: 1em; */
-   /* 正文文字颜色调亮，保证清晰度 */
-  color: #D7C6B5; 
+  /* 正文文字颜色改为半透明白色 */
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1em;
   margin: 0 0 0 0;
   line-height: 1.7;
@@ -489,9 +486,8 @@ const currentLandmark = "长城"; // 定义当前页面的景点名称
   margin: 60px auto 0 auto;
   max-width: 1600px; /* 调宽，与北海公园一致 */
   padding: 40px 60px;
-  /* background: linear-gradient(135deg, #ffffff 0%, #f9f5ed 100%); */
-  /* 背景改为深沉的烽燧褐色 */
-  background: rgba(60, 52, 45, 0.85);
+  /* 背景改为与按钮匹配的青灰色 */
+  background: #455a64;
   border-radius: 20px;
   /* box-shadow: 0 15px 40px rgba(101, 67, 33, 0.15); */
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* 调整阴影以适应深色背景 */
@@ -499,9 +495,8 @@ const currentLandmark = "长城"; // 定义当前页面的景点名称
 }
 .global-impact h2 {
   font-size: 1.3em;
-  /* color: #8b4513; */
-  /* 标题改为古铜金色 */
-  color: #B8860B;
+  /* 标题颜色改为白色 */
+  color: #ffffff;
   margin-bottom: 30px;
   position: relative;
 }
@@ -520,18 +515,16 @@ const currentLandmark = "长城"; // 定义当前页面的景点名称
   flex-wrap: wrap;
 }
 .impact-item {
-  /* background: rgba(212, 167, 106, 0.2); */
-  /* 卡片背景改为更深的半透明褐色 */
-  background: rgba(88, 73, 60, 0.6);
+  /* 卡片背景改为深一点的半透明青灰色 */
+  background: rgba(96, 125, 139, 0.6);
   border-radius: 15px;
   padding: 20px 16px; /* 调小内边距 */
   min-width: 220px; /* 调小最小宽度 */
   max-width: 260px; /* 调小最大宽度 */
   flex: 1 1 200px; /* 允许更小宽度自动换行 */
   transition: all 0.3s ease;
-  /* border: 1px solid rgba(139, 69, 19, 0.15); */
-  /* 边框颜色与主题协调 */
-  border: 1px solid rgba(184, 134, 11, 0.3); 
+  /* 边框颜色与新主题协调 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .impact-item:hover {
   transform: translateY(-5px);
@@ -541,16 +534,14 @@ const currentLandmark = "长城"; // 定义当前页面的景点名称
 .impact-value {
   font-size: 1.3rem; /* 调小字体 */
   font-weight: bold;
-  /* color: #8b4513; */
-  /* 数字颜色改为更亮的古铜金色 */
-  color: #DAA520;
+  /* 数字颜色改为白色 */
+  color: #ffffff;
   margin-bottom: 8px;
 }
 .impact-label {
   font-size: 0.95em; /* 调小字体 */
-  /* color: #5a4a42; */
-  /* 标签文字改为清晰的浅米色 */
-  color: #D7C6B5;
+  /* 标签文字改为半透明白色 */
+  color: rgba(255, 255, 255, 0.9);
 }
 .influence-footer {
   text-align: center;

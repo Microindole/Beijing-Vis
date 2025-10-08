@@ -606,8 +606,12 @@ const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 }
 
 .metrics-card {
-  background: rgba(42, 34, 34, 0.7);
-  border: 1px solid #5d4b4b;
+  /* background: rgba(42, 34, 34, 0.7); */
+  /* 背景改为主题青绿色 */
+  background: rgba(70, 130, 130, 0.8);
+  /* border: 1px solid #5d4b4b; */
+  /* 边框颜色协调 */
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   padding: 1.5rem;
 }
@@ -615,7 +619,9 @@ const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 .metrics-title {
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
-  color: #d4b483;
+  /* color: #d4b483; */
+  /* 标题文字改为清晰的亮白色 */
+  color: #ffffff;
   text-align: center;
   border-bottom: 1px solid #5d4b4b;
   padding-bottom: 0.5rem;
@@ -628,7 +634,9 @@ const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 }
 
 .impact-item {
-  background: rgba(93, 75, 75, 0.3);
+  /* background: rgba(93, 75, 75, 0.3); */
+  /* 卡片背景改为半透明青绿色 */
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   padding: 1rem;
   text-align: center;
@@ -636,18 +644,26 @@ const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 
 .impact-value {
   font-size: 1.8rem;
-  color: #d4a76a;
+  /* color: #d4a76a; */
+  /* 数字改为更亮的淡青色 */
+  color: #a8e6e6;
   font-weight: bold;
 }
 
 .impact-label {
   font-size: 0.9rem;
-  color: #b8a692;
+  /* color: #b8a692; */
+  /* 标签文字改为清晰的浅灰色 */
+  color: #e0f2f1;
 }
 
 .impact-dimension {
-  background: rgba(42, 34, 34, 0.7);
-  border: 1px solid #5d4b4b;
+  /* background: rgba(42, 34, 34, 0.7); */
+  /* 背景改为主题青绿色 */
+  background: rgba(70, 130, 130, 0.8);
+  /* border: 1px solid #5d4b4b; */
+  /* 边框颜色协调 */
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   padding: 1.5rem;
 }
@@ -655,7 +671,9 @@ const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 .impact-dimension h3 {
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
-  color: #d4b483;
+  /* color: #d4b483; */
+  /* 标题文字改为清晰的亮白色 */
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 0.5rem;

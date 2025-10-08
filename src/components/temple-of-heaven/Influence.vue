@@ -245,11 +245,14 @@ const initArchChart = () => {
         data: ["圆形布局", "色彩运用", "木构技术", "轴线序列", "声学设计"],
         axisLine: {
           lineStyle: {
-            color: "#8b4513",
+            // color: "#8b4513",
+            /* 调整轴线颜色 */
+            color: "rgba(255, 255, 255, 0.5)",
           },
         },
         axisLabel: {
-          color: "#D4A76A",
+          // color: "#D4A76A",
+          color: "rgba(255, 255, 255, 0.85)",
           rotate: 30,
         },
       },
@@ -257,16 +260,21 @@ const initArchChart = () => {
         type: "value",
         name: "影响指数",
         nameTextStyle: {
-          color: "#D4A76A",
+          /* 整轴名称文字颜色 */
+          color: "rgba(255, 255, 255, 0.85)",
         },
         axisLine: {
           lineStyle: {
-            color: "#8b4513",
+            // color: "#8b4513",
+            /* 调整轴线颜色 */
+            color: "rgba(255, 255, 255, 0.5)",
           },
         },
         splitLine: {
           lineStyle: {
-            color: "rgba(139, 69, 19, 0.1)",
+            // color: "rgba(139, 69, 19, 0.1)",
+            /* 调整分割线颜色 */
+            color: "rgba(255, 255, 255, 0.15)",
           },
         },
       },
@@ -277,8 +285,8 @@ const initArchChart = () => {
           barWidth: "60%",
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: "#d4a76a" },
-              { offset: 1, color: "#8b4513" },
+              { offset: 0, color: "#8b4513" },
+              { offset: 1, color: "#5a2d0c" },
             ]),
           },
           data: [89, 78, 82, 75, 68],
@@ -306,7 +314,9 @@ const initCultureChart = () => {
       legend: {
         data: ["论文数量", "研究项目"],
         textStyle: {
-          color: "#D4A76A",
+          // color: "#D4A76A",
+          /* 调整图例文字颜色 */
+          color: "rgba(255, 255, 255, 0.85)",
         },
         bottom: 0,
       },
@@ -322,7 +332,9 @@ const initCultureChart = () => {
         data: ["1990", "1995", "2000", "2005", "2010", "2015", "2020", "2023"],
         axisLine: {
           lineStyle: {
-            color: "#8b4513",
+            // color: "#8b4513",
+            /* 调整轴线颜色 */
+            color: "rgba(255, 255, 255, 0.5)",
           },
         },
       },
@@ -330,16 +342,22 @@ const initCultureChart = () => {
         type: "value",
         name: "数量/项",
         nameTextStyle: {
-          color: "#D4A76A",
+          // color: "#D4A76A",
+          /* 调整轴名称文字颜色 */
+          color: "rgba(255, 255, 255, 0.85)",
         },
         axisLine: {
           lineStyle: {
-            color: "#8b4513",
+            // color: "#8b4513",
+            /* 调整轴线颜色 */
+            color: "rgba(255, 255, 255, 0.5)",
           },
         },
         splitLine: {
           lineStyle: {
-            color: "rgba(139, 69, 19, 0.1)",
+            // color: "rgba(139, 69, 19, 0.1)",
+            /* 调整分割线颜色 */
+            color: "rgba(255, 255, 255, 0.15)",
           },
         },
       },
@@ -367,10 +385,14 @@ const initCultureChart = () => {
           symbolSize: 8,
           lineStyle: {
             width: 4,
-            color: "#d4a76a",
+            // color: "#d4a76a",
+            /* 调整线条颜色 */
+            color: "#ffffff",
           },
           itemStyle: {
-            color: "#d4a76a",
+            // color: "#d4a76a",
+            /* 调整标记点颜色 */
+            color: "#ffffff",
           },
           data: [3, 8, 15, 26, 42, 68, 95, 120],
         },
@@ -614,7 +636,9 @@ const currentLandmark = "天坛"; // 定义当前页面的景点名称
 }
 
 .metrics-card {
-  background: rgba(42, 34, 34, 0.7);
+  /* background: rgba(42, 34, 34, 0.7); */
+  /* 调整背景色以匹配按钮颜色 */
+  background: #c2a36e;
   border: 1px solid #5d4b4b;
   border-radius: 6px;
   padding: 1.5rem;
@@ -623,9 +647,13 @@ const currentLandmark = "天坛"; // 定义当前页面的景点名称
 .metrics-title {
   margin: 0 0 1rem 0;
   font-size: 1.2rem;
-  color: #d4b483;
+  /* color: #d4b483; */
+  /* 调整文字颜色以适应新背景 */
+  color: #ffffff;
   text-align: center;
-  border-bottom: 1px solid #5d4b4b;
+  /* border-bottom: 1px solid #5d4b4b; */
+  /* 调整边框颜色 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding-bottom: 0.5rem;
 }
 
@@ -644,17 +672,23 @@ const currentLandmark = "天坛"; // 定义当前页面的景点名称
 
 .impact-value {
   font-size: 1.8rem;
-  color: #d4a76a;
+  /* color: #d4a76a; */
+  /* 调整文字颜色 */
+  color: #ffffff;
   font-weight: bold;
 }
 
 .impact-label {
   font-size: 0.9rem;
-  color: #b8a692;
+  /* color: #b8a692; */
+  /* 调整文字颜色 */
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .impact-dimension {
-  background: rgba(42, 34, 34, 0.7);
+  /* background: rgba(42, 34, 34, 0.7); */
+  /* 调整背景色以匹配按钮颜色 */
+  background: #c2a36e;
   border: 1px solid #5d4b4b;
   border-radius: 6px;
   padding: 1.5rem;
@@ -663,7 +697,9 @@ const currentLandmark = "天坛"; // 定义当前页面的景点名称
 .impact-dimension h3 {
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
-  color: #d4b483;
+  /* color: #d4b483; */
+  /* 调整文字颜色以适应新背景 */
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 0.5rem;
