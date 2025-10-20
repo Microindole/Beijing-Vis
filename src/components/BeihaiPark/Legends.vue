@@ -10,6 +10,7 @@
     
     <CharacterHub></CharacterHub>
     <Sayings></Sayings>
+    <ParkStories></ParkStories>
   </div>
 </template>
 
@@ -17,6 +18,7 @@
 import { useRouter } from "vue-router";
 import CharacterHub from "./CharacterHub.vue";
 import Sayings from "./Sayings.vue";
+import ParkStories from "./Stories.vue"
 
 const router = useRouter();
 

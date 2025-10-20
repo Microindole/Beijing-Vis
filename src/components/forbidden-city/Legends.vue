@@ -3,6 +3,7 @@
     <button @click="goBack" class="back-button">← 返回故宫门户</button>
     <GugongCharacterHub></GugongCharacterHub>
     <palaceSayings></palaceSayings>
+    <GugongStories></GugongStories>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import { useRouter } from "vue-router";
 import * as echarts from "echarts";
 import GugongCharacterHub from "./GugongCharacterHub.vue";
 import palaceSayings from "./PalaceSayings.vue";
+import GugongStories from "./Stories.vue"
 
 const router = useRouter();
 
