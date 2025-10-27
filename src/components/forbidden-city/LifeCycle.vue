@@ -305,6 +305,10 @@ function closeModal() {
   isModalOpen.value = false;
 }
 
+function setActiveIndex(index) {
+  activeIndex.value = index;
+  isModalOpen.value = true;
+}
 // ECharts图表实例
 const chart = ref(null);
 const typeChart = ref(null);
