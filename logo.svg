@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="dreamGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="20" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="mainGradient" x1="0" x2="1">
+      <stop offset="0" stop-color="#e74c3c"/>
+      <stop offset="0.5" stop-color="#d35400"/>
+      <stop offset="1" stop-color="#f1c40f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Central Structure (Inspired by Forbidden City) -->
+  <g transform="translate(400,400)" filter="url(#dreamGlow)" opacity="0.9">
+    <path d="M-150 -100 L-150 100 L150 100 L150 -100 Z" fill="none" stroke="url(#mainGradient)" stroke-width="8"/>
+    <path d="M-100 -50 L-100 50 L100 50 L100 -50 Z" fill="#f0e6d2" stroke="#d35400" stroke-width="4"/>
+    <path d="M-50 -25 L-50 25 L50 25 L50 -25 Z" fill="#e74c3c" stroke="#ffffff" stroke-width="2"/>
+    <polygon points="-75,-75 0,-150 75,-75" fill="url(#mainGradient)"/>
+  </g>
+
+  <!-- Eight Landmark Nodes with Connections -->
+  <g transform="translate(512,512)" opacity="0.9">
+    <circle cx="-200" cy="-200" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="200" cy="-200" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="-200" cy="200" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="200" cy="200" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="0" cy="-300" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="0" cy="300" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="-300" cy="0" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+    <circle cx="300" cy="0" r="20" fill="#e74c3c" filter="url(#dreamGlow)"/>
+
+    <path d="M-200,-200 Q-100,-100 0,-300" fill="none" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M200,-200 Q100,-100 0,-300" fill="none" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-200,200 Q-100,100 0,300" fill="none" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M200,200 Q100,100 0,300" fill="none" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-300,0 Q-150,0 0,-300" fill="none" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M300,0 Q150,0 0,300" fill="none" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Decorative Roof Elements -->
+  <g transform="translate(400,350)">
+    <path d="M-150 0 Q-100 -50 0 -100 Q100 -50 150 0" fill="url(#mainGradient)" stroke="#f1c40f" stroke-width="2"/>
+    <path d="M-120 0 Q-80 -40 0 -80 Q80 -40 120 0" fill="none" stroke="#ffffff" stroke-width="1" filter="url(#dreamGlow)"/>
+  </g>
+</svg>
