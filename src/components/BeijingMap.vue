@@ -357,20 +357,14 @@ export default {
 /* ==================== 修改：优化地图路径及交互样式 ==================== */
 .map-layer path {
   cursor: pointer;
-  /* 平滑过渡所有属性，特别是滤镜和变换 */
-  transition: all 0.3s ease-in-out, filter 0.3s ease-in-out;
+  /* 优化 transition，只对需要的属性进行过渡，更高效 */
+  transition: fill 0.3s ease, transform 0.3s ease, stroke-width 0.3s ease;
 }
 
 .map-layer path:hover {
-  /* 当鼠标悬浮时，移除纹理滤镜，让颜色变得清晰，
-    同时描边变色加粗，并略微上浮和放大，提供清晰的视觉反馈
-  */
-  filter: none;
-  stroke: var(--accent-color);
+  fill: #e6c58c; /* 使用一个更明亮的颜色来高亮 */
   stroke-width: 1.5;
-  transform: translateY(-2px) scale(1.01);
-  /* 使用一个更明亮的颜色来高亮，而不是原来的固定色 */
-  fill: #f0d8a8;
+  transform: translateY(-1px) scale(1.005);
 }
 /* =================================================================== */
 

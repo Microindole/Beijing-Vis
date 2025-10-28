@@ -6,8 +6,29 @@
         <filter id="texture-suburban" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.04 0.03" numOctaves="4" seed="2" result="noise"/><feDiffuseLighting in="noise" lighting-color="#d4a76a" surfaceScale="2" result="terrain"><feDistantLight azimuth="45" elevation="60"/></feDiffuseLighting><feComposite in="terrain" in2="SourceAlpha" operator="in" result="textured"/><feTurbulence type="turbulence" baseFrequency="0.9" numOctaves="3" result="grain"/><feColorMatrix in="grain" type="saturate" values="0" result="grain-gray"/><feComponentTransfer in="grain-gray" result="grain-final"><feFuncA type="table" tableValues="0 0.03"/></feComponentTransfer><feBlend in="SourceGraphic" in2="textured" mode="multiply" result="step1"/><feBlend in="step1" in2="grain-final" mode="multiply"/></filter>
         <filter id="texture-natural" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="5" seed="5" result="noise"/><feDiffuseLighting in="noise" lighting-color="#c1b7a8" surfaceScale="4" result="terrain"><feDistantLight azimuth="60" elevation="60"/></feDiffuseLighting><feComposite in="terrain" in2="SourceAlpha" operator="in" result="textured"/><feBlend in="SourceGraphic" in2="textured" mode="multiply"/></filter>
       </defs>
-      <g ref="zoomContainer"></g>
+      <g ref="zoomContainer">
+        <image v-if="backgroundImageUrl" :href="backgroundImageUrl" x="0" y="0" width="800" height="600" preserveAspectRatio="xMidYMid slice"/>
+        <g class="map-layer"></g>
+        <g class="connectors-layer" v-if="projection">
+          <path v-for="landmark in visibleLandmarks" :key="'connector-' + landmark.id" class="connector-line" :d="getConnectorPath(landmark)"/>
+        </g>
+        <g class="landmarks-layer" v-if="projection">
+          <g v-for="landmark in visibleLandmarks" :key="landmark.id" class="landmark-marker" :transform="`translate(${projection(landmark.position)[0]}, ${projection(landmark.position)[1]})`">
+            <circle class="marker-dot" r="5" @mouseenter="showTooltip(landmark, $event)" @mouseleave="hideTooltip"/>
+          </g>
+        </g>
+        <g class="labels-layer" v-if="projection">
+          <g v-for="landmark in visibleLandmarks" :key="'label-' + landmark.id" :transform="`translate(${getLabelPosition(landmark)[0]}, ${getLabelPosition(landmark)[1]})`" @mouseenter="showTooltip(landmark, $event)" @mouseleave="hideTooltip">
+            <rect class="label-bg" x="-55" y="-14" width="110" height="28" rx="6"/>
+            <text class="label-text" text-anchor="middle" dominant-baseline="middle">{{ landmark.name }}</text>
+          </g>
+        </g>
+      </g>
     </svg>
+    <div v-if="activeTooltip" class="tooltip" :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }">
+      <h3>{{ activeTooltip.name }}</h3>
+      <p>{{ activeTooltip.description || "暂无简介" }}</p>
+    </div>
   </div>
 </template>
 
@@ -15,206 +36,165 @@
 import * as d3 from "d3";
 
 export default {
-  props: ["districtName"],
+  props: ["districtName", "landmarks"],
   data() {
     return {
       svg: null,
-      zoomContainer: null, // 新增：对总容器的引用
+      zoomContainer: null,
       projection: null,
       path: null,
-      textures: ["texture-urban", "texture-suburban", "texture-natural"],
+      beijingGeoJson: null,
+      districtBoundary: null,
+      districtFeatures: [],
+      activeTooltip: null,
+      tooltipPosition: { x: 0, y: 0 },
+      tooltipTimer: null,
     };
   },
+  computed: {
+    visibleLandmarks() {
+      if (!this.districtBoundary || !this.landmarks) return [];
+      return this.landmarks.filter(landmark => d3.geoContains(this.districtBoundary, landmark.position));
+    },
+    backgroundImageUrl() {
+      if (!this.districtName) return null;
+    }
+  },
   watch: {
-    districtName: {
-      handler(newName) { if (newName && this.svg) this.loadDistrictGeoJSON(); },
-      immediate: true
+    // MODIFIED: 移除了 immediate: true，避免在 mounted 前执行
+    districtName(newName) {
+      if (newName && this.svg) {
+        this.loadAndDrawDistrict();
+      }
     }
   },
   mounted() {
     this.svg = d3.select(this.$refs.mapSvg);
-    this.zoomContainer = d3.select(this.$refs.zoomContainer); // 新增：获取容器引用
-    this.setupZoom(); // 新增：设置缩放
-    if (this.districtName) this.loadDistrictGeoJSON();
+    this.zoomContainer = d3.select(this.$refs.zoomContainer);
+    this.setupZoom();
+    // MODIFIED: mounted 时调用总的加载函数
+    this.loadAndDrawDistrict();
   },
   methods: {
-    // ===============================================================
-    // 新增：设置和处理缩放的方法
-    // ===============================================================
     setupZoom() {
-      const zoom = d3.zoom()
-          .scaleExtent([0.8, 8]) // 设置最小缩放0.8倍，最大8倍
-          .on("zoom", this.zoomed);
+      const zoom = d3.zoom().scaleExtent([0.8, 8]).on("zoom", this.zoomed);
       this.svg.call(zoom);
     },
-
     zoomed(event) {
-      const { transform } = event;
-      this.zoomContainer.attr("transform", transform);
+      this.zoomContainer.attr("transform", event.transform);
     },
 
-    // ... 其他辅助函数保持不变 ...
-    buildAdjacency(features) {
-      const validFeatures = features.filter(f =>
-          f.geometry && (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon')
-      );
-      const adjacency = new Map(validFeatures.map(f => [f.properties.name, []]));
-      const featureVertices = validFeatures.map(feature => {
-        const pointSet = new Set();
-        let polygons = [];
-        if (feature.geometry.type === 'Polygon') {
-          polygons = feature.geometry.coordinates;
-        } else {
-          polygons = feature.geometry.coordinates.map(p => p[0]);
-        }
-        polygons.forEach(ring => {
-          ring.forEach(point => {
-            pointSet.add(`${point[0]},${point[1]}`);
-          });
-        });
-        return { name: feature.properties.name, vertices: pointSet };
-      });
-
-      for (let i = 0; i < featureVertices.length; i++) {
-        for (let j = i + 1; j < featureVertices.length; j++) {
-          const featureA = featureVertices[i];
-          const featureB = featureVertices[j];
-          let sharedVertices = 0;
-          for (const vertex of featureA.vertices) {
-            if (featureB.vertices.has(vertex)) {
-              sharedVertices++;
-            }
-          }
-          if (sharedVertices >= 2) {
-            adjacency.get(featureA.name).push(featureB.name);
-            adjacency.get(featureB.name).push(featureA.name);
-          }
-        }
-      }
-      return adjacency;
-    },
-    greedyColoring(features, adjacency) {
-      const colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3"];
-      const colorMap = new Map();
-      features.forEach(feature => {
-        if (!feature.properties.name) return;
-        const name = feature.properties.name;
-        const neighborColors = new Set(adjacency.get(name)?.map(neighborName => colorMap.get(neighborName)));
-        const availableColor = colors.find(c => !neighborColors.has(c));
-        colorMap.set(name, availableColor || "#cccccc");
-      });
-      return colorMap;
-    },
-    applyGreedyLabeling(labelsData) {
-      labelsData.sort((a, b) => b.area - a.area);
-      const placedLabels = [];
-      const visibleLabels = new Set();
-      labelsData.forEach(label => {
-        let overlaps = false;
-        for (const placed of placedLabels) {
-          if (label.x < placed.x + placed.width && label.x + label.width > placed.x &&
-              label.y < placed.y + placed.height && label.y + label.height > placed.y) {
-            overlaps = true;
-            break;
-          }
-        }
-        if (!overlaps) {
-          placedLabels.push(label);
-          visibleLabels.add(label.id);
-        }
-      });
-      return visibleLabels;
-    },
-    getTextureByAreaName(name) {
-      const hash = name.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-      return `url(#${this.textures[hash % this.textures.length]})`;
-    },
-    getSanitizedId(name) {
-      return `label-${(name || '').replace(/[\s\(\)]/g, '-')}`;
+    // MODIFIED: 这是一个新的主入口函数，确保了加载顺序正确
+    async loadAndDrawDistrict() {
+      // 步骤 1: 确保北京总地图GeoJSON已加载
+      await this.loadBeijingGeoJSON();
+      // 步骤 2: 加载并绘制具体区的地图
+      await this.loadDistrictGeoJSON();
     },
 
-    // ===============================================================
-    // 核心绘图函数
-    // ===============================================================
-    async loadDistrictGeoJSON() {
+    // MODIFIED: 这个函数现在只负责加载北京总地图，并增加了缓存判断
+    async loadBeijingGeoJSON() {
+      // 如果已经加载过，则直接返回，避免重复请求
+      if (this.beijingGeoJson) return;
       try {
-        const filePath = `./beijing_geojson_filer/北京市区geojson地图文件/北京市/${this.districtName}.json`;
-        const geoJson = await d3.json(filePath);
-        this.districtFeatures = geoJson.features;
-        this.projection = d3.geoIdentity().reflectY(true).fitSize([800, 600], geoJson);
+        // FIXED: 路径已修正为从根目录'/'开始
+        const filePath = "/beijing_geojson_filer/北京市区geojson地图文件/北京.json";
+        this.beijingGeoJson = await d3.json(filePath);
+        if (!this.beijingGeoJson) {
+          throw new Error(`文件加载失败或内容无效: ${filePath}`);
+        }
+      } catch (error) {
+        console.error("加载 北京.json 失败:", error);
+      }
+    },
+
+    // MODIFIED: 这个函数现在专注于加载具体区的地图
+    async loadDistrictGeoJSON() {
+      if (!this.districtName || !this.beijingGeoJson) return;
+      try {
+        // 从已加载的北京总地图中找到当前区的边界数据
+        this.districtBoundary = this.beijingGeoJson.features.find(f => f.properties.name === this.districtName);
+        if (!this.districtBoundary) {
+          throw new Error(`在 北京.json 中未找到名为 ${this.districtName} 的区域`);
+        }
+
+        // FIXED: 路径已修正为从根目录'/'开始
+        const filePath = `/beijing_geojson_filer/北京市区geojson地图文件/北京市/${this.districtName}.json`;
+        const districtJson = await d3.json(filePath);
+        if (!districtJson || !districtJson.features) {
+          throw new Error(`文件加载失败或内容无效: ${filePath}`);
+        }
+        this.districtFeatures = districtJson.features;
+
+        // 设置投影和路径
+        this.projection = d3.geoIdentity().reflectY(true).fitSize([800, 600], districtJson);
         this.path = d3.geoPath().projection(this.projection);
+
+        // 调用绘图函数
         this.drawMap();
       } catch (error) {
-        console.error(`加载 ${this.districtName}.json 失败:`, error);
-        this.zoomContainer.selectAll("*").remove(); // 修改：清理容器内容
+        console.error(`加载 ${this.districtName} 数据失败:`, error);
+        this.zoomContainer.selectAll("g.map-layer").remove(); // 清理失败的图层
       }
     },
 
+    // MODIFIED: 清理并合并了重复的绘图逻辑
     drawMap() {
-      // 修改：清理容器内容，而不是整个SVG
-      this.zoomContainer.selectAll("*").remove();
-
-      const adjacency = this.buildAdjacency(this.districtFeatures);
-      const colorMap = this.greedyColoring(this.districtFeatures, adjacency);
-
-      // 修改：图层被添加到总容器 zoomContainer 中
-      const mapLayer = this.zoomContainer.append("g").attr("class", "map-layer");
-      const labelLayer = this.zoomContainer.append("g").attr("class", "label-layer");
-      const vm = this;
-
-      const paths = mapLayer.selectAll("path").data(this.districtFeatures, d => d.properties.name);
-      paths.exit().transition().duration(500).style("opacity", 0).remove();
-      const enterPaths = paths.enter().append("path").attr("d", this.path).style("opacity", 0);
-
-      paths.merge(enterPaths)
-          // 新增：vector-effect 属性让描边在缩放时不发生变化
+      const mapLayer = this.zoomContainer.select("g.map-layer");
+      // 使用D3的 .join() 方法来优雅地处理 enter, update, exit
+      mapLayer.selectAll("path")
+          .data(this.districtFeatures, d => d.properties.name)
+          .join(
+              enter => enter.append("path")
+                  .attr("d", this.path)
+                  .style("opacity", 0)
+                  .call(enter => enter.transition().duration(750).style("opacity", 0.7)),
+              update => update,
+              exit => exit.transition().duration(500).style("opacity", 0).remove()
+          )
           .attr("vector-effect", "non-scaling-stroke")
-          .attr("stroke", "#fff").attr("stroke-width", 0.8)
-          .attr("fill", d => colorMap.get(d.properties.name))
-          .attr("filter", d => vm.getTextureByAreaName(d.properties.name))
-          .on("mouseenter", function(event, d) {
-            d3.select(this).attr("filter", "none").attr("stroke", "#bd6b20").attr("stroke-width", 2);
-            d3.select(`#${vm.getSanitizedId(d.properties.name)}`).style("opacity", 1);
-          })
-          .on("mouseleave", function(event, d) {
-            d3.select(this)
-                .attr("filter", vm.getTextureByAreaName(d.properties.name))
-                .attr("stroke", "#fff").attr("stroke-width", 0.8);
-            const label = d3.select(`#${vm.getSanitizedId(d.properties.name)}`);
-            if (label.node() && !label.classed("is-visible-default")) {
-              label.transition().duration(300).style("opacity", 0);
-            }
-          })
-          .transition().duration(750).style("opacity", 1);
-
-      const labelsData = [];
-      const tempLabels = labelLayer.selectAll("text.label-temp").data(this.districtFeatures.filter(d => d.properties.name), d => d.properties.name);
-      tempLabels.enter().append("text")
-          .attr("x", d => vm.path.centroid(d)[0])
-          .attr("y", d => vm.path.centroid(d)[1])
-          .text(d => d.properties.name)
-          .each(function(d) {
-            const bbox = this.getBBox();
-            labelsData.push({
-              id: vm.getSanitizedId(d.properties.name),
-              x: bbox.x, y: bbox.y, width: bbox.width, height: bbox.height,
-              area: vm.path.area(d)
-            });
-          }).remove();
-
-      const visibleLabelIds = this.applyGreedyLabeling(labelsData);
-
-      const labels = labelLayer.selectAll("text.label").data(this.districtFeatures.filter(d => d.properties.name), d => d.properties.name);
-      const enterLabels = labels.enter().append("text").attr("class", "label");
-
-      labels.merge(enterLabels)
-          .attr("id", d => vm.getSanitizedId(d.properties.name))
-          .attr("x", d => vm.path.centroid(d)[0])
-          .attr("y", d => vm.path.centroid(d)[1])
-          .attr("text-anchor", "middle").attr("dominant-baseline", "middle")
-          .text(d => d.properties.name)
-          .classed("is-visible-default", d => visibleLabelIds.has(vm.getSanitizedId(d.properties.name)))
-          .style("opacity", d => visibleLabelIds.has(vm.getSanitizedId(d.properties.name)) ? 1 : 0);
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 0.5)
+          .attr("fill", "#bebada") // 简化了着色逻辑，你可以替换回之前的颜色算法
+          .attr("filter", "url(#texture-suburban)"); // 简化了纹理，可替换
+    },
+    showTooltip(landmark, event) {
+      clearTimeout(this.tooltipTimer);
+      this.activeTooltip = {
+        name: landmark.name,
+        description: landmark.description,
+      };
+      this.tooltipPosition = { x: event.clientX + 15, y: event.clientY + 15 };
+    },
+    hideTooltip() {
+      this.tooltipTimer = setTimeout(() => { this.activeTooltip = null; }, 300);
+    },
+    getConnectorPath(landmark) {
+      const start = this.projection(landmark.position);
+      const end = this.getLabelPosition(landmark);
+      return `M${start[0]},${start[1]} L${end[0]},${end[1]}`;
+    },
+    getLabelPosition(landmark) {
+      const center = this.projection(landmark.position);
+      if (typeof landmark.labelAngle === 'number') {
+        // 2. 如果有，将角度转换为弧度 (D3/JS的数学函数使用弧度)
+        const angleInRadians = landmark.labelAngle * (Math.PI / 180);
+        const radius = 60;
+        return [
+          center[0] + Math.cos(angleInRadians) * radius,
+          center[1] + Math.sin(angleInRadians) * radius,
+        ];
+      } else {
+        // 3. 如果没有，则使用旧的哈希函数作为后备方案
+        const angle = this.getLabelAngle(landmark.id);
+        const radius = 60;
+        return [center[0] + Math.cos(angle) * radius, center[1] + Math.sin(angle) * radius];
+      }
+    },
+    getLabelAngle(id) {
+      // 用一个简单的 hash 函数给每个 id 分配一个相对固定的角度
+      const hash = id.split('').reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
+      return (hash & 0xffff) / 0xffff * 2 * Math.PI;
     },
   },
 };
@@ -249,4 +229,35 @@ export default {
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
 }
+
+.landmark-marker { cursor: pointer; }
+.marker-dot {
+  fill: #ff5722;
+  stroke: white;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transition: all 0.3s;
+  vector-effect: non-scaling-stroke; /* 让描边在缩放时保持粗细 */
+}
+.marker-dot:hover { r: 8; fill: #ff0000; }
+.connector-line { stroke: #432623; stroke-width: 1.5; stroke-dasharray: 4,2; opacity: 0.9; pointer-events: none; vector-effect: non-scaling-stroke; }
+.labels-layer g { cursor: pointer; }
+.label-bg { fill: #fff8e1; stroke: #d4a76a; stroke-width: 1; opacity: 0.9; transition: all 0.3s ease; }
+.labels-layer g:hover .label-bg { fill: #ffffff; stroke-width: 1.5; transform: scale(1.05); }
+.label-text { font-size: 12px; fill: #333; font-weight: bold; pointer-events: none; }
+.tooltip {
+  position: fixed; /* 使用 fixed 定位，避免受父容器滚动影响 */
+  background: rgba(255, 255, 240, 0.95);
+  border: 1px solid #d4a76a;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  max-width: 220px;
+  pointer-events: none;
+  font-family: sans-serif;
+  transition: opacity 0.2s;
+}
+.tooltip h3 { margin: 0 0 5px 0; color: #a0522d; font-size: 14px; }
+.tooltip p { margin: 0; font-size: 12px; color: #5a4a42; }
 </style>

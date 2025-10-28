@@ -64,8 +64,7 @@
           <DistrictMap
               v-if="currentView === 'map' && currentLevel === 'district'"
               :districtName="selectedDistrict"
-              :mapData="mapData"
-              :colorScaleConfig="colorScaleConfig"
+              :landmarks="mapLandmarks"
           />
           <LandmarkRelationsViz v-if="currentView === 'relations'"/>
         </div>
@@ -80,6 +79,7 @@ import DistrictMap from "../components/DistrictMap.vue";
 import LandmarkRelationsViz from "./LandmarkRelationsViz.vue";
 import LandmarkCarousel from "./LandmarkCarousel.vue";
 import {landmarks} from "@/data/homeViewData.js";
+import { mapLandmarks } from "@/data/mapLandmarkData.js";
 
 export default {
   components: {
@@ -96,6 +96,7 @@ export default {
       selectedDistrict: "",
       mapData: [],
       landmarks: landmarks,
+      mapLandmarks: mapLandmarks,
       colorScaleConfig: {
         range: ["#f8e5b5", "#bd6b20"],
         domain: [0, 100],
