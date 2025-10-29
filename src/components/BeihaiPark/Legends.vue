@@ -1,6 +1,5 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回北海公园门户</button>
     
     <!-- 页面标题 -->
     <div class="legends-header">
@@ -58,7 +57,6 @@ body {
 }
 
 .legends-container {
-  min-height: 100vh;
   background: linear-gradient(135deg, #eaf3ec 0%, #d1e3d6 100%);
   padding: 2rem;
   position: relative;

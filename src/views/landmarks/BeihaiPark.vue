@@ -1,6 +1,5 @@
 <template>
   <div class="landmark-portal-container">
-    <!-- 优化后的头部区域 -->
     <header class="landmark-header">
       <button @click="goBack" class="back-button">
         <span class="back-icon">←</span>
@@ -39,17 +38,18 @@
       </div>
     </header>
 
-    <!-- 优化后的探索卡片区 -->
-    <section class="exploration-section" v-if="!activeChildRoute">
+    <section class="exploration-section">
       <div class="section-header">
         <h2 class="section-title">探索维度</h2>
         <p class="section-subtitle">从不同角度了解北海公园的千年历史</p>
       </div>
 
       <div class="cards-grid">
-        <router-link
+        <a
             class="exploration-card"
-            :to="{ name: 'BeihaiParkLifeCycle'}"
+            @click="smoothScrollTo('lifecycle')"
+            role="button"
+            tabindex="0"
             :style="{ animationDelay: '0.2s' }"
         >
           <div class="card-image-wrapper">
@@ -62,7 +62,6 @@
               <div class="card-number">01</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🏛️</span>
@@ -78,11 +77,13 @@
               </button>
             </div>
           </div>
-        </router-link>
+        </a>
 
-        <router-link
+        <a
             class="exploration-card"
-            :to="{ name: 'BeihaiParkInfluence'}"
+            @click="smoothScrollTo('influence')"
+            role="button"
+            tabindex="0"
             :style="{ animationDelay: '0.3s' }"
         >
           <div class="card-image-wrapper">
@@ -95,7 +96,6 @@
               <div class="card-number">02</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🌟</span>
@@ -111,11 +111,13 @@
               </button>
             </div>
           </div>
-        </router-link>
+        </a>
 
-        <router-link
+        <a
             class="exploration-card"
-            :to="{ name: 'BeihaiParkLegends' }"
+            @click="smoothScrollTo('legends')"
+            role="button"
+            tabindex="0"
             :style="{ animationDelay: '0.4s' }"
         >
           <div class="card-image-wrapper">
@@ -128,7 +130,6 @@
               <div class="card-number">03</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">📜</span>
@@ -144,62 +145,118 @@
               </button>
             </div>
           </div>
-        </router-link>
+        </a>
       </div>
     </section>
 
-    <!-- 子路由渲染区 -->
-    <router-view />
+    <div class="integrated-content">
+      <section id="lifecycle">
+        <LifeCycle />
+      </section>
+      <section id="influence">
+        <Influence />
+      </section>
+      <section id="legends">
+        <Legends />
+      </section>
+    </div>
 
     <AppFooter />
+    <transition name="fade">
+      <button
+          v-if="showBackToTopButton"
+          @click="scrollToTop"
+          class="back-to-top-btn"
+          aria-label="返回顶部"
+      >
+        ↑
+      </button>
+    </transition>
   </div>
 </template>
 
-<script>
+<script setup>
+import { useRouter } from 'vue-router';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import AppFooter from '@/components/AppFooter.vue';
+import LifeCycle from '@/components/BeihaiPark/LifeCycle.vue';
+import Influence from '@/components/BeihaiPark/Influence.vue';
+import Legends from '@/components/BeihaiPark/Legends.vue';
 
-export default {
-  name: "BeihaiPark",
-  components: { AppFooter },
-  props: {
-    landmarkId: {
-      type: String,
-      required: false,
-    },
-  },
-  data() {
-    return {
-      landmark: {
-        name: "北海公园",
-        summary: "中国现存最古老、保存最完整的皇家园林之一，承载千年历史的湖光山色。",
-        image: "https://images.pexels.com/photos/7943027/pexels-photo-7943027.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        metrics: [
-          { icon: "📅", value: "辽代", label: "始建时期" },
-          { icon: "🏞️", value: "69公顷", label: "园区面积" },
-          { icon: "⛩️", value: "白塔", label: "地标建筑" },
-          { icon: "🚶", value: "百万+", label: "年游客量" },
-        ],
-      },
-    };
-  },
-  computed: {
-    activeChildRoute() {
-      return (
-          this.$route.name === "BeihaiParkLifeCycle" ||
-          this.$route.name === "BeihaiParkInfluence" ||
-          this.$route.name === "BeihaiParkLegends"
-      );
-    },
-  },
-  methods: {
-    goBack() {
-      this.$router.push("/");
-    },
-  },
+const router = useRouter();
+
+// 页面数据
+const landmark = ref({
+  name: "北海公园",
+  summary: "中国现存最古老、保存最完整的皇家园林之一，承载千年历史的湖光山色。",
+  image: "https://images.pexels.com/photos/7943027/pexels-photo-7943027.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  metrics: [
+    { icon: "📅", value: "辽代", label: "始建时期" },
+    { icon: "🏞️", value: "69公顷", label: "园区面积" },
+    { icon: "⛩️", value: "白塔", label: "地标建筑" },
+    { icon: "🚶", value: "百万+", label: "年游客量" },
+  ],
+});
+
+// 返回主地图页
+const goBack = () => {
+  router.push("/");
 };
+const smoothScrollTo = (id) => {
+  // 根据传入的id查找对应的section元素
+  const element = document.getElementById(id);
+
+  // 如果元素存在
+  if (element) {
+    // 使用 scrollIntoView 方法，并传入 behavior: 'smooth' 实现平滑滚动
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start' // 滚动结束后，元素的顶部将与视口的顶部对齐
+    });
+  }
+};
+
+const showBackToTopButton = ref(false);
+
+// 定义滚动事件的处理函数
+const handleScroll = () => {
+  // 当页面垂直滚动距离大于300像素时，显示按钮，否则隐藏
+  if (window.scrollY > 300) {
+    showBackToTopButton.value = true;
+  } else {
+    showBackToTopButton.value = false;
+  }
+};
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth', // 使用平滑滚动效果
+  });
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
+/* 启用平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 为整合进来的内容区域添加一些样式 */
+.integrated-content section {
+  padding-top: 5rem; /* 提供一些顶部内边距，防止标题被顶部导航栏遮挡 */
+  margin-top: -3rem; /* 负外边距抵消部分内边距，让滚动定位更精确 */
+}
+
+
 /* ========== 全局样式 ========== */
 * {
   box-sizing: border-box;
@@ -220,7 +277,7 @@ export default {
 .landmark-header {
   position: relative;
   width: 100%;
-  height: 75vh;
+  max-height: 600px;
   min-height: 600px;
   display: flex;
   align-items: flex-end;
@@ -747,5 +804,103 @@ export default {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+@media (min-width: 3500px) {
+
+  /* 1. 设置 Flexbox 容器 */
+  .integrated-content {
+    display: flex;
+    align-items: flex-start; /* 保持顶部对齐 */
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  /* 2. 关键：为每个部分（section）设置等宽、固定高度和滚动条 */
+  .integrated-content > section {
+    flex: 1; /* 让三列平分宽度 */
+
+    /* 核心：设置一个统一的、看起来舒适的高度。
+       75vh 表示视窗高度的75%。您可以根据喜好调整这个值 (比如 80vh 或 650px)。
+       这将成为所有列的统一高度。
+    */
+    height: 75vh;
+
+    /* 核心：当内部内容超出上面设定的 75vh 高度时，自动显示垂直滚动条 */
+    overflow-y: auto;
+
+    /* 其他样式重置 */
+    padding-top: 0;
+    margin-top: 0;
+
+    /* (可选) 美化滚动条样式 */
+    scrollbar-width: thin;
+    scrollbar-color: #b3cbb9 #f6fbf7;
+  }
+
+  .integrated-content > section::-webkit-scrollbar {
+    width: 8px;
+  }
+  .integrated-content > section::-webkit-scrollbar-track {
+    background: #f6fbf7;
+    border-radius: 4px;
+  }
+  .integrated-content > section::-webkit-scrollbar-thumb {
+    background-color: #b3cbb9;
+    border-radius: 4px;
+    border: 2px solid #f6fbf7;
+  }
+
+  /* 3. 强制覆盖子组件的高度限制，使其能被新容器约束 */
+  .integrated-content:deep(.lifecycle-container),
+  .integrated-content:deep(.influence-container),
+  .integrated-content:deep(.legends-container) {
+    /* 移除子组件自身的最小高度，让它们完全受父级 section 的高度控制 */
+    min-height: auto;
+  }
+}
+.back-to-top-btn {
+  position: fixed; /* 固定定位，不随页面滚动 */
+  bottom: 2rem;    /* 距离视窗底部2rem */
+  right: 2rem;     /* 距离视窗右侧2rem */
+  z-index: 1000;   /* 确保在最上层 */
+
+  width: 50px;       /* 宽度 */
+  height: 50px;      /* 高度 */
+  border-radius: 50%;/* 变成圆形 */
+
+  background-color: rgba(44, 82, 130, 0.85); /* 半透明背景色 */
+  backdrop-filter: blur(5px); /* 毛玻璃效果 */
+  color: #fff;       /* 箭头颜色 */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* 细边框 */
+
+  font-size: 1.5rem; /* 箭头大小 */
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer; /* 鼠标悬浮时显示小手图标 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 添加阴影 */
+
+  transition: all 0.3s ease; /* 所有变化的过渡效果 */
+}
+
+.back-to-top-btn:hover {
+  background-color: #2c5282; /* 悬浮时背景色加深 */
+  transform: translateY(-5px) scale(1.05); /* 向上移动并轻微放大 */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Vue transition 过渡效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

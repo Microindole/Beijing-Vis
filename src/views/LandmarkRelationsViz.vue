@@ -52,6 +52,7 @@
 import * as echarts from "echarts";
 import {landmarks, relations} from "@/data/landmarkData.js";
 
+
 export default {
   name: "LandmarkRelationsViz",
   data() {
@@ -239,7 +240,7 @@ export default {
           type: "value",
           name: "年份",
           min: -800,
-          max: 2050,
+          max: 2025,
           axisLabel: {
             formatter: function (value) {
               return value < 0 ? `公元前${-value}` : `${value}年`;

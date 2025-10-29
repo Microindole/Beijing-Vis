@@ -887,7 +887,6 @@ onBeforeUnmount(() => {
   padding: 20px;
   color: #333;
   background: linear-gradient(135deg, #fcf8f3 0%, #f4e8d0 100%);
-  min-height: 100vh;
 }
 
 .header {

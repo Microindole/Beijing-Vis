@@ -1,7 +1,6 @@
 <template>
   <div class="influence-container">
     <!-- 返回按钮 -->
-    <button @click="goBack" class="back-button">← 返回北海公园门户</button>
 
     <!-- 页面标题 -->
     <div class="influence-header">
@@ -131,14 +130,6 @@
           <div class="impact-label">年度学术出版物</div>
         </div>
       </div>
-    </div>
-
-    <!-- 页脚 -->
-    <div class="influence-footer">
-      <p>
-        北海公园作为中国皇家园林的杰出代表，不仅展现了中华园林艺术的极致，更成为全人类共同的文化遗产。
-      </p>
-      <p>全国重点文物保护单位 · 北京市文物保护单位</p>
     </div>
   </div>
 </template>
@@ -560,7 +551,6 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   color: #333;
   line-height: 1.6;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
-  min-height: 100vh;
   padding: 20px;
   position: relative;
   overflow-x: hidden;
@@ -622,6 +612,8 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   display: flex;
   flex-direction: column;
   gap: 18px;
+  column-count: 2;
+  column-gap: 28px;
 }
 .section-title {
   margin-bottom: 8px;
@@ -651,6 +643,7 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* 边框颜色调整 */
   border: 1px solid rgba(100, 149, 237, 0.2);
+  break-inside: avoid;
 }
 .philosophy-item:last-child {
   margin-bottom: 0;

@@ -5,7 +5,6 @@
       <h1>北海公园建筑与功能演变</h1>
       <p class="intro-text">从金代肇建到现代遗产保护的千年皇家园林变迁</p>
       <!-- 返回按钮 -->
-      <button @click="goBack" class="back-button">← 返回北海公园门户</button>
       <!-- 状态概览卡片 -->
       <div class="status-overview">
         <div class="status-card">
@@ -135,11 +134,6 @@
       </div>
     </div>
 
-    <footer class="lifecycle-footer">
-      <p>
-        © {{ new Date().getFullYear() }} 北海公园数字文化遗产中心
-      </p>
-    </footer>
   </div>
 </template>
 
@@ -400,7 +394,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;
