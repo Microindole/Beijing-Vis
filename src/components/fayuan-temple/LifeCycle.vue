@@ -134,12 +134,6 @@
         </div>
       </div>
     </div>
-
-    <footer class="lifecycle-footer">
-      <p>
-        © {{ new Date().getFullYear() }} 法源寺数字文化遗产中心
-      </p>
-    </footer>
   </div>
 </template>
 
