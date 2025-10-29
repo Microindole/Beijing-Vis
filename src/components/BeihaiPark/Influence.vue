@@ -548,9 +548,9 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 <style scoped>
 .influence-container {
   font-family: "Noto Serif SC", serif;
-  color: #333;
+ /* color: #333;*/
   line-height: 1.6;
-  background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
+  /*background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);*/
   padding: 20px;
   position: relative;
   overflow-x: hidden;

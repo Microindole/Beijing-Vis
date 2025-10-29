@@ -392,8 +392,8 @@ onMounted(() => {
 /* 基础容器样式 */
 .lifecycle-container {
   font-family: "Noto Serif SC", "SimSun", serif;
-  color: #5a4a42;
-  background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
+ /* color: #5a4a42;
+  background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);*/
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -403,7 +403,7 @@ onMounted(() => {
 .lifecycle-header {
   text-align: center;
   padding: 60px 20px 30px;
-  background: linear-gradient(to right, #b3cbb9, #4caf50);
+  background: linear-gradient(to right,  #a2b1bc, #4e96df);
   position: relative;
   box-shadow: 0 4px 12px rgba(101, 67, 33, 0.15);
   margin-bottom: 30px;
@@ -431,9 +431,9 @@ onMounted(() => {
   position: absolute;
   top: 20px;
   left: 20px;
-  background-color: rgba(76,175,80,0.8);
+  background-color: rgba(76, 145, 175, 0.8);
   color: #fff8e1;
-  border: 1px solid #388e3c;
+  border: 1px solid #38638e;
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
@@ -445,7 +445,7 @@ onMounted(() => {
 }
 
 .back-button:hover {
-  background-color: #388e3c;
+  background-color: #38508e;
   transform: translateX(-2px);
 }
 
@@ -518,7 +518,7 @@ onMounted(() => {
 }
 
 .timeline-point.active .timeline-year {
-  color: #388e3c;
+  color: #2881a7;
   font-weight: bold;
   transform: scale(1.1);
 }
@@ -527,20 +527,20 @@ onMounted(() => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: #b3cbb9;
+  background-color: #b3c4cb;
   margin-bottom: 8px;
   transition: all 0.3s ease;
 }
 
 .timeline-point.active .timeline-marker {
-  background-color: #388e3c;
+  background-color: #386a8e;
   transform: scale(1.3);
   box-shadow: 0 0 0 4px rgba(56, 142, 60, 0.18);
 }
 
 .timeline-year {
   font-size: 1rem;
-  color: #4caf50;
+  color: #4c89af;
   transition: all 0.3s ease;
   white-space: nowrap;
 }
@@ -575,7 +575,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(to right, #b3cbb9, #4caf50);
+  background: linear-gradient(to right, #b3cbb9, #4c98af);
   border-radius: 2px;
   z-index: 1;
 }
@@ -622,7 +622,7 @@ onMounted(() => {
 }
 
 .timeline-item.active .timeline-dot {
-  background-color: #388e3c;
+  background-color: #38678e;
   width: 22px;
   height: 22px;
   box-shadow: 0 0 0 6px rgba(56, 142, 60, 0.18);
@@ -631,7 +631,7 @@ onMounted(() => {
 .timeline-year {
   font-size: 1.1rem;
   font-weight: bold;
-  color: #388e3c;
+  color: #386d8e;
   margin-bottom: 5px;
 }
 
@@ -651,12 +651,12 @@ onMounted(() => {
 .history-info h2 {
   font-size: 28px;
   margin-bottom: 8px;
-  color: #388e3c;
+  color: #38878e;
 }
 
 .history-period {
   font-size: 16px;
-  color: #7cb342;
+  color: #42a6b3;
   margin-bottom: 12px;
 }
 
@@ -685,17 +685,17 @@ onMounted(() => {
 .metric-value {
   font-size: 18px;
   font-weight: bold;
-  color: #388e3c;
+  color: #387a8e;
 }
 
 .metric-label {
   font-size: 14px;
-  color: #7cb342;
+  color: #4299b3;
 }
 
 .architectural-features h3 {
   margin-bottom: 8px;
-  color: #388e3c;
+  color: #387a8e;
 }
 
 .architectural-features ul {
@@ -722,7 +722,7 @@ onMounted(() => {
 
 .network-section h3 {
   font-size: 20px;
-  color: #388e3c;
+  color: #387e8e;
   margin-bottom: 12px;
 }
 
@@ -743,7 +743,7 @@ onMounted(() => {
 }
 
 .visualization-card h3 {
-  color: #388e3c;
+  color: #38678e;
   font-size: 1.2em;
   margin-top: 0;
   margin-bottom: 20px;

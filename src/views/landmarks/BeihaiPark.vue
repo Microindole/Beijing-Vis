@@ -480,7 +480,7 @@ html {
 .exploration-section {
   position: relative;
   padding: 80px 40px 100px;
-  background: linear-gradient(to bottom, #e8f4f8 0%, #d4e9f0 100%);
+  background: linear-gradient(to bottom, #e8eff8 0%, #d4dff0 100%);
   margin-top: -40px;
   z-index: 4;
 }
@@ -835,7 +835,7 @@ html {
 
     /* (可选) 美化滚动条样式 */
     scrollbar-width: thin;
-    scrollbar-color: #b3cbb9 #f6fbf7;
+    scrollbar-color: #b3c0cb #f6fbf7;
   }
 
   .integrated-content > section::-webkit-scrollbar {

@@ -27,10 +27,10 @@ const goBack = () => router.push("/landmarks/beihai-park");
 
 <style scoped>
 :root {
-  --primary-color: #3a6c4f;
+  --primary-color: #3a656c;
   --secondary-color: #b3cbb9;
-  --accent-color: #5e8c6a;
-  --text-dark: #2d3a2e;
+  --accent-color: #5e8c8c;
+  --text-dark: #2d3a3a;
   --text-medium: #4e5d4a;
   --text-light: #7a8c7a;
   --bg-light: #eaf3ec;
@@ -57,7 +57,7 @@ body {
 }
 
 .legends-container {
-  background: linear-gradient(135deg, #eaf3ec 0%, #d1e3d6 100%);
+ /* background: linear-gradient(135deg, #eaf3ec 0%, #d1e3d6 100%);*/
   padding: 2rem;
   position: relative;
   font-family: "Noto Serif SC", serif;
@@ -68,9 +68,9 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  background-color: rgba(58, 108, 79, 0.85);
+  background-color: rgba(58, 101, 108, 0.85);
   color: #f6fbf7;
-  border: 1px solid #3a6c4f;
+  border: 1px solid #226e65;
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
@@ -82,7 +82,7 @@ body {
 }
 
 .back-button:hover {
-  background-color: rgba(94, 140, 106, 0.95);
+  background-color: rgba(94, 119, 140, 0.95);
   transform: translateX(-2px);
 }
 
@@ -95,7 +95,7 @@ body {
 
 .legends-header h1 {
   font-size: 2.8rem;
-  color: #3a6c4f;
+  color: #3a5d6c;
   margin-bottom: 1rem;
   font-weight: bold;
   letter-spacing: 0.1em;
