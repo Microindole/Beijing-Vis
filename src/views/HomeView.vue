@@ -101,7 +101,7 @@ export default {
         range: ["#f8e5b5", "#bd6b20"],
         domain: [0, 100],
       },
-      currentView: "map",
+      currentView: "relations",
       activeLandmarkId: null,
 
       // 1. 新增用于打字机效果的状态
