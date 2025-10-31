@@ -5,7 +5,6 @@
       <h1>故宫建筑群演变与修缮历程</h1>
       <p class="intro-text">从永乐肇建到世界文化遗产的六百年紫禁传奇</p>
       <!-- 返回按钮 -->
-      <button @click="goBack" class="back-button">← 返回故宫门户</button>
       <!-- 新增状态概览卡片 -->
       <div class="status-overview">
         <div class="status-card">
@@ -158,8 +157,6 @@ const router = useRouter();
 
 const forbiddenCity = ref(forbiddenCityData);
 
-// 返回门户主页
-const goBack = () => router.push("/landmarks/forbidden-city");
 
 // 时间轴数据 - 重点强化建筑演变内容
 const timelineData = ref([
@@ -646,7 +643,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

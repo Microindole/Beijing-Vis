@@ -1,6 +1,5 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回故宫门户</button>
     <GugongCharacterHub></GugongCharacterHub>
     <palaceSayings></palaceSayings>
     <GugongStories></GugongStories>
@@ -18,7 +17,6 @@ import GugongStories from "./Stories.vue"
 const router = useRouter();
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/forbidden-city");
 
 // 传奇事件数据
 const legendsData = ref([
@@ -330,7 +328,6 @@ onMounted(() => {
 }
 
 .legends-container {
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   padding: 2rem;
   position: relative;

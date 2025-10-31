@@ -4,7 +4,7 @@ export default [
     name: "ming-tombs",
     component: () => import("@/views/landmarks/MingTombs.vue"),
     meta: {
-      title: "故宫",
+      title: "明十三陵",
       icon: "icon-ming-tombs",
     },
     props: true,

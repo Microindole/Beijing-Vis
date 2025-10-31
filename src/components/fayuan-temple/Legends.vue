@@ -1,18 +1,15 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回法源寺门户</button>
-    
-    <!-- 页面标题 -->
     <div class="legends-header">
       <h1>法源寺千年传奇</h1>
       <p>从高僧圣迹到历史名人，感受古刹背后的千年风云</p>
     </div>
-    
+
     <CharacterHub></CharacterHub>
     <Sayings></Sayings>
     <TemStories></TemStories>
-    
-  </div>
+
+  </div>g
 </template>
 
 <script setup>
@@ -24,8 +21,6 @@ import TemStories from "./Stories.vue";
 
 const router = useRouter();
 
-// 返回门户主页
-const goBack = () => router.push("/landmarks/fayuan-temple");
 
 
 </script>
@@ -66,7 +61,6 @@ body {
   font-family: "Noto Serif SC", serif;
   color: var(--text-dark);
   line-height: 1.6;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #f0e6d1 0%, #e2d4b7 100%);
@@ -77,9 +71,9 @@ body {
 /* 导航区样式 */
 .dashboard-nav {
   background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--accent-color) 100%
+      135deg,
+      var(--primary-color) 0%,
+      var(--accent-color) 100%
   );
   color: white;
   padding: 1.5rem 2rem;

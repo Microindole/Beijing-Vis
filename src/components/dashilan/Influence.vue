@@ -1,9 +1,6 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <button class="back-button" @click="goBack">
-        <span class="icon">←</span> 返回大栅栏门户
-      </button>
       <h1 class="dashboard-title">大栅栏：京味市井的百年变迁与现代活力</h1>
       <p class="dashboard-subtitle">
         探索北京前门外的历史街区，感受传统商业与民俗文化的魅力
@@ -158,7 +155,6 @@ const tourismChart = ref(null); // 这个在新的模板中没有直接引用，
 const router = useRouter();
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/dashilan");
 
 // (如果你有 RadarChartBoard 组件，请确保它的数据源能被动态传入或在组件内部调整)
 // 例如，RadarChartBoard 组件内部的数据可以改为：
@@ -515,7 +511,6 @@ const currentLandmark = "大栅栏"; // 定义当前页面的景点名称
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;

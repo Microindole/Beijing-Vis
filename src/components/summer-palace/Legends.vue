@@ -1,6 +1,5 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回颐和园门户</button>
     <GugongCharacterHub></GugongCharacterHub>
     <palaceSayings></palaceSayings>
     <Stories></Stories>
@@ -330,7 +329,6 @@ onMounted(() => {
 }
 
 .legends-container {
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   padding: 2rem;
   position: relative;

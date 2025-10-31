@@ -1,9 +1,6 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <button class="back-button" @click="goBack">
-        <span class="icon">←</span> 返回明十三陵门户
-      </button>
       <h1 class="dashboard-title">明十三陵的深远影响力</h1>
       <p class="dashboard-subtitle">探究世界文化遗产的当代价值与中华文化传承</p>
     </div>
@@ -148,7 +145,6 @@ import RadarChartBoard from "../RadarChartBoard.vue";
 const router = useRouter();
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/ming-tombs");
 
 // ECharts图表引用
 const imperialPhilosophyChart = ref(null); // 对应HTML中的 cosmosChart
@@ -519,7 +515,6 @@ const currentLandmark = "明十三陵"; // 定义当前页面的景点名称
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;

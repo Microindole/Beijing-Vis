@@ -1,6 +1,5 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回大栅栏门户</button>
     <GugongCharacterHub></GugongCharacterHub>
     <palaceSayings></palaceSayings>
     <lanstories></lanstories>
@@ -18,7 +17,7 @@ import lanstories from "./Stories.vue"
 const router = useRouter();
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/dashilan");
+
 </script>
 
 <style scoped>
@@ -44,7 +43,6 @@ const goBack = () => router.push("/landmarks/dashilan");
 }
 
 .legends-container {
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   padding: 2rem;
   position: relative;

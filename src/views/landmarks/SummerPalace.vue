@@ -1,6 +1,5 @@
 <template>
   <div class="landmark-portal-container">
-    <!-- 优化后的头部区域 -->
     <header class="landmark-header">
       <button @click="goBack" class="back-button">
         <span class="back-icon">←</span>
@@ -39,30 +38,24 @@
       </div>
     </header>
 
-    <!-- 优化后的探索卡片区 -->
-    <section class="exploration-section" v-if="!activeChildRoute">
+    <section class="exploration-section">
       <div class="section-header">
         <h2 class="section-title">探索维度</h2>
         <p class="section-subtitle">从不同角度了解颐和园的历史与文化</p>
       </div>
 
       <div class="cards-grid">
-        <article
-            class="exploration-card"
-            @click="explore('lifeCycle')"
-            :style="{ animationDelay: '0.2s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('lifecycle')" role="button" tabindex="0" :style="{ animationDelay: '0.2s' }">
           <div class="card-image-wrapper">
             <img
                 src="https://5b0988e595225.cdn.sohucs.com/images/20190302/76301000101248c5b5b98902edd505af.jpeg"
-                alt="生命年轮预览"
+                alt="园林变迁预览"
                 class="card-image"
             />
             <div class="card-overlay">
               <div class="card-number">01</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🏛️</span>
@@ -78,13 +71,9 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('influence')"
-            :style="{ animationDelay: '0.3s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('influence')" role="button" tabindex="0" :style="{ animationDelay: '0.3s' }">
           <div class="card-image-wrapper">
             <img
                 src="https://th.bing.com/th/id/R.8f12a0feaa00223ec8b12150d8457f96?rik=w0LNbzIwxSPCmQ&riu=http%3a%2f%2fwww.br-cn.com%2fimage%2f2023-01-02%2fthumb%2f1059526375796510720.jpg&ehk=PDDMjLZpIGqmoj%2boTIDuzZoQ7O384zqlJ7MA%2fypr0%2fA%3d&risl=&pid=ImgRaw&r=0"
@@ -95,7 +84,6 @@
               <div class="card-number">02</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🌍</span>
@@ -111,13 +99,9 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('legends')"
-            :style="{ animationDelay: '0.4s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('legends')" role="button" tabindex="0" :style="{ animationDelay: '0.4s' }">
           <div class="card-image-wrapper">
             <img
                 src="https://th.bing.com/th/id/OIP.OhvCxPWxmKbmROhVOaefvQHaE6?w=279&h=185&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"
@@ -128,7 +112,6 @@
               <div class="card-number">03</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">📖</span>
@@ -144,78 +127,84 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
       </div>
     </section>
 
-    <!-- 子组件渲染区 -->
-    <router-view v-if="activeChildRoute" :landmark="landmark" />
+    <div class="integrated-content">
+      <section id="lifecycle"><LifeCycle /></section>
+      <section id="influence"><Influence /></section>
+      <section id="legends"><Legends /></section>
+    </div>
 
     <AppFooter />
+
+    <transition name="fade">
+      <button v-if="showBackToTopButton" @click="scrollToTop" class="back-to-top-btn" aria-label="返回顶部">↑</button>
+    </transition>
   </div>
 </template>
 
-<script>
-import AppFooter from "@/components/AppFooter.vue";
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
+import AppFooter from '@/components/AppFooter.vue';
+import LifeCycle from '@/components/summer-palace/LifeCycle.vue';
+import Influence from '@/components/summer-palace/Influence.vue';
+import Legends from '@/components/summer-palace/Legends.vue';
 
-export default {
-  name: "SummerPalacePortal",
-  components: { AppFooter },
-  props: {
-    landmarkId: {
-      type: String,
-      required: false,
-      default: "summer-palace",
-    },
-  },
-  data() {
-    return {
-      landmark: {
-        name: "颐和园",
-        summary: "中国现存规模最大、保存最完整的皇家行宫御苑，被誉为'皇家园林博物馆'。",
-        image: "https://image.arrivalguides.com/x/05/9b69ea7184c4dc9e31b123f924aa265a.jpg",
-        metrics: [
-          { icon: "📅", value: "1750年", label: "始建时间" },
-          { icon: "🌊", value: "2.9km²", label: "水域占比70%" },
-          { icon: "🏯", value: "长廊", label: "世界之最" },
-          { icon: "👑", value: "慈禧", label: "重建主持" },
-        ],
-      },
-    };
-  },
-  computed: {
-    activeChildRoute() {
-      return this.$route.matched.length > 1;
-    },
-  },
-  methods: {
-    goBack() {
-      this.$router.push("/");
-    },
-    explore(direction) {
-      if (direction === "lifeCycle") {
-        this.$router.push({
-          name: "SummerPalaceLifeCycle",
-          params: { landmarkId: this.landmarkId },
-        });
-      } else if (direction === "influence") {
-        this.$router.push({
-          name: "SummerPalaceInfluence",
-          params: { landmarkId: this.landmarkId },
-        });
-      } else if (direction === "legends") {
-        this.$router.push({
-          name: "SummerPalaceLegends",
-          params: { landmarkId: this.landmarkId },
-        });
-      }
-    },
-  },
+const router = useRouter();
+
+const landmark = ref({
+  name: "颐和园",
+  summary: "中国现存规模最大、保存最完整的皇家行宫御苑，被誉为'皇家园林博物馆'。",
+  image: "https://image.arrivalguides.com/x/05/9b69ea7184c4dc9e31b123f924aa265a.jpg",
+  metrics: [
+    { icon: "📅", value: "1750年", label: "始建时间" },
+    { icon: "🌊", value: "2.9km²", label: "水域占比70%" },
+    { icon: "🏯", value: "长廊", label: "世界之最" },
+    { icon: "👑", value: "慈禧", label: "重建主持" },
+  ],
+});
+
+const goBack = () => {
+  router.push("/");
 };
+
+const smoothScrollTo = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
+// 返回顶部按钮逻辑
+const showBackToTopButton = ref(false);
+const handleScroll = () => {
+  showBackToTopButton.value = window.scrollY > 300;
+};
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
 /* ========== 全局样式 ========== */
+html {
+  scroll-behavior: smooth;
+}
+.integrated-content section {
+  padding-top: 5rem;
+  margin-top: -3rem;
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -750,4 +739,61 @@ export default {
     transition-duration: 0.01ms !important;
   }
 }
+.landmark-header {
+  max-height: 700px;
+}
+
+/* 2. 宽屏/缩放 水平滚动布局 */
+@media (min-width: 3200px) {
+  .integrated-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+  }
+  .integrated-content > section {
+    flex: 1;
+    height: 75vh;
+    overflow-y: auto;
+    padding-top: 0;
+    margin-top: 0;
+    border: 1px solid #d9cfc0;
+    border-radius: 16px;
+    background: #f8f5f0;
+    scrollbar-width: thin;
+    scrollbar-color: #5fb3b3 #f8f5f0;
+  }
+  .integrated-content > section::-webkit-scrollbar { width: 8px; }
+  .integrated-content > section::-webkit-scrollbar-track { background: #f8f5f0; border-radius: 4px; }
+  .integrated-content > section::-webkit-scrollbar-thumb { background-color: #5fb3b3; border-radius: 4px; border: 2px solid #f8f5f0; }
+
+  .integrated-content:deep(.lifecycle-container),
+  .integrated-content:deep(.dashboard-container),
+  .integrated-content:deep(.legends-container) {
+    min-height: auto;
+  }
+  .integrated-content:deep(.main-visualization) {
+    flex-direction: column;
+  }
+}
+
+/* 3. 返回顶部按钮样式 */
+.back-to-top-btn {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+  width: 50px; height: 50px; border-radius: 50%;
+  background-color: rgba(45, 125, 125, 0.85); /* 颐和园主题色 */
+  backdrop-filter: blur(5px); color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 1.5rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.back-to-top-btn:hover {
+  background-color: #2e7d7d;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

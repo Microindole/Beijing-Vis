@@ -3,7 +3,6 @@
     <div class="lifecycle-header">
       <h1>大栅栏商业街区发展历程</h1>
       <p class="intro-text">从明清市集到京城繁华地标的数百年变迁</p>
-      <button @click="goBack" class="back-button">← 返回大栅栏门户</button>
       <div class="status-overview">
         <div class="status-card">
           <span class="status-icon">🛍️</span>
@@ -145,7 +144,7 @@ const router = useRouter();
 const forbiddenCity = ref(forbiddenCityData);
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/dashilan");
+
 
 // 时间轴数据 - 重点强化建筑演变内容
 const timelineData = ref([
@@ -790,7 +789,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

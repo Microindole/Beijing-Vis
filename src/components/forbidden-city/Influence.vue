@@ -1,9 +1,6 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <button class="back-button" @click="goBack">
-        <span class="icon">←</span> 返回故宫门户
-      </button>
       <h1 class="dashboard-title">故宫建筑的帝王秩序与世界影响</h1>
       <p class="dashboard-subtitle">
         解读古代建筑中的权力象征及其全球文化遗产价值
@@ -144,8 +141,6 @@ import RadarChartBoard from "../RadarChartBoard.vue";
 
 const router = useRouter();
 
-// 返回门户主页
-const goBack = () => router.push("/landmarks/forbidden-city");
 
 // ECharts图表引用
 const cosmosChart = ref(null); // Renamed to imperialOrderChart for clarity, but keeping original for direct replacement.
@@ -446,7 +441,6 @@ const currentLandmark = "故宫"; // 定义当前页面的景点名称
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;

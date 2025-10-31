@@ -5,7 +5,7 @@
       <h1>颐和园历史沿革与园林精粹</h1>
       <p class="intro-text">从清漪园到世界文化遗产的皇家园林传奇</p>
       <!-- 返回按钮 -->
-      <button @click="goBack" class="back-button">← 返回颐和园门户</button>
+
       <!-- 新增状态概览卡片 -->
       <div class="status-overview">
         <div class="status-card">
@@ -643,7 +643,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

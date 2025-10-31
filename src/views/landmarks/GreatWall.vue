@@ -1,6 +1,5 @@
 <template>
   <div class="landmark-portal-container">
-    <!-- 优化后的头部区域 -->
     <header class="landmark-header">
       <button @click="goBack" class="back-button">
         <span class="back-icon">←</span>
@@ -39,19 +38,14 @@
       </div>
     </header>
 
-    <!-- 优化后的探索卡片区 -->
-    <section class="exploration-section" v-if="!isChildRoute">
+    <section class="exploration-section">
       <div class="section-header">
         <h2 class="section-title">探索维度</h2>
         <p class="section-subtitle">从不同角度了解长城的历史与文化</p>
       </div>
 
       <div class="cards-grid">
-        <article
-            class="exploration-card"
-            @click="explore('lifeCycle')"
-            :style="{ animationDelay: '0.2s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('lifecycle')" role="button" tabindex="0" :style="{ animationDelay: '0.2s' }">
           <div class="card-image-wrapper">
             <img
                 src="https://tse4-mm.cn.bing.net/th/id/OIP-C.o0MAiIuCUJvJPNk6loFDKQHaEK?rs=1&pid=ImgDetMain"
@@ -62,7 +56,6 @@
               <div class="card-number">01</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🏛️</span>
@@ -78,13 +71,9 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('influence')"
-            :style="{ animationDelay: '0.3s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('influence')" role="button" tabindex="0" :style="{ animationDelay: '0.3s' }">
           <div class="card-image-wrapper">
             <img
                 src="https://bpic.588ku.com/back_origin_min_pic/19/10/22/65998c0d051b3341dbb4f18d37ed8bca.jpg"
@@ -95,7 +84,6 @@
               <div class="card-number">02</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🌏</span>
@@ -111,13 +99,9 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('legends')"
-            :style="{ animationDelay: '0.4s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('legends')" role="button" tabindex="0" :style="{ animationDelay: '0.4s' }">
           <div class="card-image-wrapper">
             <img
                 src="https://tse2-mm.cn.bing.net/th/id/OIP-C.TBSlVniBe9Nh-P5ltfNjQwHaF9?w=1024&h=825&rs=1&pid=ImgDetMain"
@@ -128,7 +112,6 @@
               <div class="card-number">03</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">📖</span>
@@ -144,28 +127,35 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
       </div>
     </section>
 
-    <!-- 子组件渲染区 -->
-    <router-view />
+    <div class="integrated-content">
+      <section id="lifecycle"><LifeCycle /></section>
+      <section id="influence"><Influence /></section>
+      <section id="legends"><Legends /></section>
+    </div>
 
     <AppFooter />
+
+    <transition name="fade">
+      <button v-if="showBackToTopButton" @click="scrollToTop" class="back-to-top-btn" aria-label="返回顶部">↑</button>
+    </transition>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import AppFooter from '@/components/AppFooter.vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
+import AppFooter from '@/components/AppFooter.vue';
+import LifeCycle from '@/components/GreatWall/LifeCycle.vue';
+import Influence from '@/components/GreatWall/Influence.vue';
+import Legends from '@/components/GreatWall/Legends.vue';
 
-const route = useRoute()
-const router = useRouter()
+const router = useRouter();
 
-const isChildRoute = computed(() => route.name !== 'great-wall')
-
-const landmark = {
+const landmark = ref({
   name: "长城",
   summary: "世界最长的古代防御工程，中华民族的重要象征，1987年被列入世界文化遗产名录。",
   image: "https://x0.ifengimg.com/ucms/2021_12/9D96B9B87AEAED9CB42CED7849A4F6CA71591D16_size119_w1024_h643.jpg",
@@ -175,24 +165,45 @@ const landmark = {
     { icon: "🏯", value: "八达岭等", label: "著名段落" },
     { icon: "🌍", value: "百万+", label: "游客量" },
   ],
-}
+});
 
-function goBack() {
-  router.push("/")
-}
+const goBack = () => {
+  router.push("/");
+};
 
-function explore(direction) {
-  if (direction === "lifeCycle") {
-    router.push({ name: "GreatWallLifeCycle" })
-  } else if (direction === "influence") {
-    router.push({ name: "GreatWallInfluence" })
-  } else if (direction === "legends") {
-    router.push({ name: "GreatWallLegends" })
+const smoothScrollTo = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-}
+};
+
+// 返回顶部按钮逻辑
+const showBackToTopButton = ref(false);
+const handleScroll = () => {
+  showBackToTopButton.value = window.scrollY > 300;
+};
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
+html {
+  scroll-behavior: smooth;
+}
+.integrated-content section {
+  padding-top: 5rem;
+  margin-top: -3rem;
+}
 /* ========== 全局样式 ========== */
 * {
   box-sizing: border-box;
@@ -728,4 +739,61 @@ function explore(direction) {
     transition-duration: 0.01ms !important;
   }
 }
+.landmark-header {
+  max-height: 700px;
+}
+
+/* 2. 宽屏/缩放 水平滚动布局 */
+@media (min-width: 3500px) {
+  .integrated-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+  }
+  .integrated-content > section {
+    flex: 1;
+    height: 75vh;
+    overflow-y: auto;
+    padding-top: 0;
+    margin-top: 0;
+    border: 1px solid #e0d5c7;
+    border-radius: 16px;
+    background: #f8f5f0;
+    scrollbar-width: thin;
+    scrollbar-color: #d4a76a #f8f5f0;
+  }
+  .integrated-content > section::-webkit-scrollbar { width: 8px; }
+  .integrated-content > section::-webkit-scrollbar-track { background: #f8f5f0; border-radius: 4px; }
+  .integrated-content > section::-webkit-scrollbar-thumb { background-color: #d4a76a; border-radius: 4px; border: 2px solid #f8f5f0; }
+
+  .integrated-content:deep(.lifecycle-container),
+  .integrated-content:deep(.influence-container),
+  .integrated-content:deep(.legends-container) {
+    min-height: auto;
+  }
+  .integrated-content:deep(.main-columns) {
+    flex-direction: column;
+  }
+}
+
+/* 3. 返回顶部按钮样式 */
+.back-to-top-btn {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+  width: 50px; height: 50px; border-radius: 50%;
+  background-color: rgba(93, 64, 55, 0.85); /* 长城主题色 */
+  backdrop-filter: blur(5px); color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 1.5rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.back-to-top-btn:hover {
+  background-color: #5d4037;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

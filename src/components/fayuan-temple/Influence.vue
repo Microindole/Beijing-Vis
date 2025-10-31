@@ -1,9 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <button class="back-button" @click="goBack">
-        <span class="icon">←</span> 返回法源寺门户
-      </button>
+
       <h1 class="dashboard-title">法源寺的佛教文化地位与世界影响</h1>
       <p class="dashboard-subtitle">
         探索千年古刹的宗教价值及其全球文化遗产意义
@@ -143,6 +141,13 @@
         </div>
       </div>
     </div>
+
+    <div class="dashboard-footer">
+      <p>
+        法源寺作为汉传佛教的活态传承中心，不仅承载着千年佛教智慧，更成为促进世界宗教对话与和平的重要桥梁。
+      </p>
+      <p>中国重点文物保护单位 · 佛教重要活动场所</p>
+    </div>
   </div>
 </template>
 
@@ -154,8 +159,7 @@ import RadarChartBoard from "../RadarChartBoard.vue";
 
 const router = useRouter();
 
-// 返回门户主页
-const goBack = () => router.push("/landmarks/fayuan-temple");
+
 
 // ECharts图表引用
 const buddhismChart = ref(null);
@@ -454,7 +458,6 @@ onMounted(() => {
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;

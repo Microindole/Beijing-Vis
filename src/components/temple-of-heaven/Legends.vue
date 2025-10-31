@@ -1,7 +1,6 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回天坛门户</button>
-    
+
     <!-- 页面标题 -->
     <div class="legends-header">
       <h1>天坛六百年皇家秘事</h1>
@@ -24,7 +23,6 @@ import Stories from "./Stories.vue";
 const router = useRouter();
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/temple-of-heaven");
 
 
 </script>
@@ -65,7 +63,6 @@ body {
   font-family: "Noto Serif SC", serif;
   color: var(--text-dark);
   line-height: 1.6;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #f0e6d1 0%, #e2d4b7 100%);

@@ -5,7 +5,6 @@
       <h1>法源寺建筑与功能演变</h1>
       <p class="intro-text">从唐代创建到现代文化遗产保护的千年古刹变迁</p>
       <!-- 返回按钮 -->
-      <button @click="goBack" class="back-button">← 返回法源寺门户</button>
       <!-- 状态概览卡片 -->
       <div class="status-overview">
         <div class="status-card">
@@ -37,10 +36,10 @@
       <!-- 时间轴导航 -->
       <div class="timeline-nav">
         <div
-          v-for="(item, index) in timelineData"
-          :key="index"
-          :class="['timeline-point', { active: activeIndex === index }]"
-          @click="setActiveIndex(index)"
+            v-for="(item, index) in timelineData"
+            :key="index"
+            :class="['timeline-point', { active: activeIndex === index }]"
+            @click="setActiveIndex(index)"
         >
           <div class="timeline-marker"></div>
           <span class="timeline-year">{{ item.year }}</span>
@@ -53,10 +52,10 @@
           <div class="timeline">
             <div class="timeline-line"></div>
             <div
-              v-for="(item, index) in timelineData"
-              :key="index"
-              :class="['timeline-item', { active: activeIndex === index }]"
-              @click="handleClick(index, $event)"
+                v-for="(item, index) in timelineData"
+                :key="index"
+                :class="['timeline-item', { active: activeIndex === index }]"
+                @click="handleClick(index, $event)"
             >
               <div class="timeline-dot"></div>
               <div class="timeline-year">{{ item.year }}</div>
@@ -79,23 +78,23 @@
                   <div class="history-desc">{{ activeData.description }}</div>
                   <div class="history-metrics">
                     <div
-                      class="metric"
-                      v-for="(metric, idx) in activeData.metrics"
-                      :key="idx"
+                        class="metric"
+                        v-for="(metric, idx) in activeData.metrics"
+                        :key="idx"
                     >
                       <div class="metric-value">{{ metric.value }}</div>
                       <div class="metric-label">{{ metric.label }}</div>
                     </div>
                   </div>
                   <div
-                    class="architectural-features"
-                    v-if="activeData.features && activeData.features.length"
+                      class="architectural-features"
+                      v-if="activeData.features && activeData.features.length"
                   >
                     <h3>建筑与景观特点</h3>
                     <ul>
                       <li
-                        v-for="(feature, idx) in activeData.features"
-                        :key="idx"
+                          v-for="(feature, idx) in activeData.features"
+                          :key="idx"
                       >
                         {{ feature }}
                       </li>
@@ -109,8 +108,8 @@
               <!-- 右侧网络图 -->
               <div class="network-section" style="min-width:340px;max-width:500px;">
                 <LandmarkNetwork
-                  :landmark="{ name: '法源寺' }"
-                  :event="timelineData[activeIndex]"
+                    :landmark="{ name: '法源寺' }"
+                    :event="timelineData[activeIndex]"
                 />
               </div>
             </div>
@@ -134,6 +133,12 @@
         </div>
       </div>
     </div>
+
+    <footer class="lifecycle-footer">
+      <p>
+        © {{ new Date().getFullYear() }} 法源寺数字文化遗产中心
+      </p>
+    </footer>
   </div>
 </template>
 
@@ -142,10 +147,10 @@ import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import * as echarts from "echarts";
 import LandmarkNetwork from "../LandmarkNetwork.vue"; // 引入网络图组件
-import fayuanData from "../../assets/fayuan-timeline.json"; 
+import fayuanData from "../../assets/fayuan-timeline.json";
 
 const router = useRouter();
-const goBack = () => router.push("/landmarks/fayuan-temple");
+
 
 
 
@@ -350,11 +355,11 @@ watch(activeIndex, (newIndex) => {
       seriesIndex: 0,
       dataIndex: newIndex,
     });
-   /* chartInstance.dispatchAction({
-      type: "showTip",
-      seriesIndex: 0,
-      dataIndex: newIndex,
-    });*/
+    /* chartInstance.dispatchAction({
+       type: "showTip",
+       seriesIndex: 0,
+       dataIndex: newIndex,
+     });*/
   }
   if (typeChartInstance) {
     typeChartInstance.dispatchAction({
@@ -384,7 +389,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #3c2f1e; /* 深棕色文字，更符合古建筑文档色彩 */
   background: linear-gradient(to bottom, #f9f2e5, #e8dfd1); /* 浅米色渐变背景 */
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

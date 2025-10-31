@@ -21,7 +21,7 @@ export default [
       },
     ],
     meta: {
-      title: "故宫",
+      title: "法源寺",
       icon: "icon-fayuan-temple",
     },
   },

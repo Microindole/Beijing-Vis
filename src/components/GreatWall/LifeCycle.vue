@@ -4,8 +4,6 @@
     <div class="lifecycle-header">
       <h1>长城修筑与功能演变</h1>
       <p class="intro-text">从秦汉初建到明清大修，见证中华民族两千余年的防御智慧与历史变迁</p>
-      <!-- 返回按钮 -->
-      <button @click="goBack" class="back-button">← 返回长城门户</button>
       <!-- 状态概览卡片 -->
       <div class="status-overview">
         <div class="status-card">
@@ -151,7 +149,6 @@ import LandmarkNetwork from "../LandmarkNetwork.vue";
 import greatwallData from "../../assets/greatwall.json";
 
 const router = useRouter();
-const goBack = () => router.push("/landmarks/great-wall");
 
 // 增加更多长城历史时间节点（可根据实际数据进一步丰富）
 const timelineData = ref([
@@ -479,7 +476,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

@@ -2,7 +2,6 @@
   <div class="dashboard-container">
     <!-- 页面标题区 -->
     <div class="influence-header">
-      <button @click="goBack" class="back-button">← 返回天坛门户</button>
       <h1>天坛建筑的宇宙观与世界影响</h1>
       <p>解读古代建筑中的哲学智慧及其全球文化遗产价值</p>
     </div>
@@ -151,7 +150,6 @@ import RadarChartBoard from "../RadarChartBoard.vue";
 const router = useRouter();
 
 // 返回门户主页
-const goBack = () => router.push("/landmarks/temple-of-heaven");
 
 // ECharts图表引用
 const cosmosChart = ref(null);
@@ -419,7 +417,6 @@ const currentLandmark = "天坛"; // 定义当前页面的景点名称
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;

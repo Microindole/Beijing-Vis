@@ -1,6 +1,5 @@
 <template>
   <div class="landmark-portal-container">
-    <!-- 优化后的头部区域 -->
     <header class="landmark-header">
       <button @click="goBack" class="back-button">
         <span class="back-icon">←</span>
@@ -43,8 +42,7 @@
       </div>
     </header>
 
-    <!-- 优化后的探索卡片区 -->
-    <section class="exploration-section" v-if="!activeChildRoute">
+    <section class="exploration-section">
       <div class="section-header">
         <div class="imperial-ornament">
           <span class="ornament-left">❖</span>
@@ -55,173 +53,107 @@
       </div>
 
       <div class="cards-grid">
-        <article
-            class="exploration-card"
-            @click="explore('lifeCycle')"
-            :style="{ animationDelay: '0.2s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('lifecycle')" role="button" tabindex="0" :style="{ animationDelay: '0.2s' }">
           <div class="card-image-wrapper">
-            <img
-                src="https://img95.699pic.com/photo/50061/9614.jpg_wh860.jpg"
-                alt="生命年轮预览"
-                class="card-image"
-            />
-            <div class="card-overlay">
-              <div class="card-number">壹</div>
-            </div>
+            <img src="https://img95.699pic.com/photo/50061/9614.jpg_wh860.jpg" alt="生命年轮预览" class="card-image" />
+            <div class="card-overlay"><div class="card-number">壹</div></div>
           </div>
-
           <div class="card-body">
-            <h3 class="card-title">
-              <span class="title-icon">🏛️</span>
-              生命年轮
-            </h3>
-            <p class="card-description">
-              从兴建到重生的时光之旅，探索{{ landmark.name }}的建筑更迭与功能演变。追溯从明永乐年间到现代博物院的六百年历程，见证皇家宫殿如何从权力中心转变为文化瑰宝。
-            </p>
-            <div class="card-footer">
-              <button class="explore-btn">
-                <span>立即探索</span>
-                <span class="btn-arrow">→</span>
-              </button>
-            </div>
+            <h3 class="card-title"><span class="title-icon">🏛️</span>生命年轮</h3>
+            <p class="card-description">从兴建到重生的时光之旅，探索{{ landmark.name }}的建筑更迭与功能演变。追溯从明永乐年间到现代博物院的六百年历程，见证皇家宫殿如何从权力中心转变为文化瑰宝。</p>
+            <div class="card-footer"><button class="explore-btn"><span>立即探索</span><span class="btn-arrow">→</span></button></div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('influence')"
-            :style="{ animationDelay: '0.3s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('influence')" role="button" tabindex="0" :style="{ animationDelay: '0.3s' }">
           <div class="card-image-wrapper">
-            <img
-                src="https://pic1.zhimg.com/v2-05a97426ce2ae46268d80e881c47c204_b.jpg"
-                alt="影响力光环预览"
-                class="card-image"
-            />
-            <div class="card-overlay">
-              <div class="card-number">贰</div>
-            </div>
+            <img src="https://pic1.zhimg.com/v2-05a97426ce2ae46268d80e881c47c204_b.jpg" alt="影响力光环预览" class="card-image" />
+            <div class="card-overlay"><div class="card-number">贰</div></div>
           </div>
-
           <div class="card-body">
-            <h3 class="card-title">
-              <span class="title-icon">👑</span>
-              影响力光环
-            </h3>
-            <p class="card-description">
-              解析{{ landmark.name }}如何融入当代生活，评估其在全球范围内的文化影响力与认知度。从世界遗产到文化IP，探讨这座宫殿如何持续散发着跨越时代的文化魅力与艺术价值。
-            </p>
-            <div class="card-footer">
-              <button class="explore-btn">
-                <span>立即探索</span>
-                <span class="btn-arrow">→</span>
-              </button>
-            </div>
+            <h3 class="card-title"><span class="title-icon">👑</span>影响力光环</h3>
+            <p class="card-description">解析{{ landmark.name }}如何融入当代生活，评估其在全球范围内的文化影响力与认知度。从世界遗产到文化IP，探讨这座宫殿如何持续散发着跨越时代的文化魅力与艺术价值。</p>
+            <div class="card-footer"><button class="explore-btn"><span>立即探索</span><span class="btn-arrow">→</span></button></div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('legends')"
-            :style="{ animationDelay: '0.4s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('legends')" role="button" tabindex="0" :style="{ animationDelay: '0.4s' }">
           <div class="card-image-wrapper">
-            <img
-                src="https://5b0988e595225.cdn.sohucs.com/images/20190613/bb4258e15195469ba1be8c62c1a85b4b.jpeg"
-                alt="传奇故事预览"
-                class="card-image"
-            />
-            <div class="card-overlay">
-              <div class="card-number">叁</div>
-            </div>
+            <img src="https://5b0988e595225.cdn.sohucs.com/images/20190613/bb4258e15195469ba1be8c62c1a85b4b.jpeg" alt="传奇故事预览" class="card-image" />
+            <div class="card-overlay"><div class="card-number">叁</div></div>
           </div>
-
           <div class="card-body">
-            <h3 class="card-title">
-              <span class="title-icon">📜</span>
-              传奇故事
-            </h3>
-            <p class="card-description">
-              聆听{{ landmark.name }}背后那些引人入胜的帝王轶事、民间传说与文人墨客的动人篇章。从紫禁城的神秘传说到皇家秘史，探寻那些隐藏在红墙黄瓦之下的历史真相与动人故事。
-            </p>
-            <div class="card-footer">
-              <button class="explore-btn">
-                <span>立即探索</span>
-                <span class="btn-arrow">→</span>
-              </button>
-            </div>
+            <h3 class="card-title"><span class="title-icon">📜</span>传奇故事</h3>
+            <p class="card-description">聆听{{ landmark.name }}背后那些引人入胜的帝王轶事、民间传说与文人墨客的动人篇章。从紫禁城的神秘传说到皇家秘史，探寻那些隐藏在红墙黄瓦之下的历史真相与动人故事。</p>
+            <div class="card-footer"><button class="explore-btn"><span>立即探索</span><span class="btn-arrow">→</span></button></div>
           </div>
-        </article>
+        </a>
       </div>
     </section>
 
-    <!-- 子组件渲染区 -->
-    <router-view v-else :landmark="landmark"></router-view>
+    <div class="integrated-content">
+      <section id="lifecycle"><LifeCycle /></section>
+      <section id="influence"><Influence /></section>
+      <section id="legends"><Legends /></section>
+    </div>
 
     <AppFooter />
+
+    <transition name="fade">
+      <button v-if="showBackToTopButton" @click="scrollToTop" class="back-to-top-btn" aria-label="返回顶部">↑</button>
+    </transition>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref ,onMounted,onBeforeUnmount} from 'vue';
+import { useRouter } from 'vue-router';
 import AppFooter from '@/components/AppFooter.vue';
+import LifeCycle from '@/components/forbidden-city/LifeCycle.vue';
+import Influence from '@/components/forbidden-city/Influence.vue';
+import Legends from '@/components/forbidden-city/Legends.vue';
 
-export default {
-  name: "ForbiddenCity",
-  components: { AppFooter },
-  props: {
-    landmarkId: {
-      type: String,
-      required: false,
-    },
-  },
-  data() {
-    return {
-      landmark: {
-        name: "故宫",
-        summary: "世界五大宫之首，明清两代的皇家宫殿，中国古代宫廷建筑之精华。",
-        image: "https://www.shuomingshu.cn/wp-content/uploads/images/2022/12/02/a382daee878049f2969575e60d9f2464_vgf1x4cfjcj.jpg",
-        metrics: [
-          { icon: "👑", value: "24位", label: "明清帝王" },
-          { icon: "🏮", value: "8707间", label: "殿宇房舍" },
-          { icon: "🟥", value: "72万㎡", label: "占地面积" },
-          { icon: "🐉", value: "600年", label: "紫禁风云" },
-        ],
-      },
-    };
-  },
-  computed: {
-    activeChildRoute() {
-      return this.$route.matched.length > 1;
-    },
-  },
-  methods: {
-    goBack() {
-      this.$router.push("/");
-    },
-    explore(direction) {
-      if (direction === "lifeCycle") {
-        this.$router.push({
-          name: "ForbiddenCityLifeCycle",
-          params: { landmarkId: this.landmarkId || "forbidden-city" },
-        });
-      } else if (direction === "influence") {
-        this.$router.push({
-          name: "ForbiddenCityInfluence",
-          params: { landmarkId: this.landmarkId || "forbidden-city" },
-        });
-      } else if (direction === "legends") {
-        this.$router.push({
-          name: "ForbiddenCityLegends",
-          params: { landmarkId: this.landmarkId || "forbidden-city" },
-        });
-      }
-    },
-  },
+const router = useRouter();
+
+const landmark = ref({
+  name: "故宫",
+  summary: "世界五大宫之首，明清两代的皇家宫殿，中国古代宫廷建筑之精华。",
+  image: "https://www.shuomingshu.cn/wp-content/uploads/images/2022/12/02/a382daee878049f2969575e60d9f2464_vgf1x4cfjcj.jpg",
+  metrics: [
+    { icon: "👑", value: "24位", label: "明清帝王" },
+    { icon: "🏮", value: "8707间", label: "殿宇房舍" },
+    { icon: "🟥", value: "72万㎡", label: "占地面积" },
+    { icon: "🐉", value: "600年", label: "紫禁风云" },
+  ],
+});
+
+const goBack = () => {
+  router.push("/");
 };
+
+const smoothScrollTo = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
+const showBackToTopButton = ref(false);
+const handleScroll = () => { showBackToTopButton.value = window.scrollY > 300; };
+const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+onMounted(() => window.addEventListener('scroll', handleScroll));
+onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
 </script>
 
 <style scoped>
+html {
+  scroll-behavior: smooth;
+}
+.integrated-content section {
+  padding-top: 5rem;
+  margin-top: -3rem;
+}
 /* ========== 全局样式 ========== */
 * {
   box-sizing: border-box;
@@ -846,4 +778,38 @@ export default {
     transition-duration: 0.01ms !important;
   }
 }
+.landmark-header { max-height: 700px; }
+@media (min-width: 3500px) {
+  .integrated-content { display: flex; align-items: flex-start; gap: 2rem; padding: 2rem; }
+  .integrated-content > section {
+    flex: 1; height: 75vh; overflow-y: auto; padding-top: 0; margin-top: 0;
+    border: 1px solid #f0ddc0; border-radius: 16px; background: #fef5e7;
+    scrollbar-width: thin; scrollbar-color: #d4a76a #fef5e7;
+  }
+  .integrated-content > section::-webkit-scrollbar { width: 8px; }
+  .integrated-content > section::-webkit-scrollbar-track { background: #fef5e7; border-radius: 4px; }
+  .integrated-content > section::-webkit-scrollbar-thumb { background-color: #d4a76a; border-radius: 4px; border: 2px solid #fef5e7; }
+  .integrated-content:deep(.lifecycle-container),
+  .integrated-content:deep(.dashboard-container),
+  .integrated-content:deep(.legends-container) { min-height: auto; }
+  .integrated-content:deep(.main-visualization) { flex-direction: column; }
+}
+.back-to-top-btn {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+  width: 50px; height: 50px; border-radius: 50%;
+  background-color: rgba(139, 0, 0, 0.85);
+  backdrop-filter: blur(5px); color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  font-size: 1.5rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.back-to-top-btn:hover {
+  background-color: #8B0000;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

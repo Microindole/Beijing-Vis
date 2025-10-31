@@ -1,7 +1,6 @@
 <template>
   <div class="influence-container">
-    <!-- 返回按钮 -->
-    <button @click="goBack" class="back-button">← 返回长城门户</button>
+
 
     <!-- 页面标题 -->
     <div class="influence-header">
@@ -137,7 +136,6 @@ import RadarChart from "../RadarChart.vue";
 import RadarChartBoard from "../RadarChartBoard.vue";
 
 const router = useRouter();
-const goBack = () => router.push("/landmarks/great-wall");
 
 const provinceChart = ref(null);
 const structureChart = ref(null);
@@ -342,7 +340,6 @@ const currentLandmark = "长城"; // 定义当前页面的景点名称
   color: #333;
   line-height: 1.6;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
-  min-height: 100vh;
   padding: 20px;
   position: relative;
   overflow-x: hidden;

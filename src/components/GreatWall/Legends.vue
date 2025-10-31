@@ -1,7 +1,6 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回长城门户</button>
-    
+
     <!-- 页面标题 -->
     <div class="legends-header">
       <h1>长城千年传奇秘闻</h1>
@@ -23,7 +22,6 @@ import Stories from "./Stories.vue";
 const router = useRouter();
 
 // 返回长城门户主页
-const goBack = () => router.push("/landmarks/great-wall");
 </script>
 
 <style scoped>
@@ -60,8 +58,6 @@ body {
 }
 
 .legends-container {
-  min-height: 100vh;
-  /* 调整背景渐变色 */
   background: linear-gradient(135deg, #f9f5ed 0%, #e8d8c3 100%);
   padding: 2rem;
   position: relative;

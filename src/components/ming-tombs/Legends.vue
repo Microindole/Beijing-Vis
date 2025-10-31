@@ -1,6 +1,5 @@
 <template>
   <div class="legends-container">
-    <button @click="goBack" class="back-button">← 返回明十三陵门户</button>
     <GugongCharacterHub></GugongCharacterHub>
     <palaceSayings></palaceSayings>
     <Stories></Stories>
@@ -17,8 +16,7 @@ import Stories from "./Stories.vue";
 
 const router = useRouter();
 
-// 返回门户主页
-const goBack = () => router.push("/landmarks/ming-tombs");
+
 
 // 传奇事件数据
 const legendsData = ref([
@@ -330,7 +328,6 @@ onMounted(() => {
 }
 
 .legends-container {
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   padding: 2rem;
   position: relative;

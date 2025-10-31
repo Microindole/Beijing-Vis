@@ -1,9 +1,6 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <button class="back-button" @click="goBack">
-        <span class="icon">←</span> 返回颐和园门户
-      </button>
       <h1 class="dashboard-title">颐和园园林的艺术与世界影响</h1>
       <p class="dashboard-subtitle">
         解读古代园林中的山水意境及其全球文化遗产价值
@@ -446,7 +443,6 @@ const currentLandmark = "颐和园"; // 定义当前页面的景点名称
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;

@@ -3,7 +3,6 @@
     <div class="lifecycle-header">
       <h1>明十三陵建筑群演变与保护历程</h1>
       <p class="intro-text">从长陵营建到世界文化遗产的六百年兴衰</p>
-      <button @click="goBack" class="back-button">← 返回明十三陵门户</button>
       <div class="status-overview">
         <div class="status-card">
           <span class="status-icon">👑</span>
@@ -144,8 +143,7 @@ const router = useRouter();
 
 const mingThirteenTombs = ref(mingThirteenTombsData);
 
-// 返回门户主页
-const goBack = () => router.push("/landmarks/ming-tombs");
+
 
 // 时间轴数据 - 重点强化建筑演变内容
 const timelineData = ref([
@@ -859,7 +857,6 @@ watch(
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #f9f5ed, #e8dfd1);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

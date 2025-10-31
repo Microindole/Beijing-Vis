@@ -37,25 +37,21 @@
         </div>
       </div>
     </header>
-    <section class="exploration-section" v-if="!activeChildRoute">
+
+    <section class="exploration-section">
       <div class="section-header">
         <h2 class="section-title">探索维度</h2>
         <p class="section-subtitle">从不同角度了解大栅栏的历史与文化</p>
       </div>
 
       <div class="cards-grid">
-        <article
-            class="exploration-card"
-            @click="explore('lifeCycle')"
-            :style="{ animationDelay: '0.2s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('lifecycle')" role="button" tabindex="0" :style="{ animationDelay: '0.2s' }">
           <div class="card-image-wrapper">
             <img :src="oldDashilanImage" alt="街巷记忆预览" class="card-image" />
             <div class="card-overlay">
               <div class="card-number">01</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🏛️</span>
@@ -71,20 +67,15 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('influence')"
-            :style="{ animationDelay: '0.3s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('influence')" role="button" tabindex="0" :style="{ animationDelay: '0.3s' }">
           <div class="card-image-wrapper">
             <img :src="tongRenTangImage" alt="商韵流传预览" class="card-image" />
             <div class="card-overlay">
               <div class="card-number">02</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">🏪</span>
@@ -100,20 +91,15 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
 
-        <article
-            class="exploration-card"
-            @click="explore('legends')"
-            :style="{ animationDelay: '0.4s' }"
-        >
+        <a class="exploration-card" @click="smoothScrollTo('legends')" role="button" tabindex="0" :style="{ animationDelay: '0.4s' }">
           <div class="card-image-wrapper">
             <img :src="dashilanStoryImage" alt="坊间拾趣预览" class="card-image" />
             <div class="card-overlay">
               <div class="card-number">03</div>
             </div>
           </div>
-
           <div class="card-body">
             <h3 class="card-title">
               <span class="title-icon">📖</span>
@@ -129,96 +115,87 @@
               </button>
             </div>
           </div>
-        </article>
+        </a>
       </div>
     </section>
-    <router-view :landmark-id="landmarkId" :landmark="landmark" />
+
+    <div class="integrated-content">
+      <section id="lifecycle"><LifeCycle /></section>
+      <section id="influence"><Influence /></section>
+      <section id="legends"><Legends /></section>
+    </div>
 
     <AppFooter />
+
+    <transition name="fade">
+      <button v-if="showBackToTopButton" @click="scrollToTop" class="back-to-top-btn" aria-label="返回顶部">↑</button>
+    </transition>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
+import AppFooter from '@/components/AppFooter.vue';
+import LifeCycle from '@/components/dashilan/LifeCycle.vue';
+import Influence from '@/components/dashilan/Influence.vue';
+import Legends from '@/components/dashilan/Legends.vue';
 import DashilarBackgroundImage from "../../assets/dashilan/dashilan_bg.jpg";
 import oldDashilanImage from "../../assets/dashilan/olddashilan.jpg";
 import tongRenTangImage from "../../assets/dashilan/TongRenTang.jpg";
 import dashilanStoryImage from "../../assets/dashilan/dashilan_story.jpg";
-import AppFooter from '@/components/AppFooter.vue';
 
-export default {
-  name: "DashilarPortal",
-  components: { AppFooter },
-  props: {
-    landmarkId: {
-      type: String,
-      required: true,
-      default: "dashilar",
-    },
-  },
-  data() {
-    return {
-      landmark: {},
-      oldDashilanImage: oldDashilanImage,
-      tongRenTangImage: tongRenTangImage,
-      dashilanStoryImage: dashilanStoryImage,
-    };
-  },
-  created() {
-    this.loadLandmarkData();
-  },
-  computed: {
-    activeChildRoute() {
-      return this.$route.matched.length > 1;
-    },
-  },
-  methods: {
-    goBack() {
-      this.$router.push("/");
-    },
-    explore(direction) {
-      const params = {
-        landmarkId: this.landmarkId,
-        landmark: this.landmark,
-      };
-      if (direction === "lifeCycle") {
-        this.$router.push({
-          name: "DashilanLifeCycle",
-          params: { ...params, direction: direction },
-        });
-      } else if (direction === "influence") {
-        this.$router.push({
-          name: "DashilanInfluence",
-          params,
-        });
-      } else if (direction === "legends") {
-        this.$router.push({
-          name: "DashilanLegends",
-          params,
-          query: { landmarkId: this.landmarkId },
-        });
-      }
-    },
-    loadLandmarkData() {
-      if (this.landmarkId === "dashilar") {
-        this.landmark = {
-          name: "大栅栏",
-          summary:
-              "北京著名的百年商业老街，京味文化与市井生活的鲜活画卷，承载着丰富的历史记忆与民国风情。",
-          image: DashilarBackgroundImage,
-          metrics: [
-            { icon: "📅", value: "明代初", label: "始建时期" },
-            { icon: "📏", value: "275米", label: "街道长度" },
-            { icon: "🏅", value: "国家级", label: "历史街区" },
-            { icon: "🚶", value: "15万+", label: "日均客流" },
-          ],
-        };
-      }
-    },
-  },
+const router = useRouter();
+
+const landmark = ref({
+  name: "大栅栏",
+  summary: "北京著名的百年商业老街，京味文化与市井生活的鲜活画卷，承载着丰富的历史记忆与民国风情。",
+  image: DashilarBackgroundImage,
+  metrics: [
+    { icon: "📅", value: "明代初", label: "始建时期" },
+    { icon: "📏", value: "275米", label: "街道长度" },
+    { icon: "🏅", value: "国家级", label: "历史街区" },
+    { icon: "🚶", value: "15万+", label: "日均客流" },
+  ],
+});
+
+const goBack = () => {
+  router.push("/");
 };
+
+const smoothScrollTo = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
+// 返回顶部按钮逻辑
+const showBackToTopButton = ref(false);
+const handleScroll = () => {
+  showBackToTopButton.value = window.scrollY > 300;
+};
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
+html {
+  scroll-behavior: smooth;
+}
+.integrated-content section {
+  padding-top: 5rem;
+  margin-top: -3rem;
+}
 /* ========== 全局样式 ========== */
 * {
   box-sizing: border-box;
@@ -754,4 +731,61 @@ export default {
     transition-duration: 0.01ms !important;
   }
 }
+.landmark-header {
+  max-height: 700px;
+}
+
+/* 2. 宽屏/缩放 水平滚动布局 */
+@media (min-width: 3500px) {
+  .integrated-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+  }
+  .integrated-content > section {
+    flex: 1;
+    height: 75vh;
+    overflow-y: auto;
+    padding-top: 0;
+    margin-top: 0;
+    border: 1px solid #e0d5c7;
+    border-radius: 16px;
+    background: #f8f5f0;
+    scrollbar-width: thin;
+    scrollbar-color: #d4a76a #f8f5f0;
+  }
+  .integrated-content > section::-webkit-scrollbar { width: 8px; }
+  .integrated-content > section::-webkit-scrollbar-track { background: #f8f5f0; border-radius: 4px; }
+  .integrated-content > section::-webkit-scrollbar-thumb { background-color: #d4a76a; border-radius: 4px; border: 2px solid #f8f5f0; }
+
+  .integrated-content:deep(.lifecycle-container),
+  .integrated-content:deep(.dashboard-container),
+  .integrated-content:deep(.legends-container) {
+    min-height: auto;
+  }
+  .integrated-content:deep(.main-visualization) {
+    flex-direction: column;
+  }
+}
+
+/* 3. 返回顶部按钮样式 */
+.back-to-top-btn {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+  width: 50px; height: 50px; border-radius: 50%;
+  background-color: rgba(139, 69, 19, 0.85); /* 大栅栏主题色 */
+  backdrop-filter: blur(5px); color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 1.5rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.back-to-top-btn:hover {
+  background-color: #8B4513;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

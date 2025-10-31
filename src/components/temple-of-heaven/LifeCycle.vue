@@ -4,9 +4,7 @@
     <div class="lifecycle-header">
       <h1>天坛建筑与功能演变</h1>
       <p class="intro-text">从明代肇建到现代世界遗产保护的祭坛建筑群变迁史</p>
-      <!-- 返回按钮 -->
-      <button @click="goBack" class="back-button">← 返回天坛门户</button>
-      <!-- 状态概览卡片 -->
+     <!-- 状态概览卡片 -->
       <div class="status-overview">
         <div class="status-card">
           <span class="status-icon">🏛️</span>
@@ -149,7 +147,6 @@ import LandmarkNetwork from "../LandmarkNetwork.vue"; // 引入网络图组件
 import tiantanData from "../../assets/tiantan-timeline.json"; // 引入天坛数据
 
 const router = useRouter();
-const goBack = () => router.push("/landmarks/temple-of-heaven");
 
 const timelineData = ref(tiantanData);
 
@@ -387,7 +384,6 @@ onMounted(() => {
   font-family: "Noto Serif SC", "SimSun", serif;
   color: #5a4a42;
   background: linear-gradient(to bottom, #fdf6e3, #f4e5d3);
-  min-height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;
