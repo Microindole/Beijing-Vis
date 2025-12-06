@@ -1,20 +1,20 @@
 <template>
   <div class="influence-container">
-    <!-- 返回按钮 -->
-
-    <!-- 页面标题 -->
     <div class="influence-header">
       <h1>北海公园的历史价值与世界影响</h1>
       <p>解读皇家园林的艺术成就及其全球文化遗产地位</p>
     </div>
 
-    <!-- 两列主内容 -->
     <div class="main-columns">
-      <!-- 左侧：雷达图和其他图表 -->
-      <div class="charts-section" style="flex: 2; min-width: 340px">
-        <div class="chart-card" style="height: 100%">
-          <h3 class="chart-title">北京历史地标评估雷达图</h3>
-          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
+      <div class="charts-section" style="flex: 1.5; min-width: 400px">
+
+        <div class="chart-card evaluation-card">
+          <div class="radar-header">
+            <h3 class="chart-title">核心价值评估 (与同类园林对比)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <BeihaiEvaluation />
+          </div>
         </div>
         <div class="charts-grid">
           <div class="chart-card">
@@ -25,91 +25,42 @@
             <h3 class="chart-title">园林艺术影响力</h3>
             <div ref="archChart" class="chart-box"></div>
           </div>
-          <div class="chart-card">
-            <h3 class="chart-title">学术研究趋势</h3>
-            <div ref="cultureChart" class="chart-box"></div>
-          </div>
-          <div class="chart-card">
-            <h3 class="chart-title">游客来源分布</h3>
-            <div ref="tourismChart" class="chart-box"></div>
-          </div>
         </div>
       </div>
-      <!-- 右侧：文字紧凑排列 -->
-      <div
-        class="text-section"
-        style="flex: 1; min-width: 220px; padding: 16px 10px"
-      >
-        <div class="section-title">
-          <h2>世界文化遗产价值</h2>
-          <div class="divider"></div>
+
+      <div class="text-section-visual" style="flex: 1.2; min-width: 380px;">
+        <div class="section-header-visual">
+          <h2>世界文化遗产价值体系</h2>
+          <p>拖动节点探索北海的多维影响力</p>
         </div>
-        <div class="philosophy-item">
-          <h3>对园林艺术的影响</h3>
-          <ul>
-            <li>俄罗斯圣彼得堡夏宫花园借鉴了北海的湖岛布局</li>
-            <li>日本东京新宿御苑模仿北海的水体与岛屿结合</li>
-            <li>美国旧金山金门公园中式园林区参考了北海的桥岛结构</li>
-          </ul>
-        </div>
-        <div class="philosophy-item">
-          <h3>对文化研究的影响</h3>
-          <ul>
-            <li>1990-2023年发表相关论文1,200余篇</li>
-            <li>全球20余所高校开设中国园林艺术课程</li>
-            <li>联合国教科文组织将其列为东方园林艺术典范</li>
-          </ul>
-        </div>
-        <div class="philosophy-item">
-          <h3>对旅游产业的影响</h3>
-          <ul>
-            <li>年接待游客约500万人次（2019年数据）</li>
-            <li>外国游客占比约20%，来自80多个国家</li>
-            <li>带动周边形成文化旅游产业链</li>
-          </ul>
-        </div>
-        <div class="philosophy-item">
-          <h3>对中外交流的影响</h3>
-          <ul>
-            <li>清代白塔由尼泊尔工匠设计建造，成为中外建筑艺术融合的典范</li>
-            <li>北海公园多次接待外国元首和国际文化交流活动</li>
-            <li>园林布局与佛教建筑影响东亚、东南亚多国园林设计</li>
-          </ul>
-        </div>
-        <div class="philosophy-item">
-          <h3>历史事件与皇家政治</h3>
-          <ul>
-            <li>
-              辽、金、元、明、清五代帝王在此理政、宴饮、祭祀，见证中国封建王朝更替
-            </li>
-            <li>明清时期为皇家重要的政治与休闲场所</li>
-            <li>见证近现代中国社会变迁，1925年正式对公众开放</li>
-          </ul>
-        </div>
-        <div class="philosophy-item">
-          <h3>艺术与文学影响</h3>
-          <ul>
-            <li>乾隆、康熙等皇帝多次在北海题诗作画，留下丰富的文学艺术遗产</li>
-            <li>九龙壁、白塔等成为中国古代建筑与琉璃艺术的代表</li>
-            <li>吸引无数文人墨客吟咏、描绘，成为中国园林诗画的重要题材</li>
-          </ul>
+        <div class="galaxy-wrapper">
+          <InfluenceGalaxy />
         </div>
       </div>
     </div>
 
-    <!-- 北海公园世界影响网络图，独立一行且占较大空间 -->
-    <div class="network-section" style="margin: 60px auto 0; max-width: 1200px">
+    <div class="bottom-charts">
+      <div class="chart-card large-card">
+        <h3 class="chart-title">学术研究历史演变 (1990-2023)</h3>
+        <div class="chart-box">
+          <BeihaiStream />
+        </div>
+      </div>
+      <div class="chart-card large-card">
+        <h3 class="chart-title">游客来源层级分布</h3>
+        <div class="chart-box">
+          <BeihaiSunburst />
+        </div>
+      </div>
+    </div>
+
+    <div class="network-section" style="margin: 40px auto 0; max-width: 1200px">
       <div class="chart-card" style="height: 480px">
         <h3 class="chart-title">北海公园世界影响网络</h3>
-        <div
-          ref="influenceNetworkChart"
-          class="chart-box"
-          style="height: 400px"
-        ></div>
+        <div ref="influenceNetworkChart" class="chart-box" style="height: 400px"></div>
       </div>
     </div>
 
-    <!-- 全球影响总结 -->
     <div class="global-impact">
       <h2>北海公园的全球文化遗产价值</h2>
       <div class="impact-grid">
@@ -138,17 +89,31 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import * as echarts from "echarts";
-import RadarChart from "../RadarChart.vue"; // 引入雷达图组件
-import RadarChartBoard from "../RadarChartBoard.vue";
+
+// 引入所有 D3 组件
+import InfluenceGalaxy from "./InfluenceGalaxy.vue";
+import BeihaiEvaluation from "./BeihaiEvaluation.vue";
+import BeihaiStream from "./BeihaiStream.vue";
+import BeihaiSunburst from "./BeihaiSunburst.vue";
 
 const router = useRouter();
 const goBack = () => router.push("/landmarks/beihai-park");
 
 const cosmosChart = ref(null);
 const archChart = ref(null);
+const influenceNetworkChart = ref(null);
+
+// 雷达图数据
+const radarData = ref([
+  { axis: "官方评级", value: 5 },
+  { axis: "历史价值", value: 4.8 },
+  { axis: "公众热度", value: 4.2 },
+  { axis: "当代活力", value: 3.5 },
+  { axis: "文化特性", value: 4.9 }
+]);
+
 const cultureChart = ref(null);
 const tourismChart = ref(null);
-const influenceNetworkChart = ref(null); // 新增
 
 const initCosmosChart = () => {
   if (cosmosChart.value) {
@@ -164,14 +129,7 @@ const initCosmosChart = () => {
           radius: ["40%", "70%"],
           center: ["50%", "40%"],
           roseType: "area",
-          label: {
-            show: true,
-            formatter: "{b|{b}}\n{c|{c}%}",
-            rich: {
-              b: { fontSize: 14, color: "#5a4a42", lineHeight: 20 },
-              c: { fontSize: 16, color: "#8b4513", fontWeight: "bold" },
-            },
-          },
+          label: { show: false },
           data: [
             { value: 40, name: "空间布局" },
             { value: 30, name: "建筑艺术" },
@@ -328,6 +286,7 @@ const initTourismChart = () => {
 
 // 新增：北海公园世界影响网络图
 const initInfluenceNetworkChart = () => {
+  // ... 保持原有的网络图代码不变 ...
   if (influenceNetworkChart.value) {
     const chart = echarts.init(influenceNetworkChart.value);
     chart.setOption({
@@ -538,11 +497,8 @@ const initInfluenceNetworkChart = () => {
 onMounted(() => {
   initCosmosChart();
   initArchChart();
-  initCultureChart();
-  initTourismChart();
-  initInfluenceNetworkChart(); // 新增
+  initInfluenceNetworkChart();
 });
-const currentLandmark = "北海公园"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>
@@ -827,5 +783,175 @@ const currentLandmark = "北海公园"; // 定义当前页面的景点名称
   .text-section {
     padding: 18px 8px;
   }
+}
+
+.influence-container {
+  font-family: "Noto Serif SC", serif;
+  background: #fdfbf7;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+.influence-header {
+  text-align: center;
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.influence-header h1 {
+  font-size: 2.2rem;
+  color: #8b4513;
+  margin-bottom: 15px;
+}
+.main-columns {
+  display: flex;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 20px auto;
+  align-items: stretch;
+}
+
+/* 左侧样式 */
+.radar-card-enhance {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.08);
+  margin-bottom: 20px;
+  height: 450px; /* 给雷达图足够高度 */
+  display: flex;
+  flex-direction: column;
+}
+.radar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.d3-wrapper {
+  flex: 1;
+  position: relative;
+}
+.radar-controls {
+  display: flex;
+  gap: 10px;
+}
+.control-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid #d4a76a;
+  border-radius: 20px;
+  color: #8b4513;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.control-tag.active {
+  background: #8b4513;
+  color: #fff;
+}
+
+/* 右侧样式：星系容器 */
+.text-section-visual {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(58, 108, 79, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+.section-header-visual h2 {
+  color: #3a6c4f;
+  font-size: 1.5rem;
+  margin: 0;
+}
+.section-header-visual p {
+  color: #7a8c7a;
+  font-size: 0.9rem;
+  margin: 5px 0 15px 0;
+}
+.galaxy-wrapper {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* 底部图表网格 */
+.bottom-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto 30px;
+}
+
+.chart-card {
+  background: rgba(255, 248, 225, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(139, 69, 19, 0.08);
+  padding: 15px;
+  height: 300px;
+}
+.chart-card.large-card {
+  height: 380px; /* 增加高度以容纳复杂图表 */
+}
+.chart-box {
+  width: 100%;
+  height: 100%;
+}
+.chart-title {
+  color: #8b4513;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* 全球影响部分保持不变 */
+.global-impact {
+  margin: 40px auto;
+  max-width: 1200px;
+  padding: 40px;
+  background: #3a6c4f; /* 恢复为深绿色，更符合北海主题 */
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+}
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+.impact-item {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 10px;
+}
+.impact-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.evaluation-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.08);
+  margin-bottom: 20px;
+  /* 高度可以比之前的 450px 稍微矮一点，显得更精致 */
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+.radar-header {
+  display: flex;
+  justify-content: center; /* 标题居中 */
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.chart-wrapper {
+  flex: 1;
+  width: 100%;
+  position: relative;
 }
 </style>
