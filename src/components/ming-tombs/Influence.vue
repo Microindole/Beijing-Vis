@@ -5,126 +5,71 @@
       <p class="dashboard-subtitle">探究世界文化遗产的当代价值与中华文化传承</p>
     </div>
 
-    <div class="dashboard-content">
-      <div class="main-visualization">
-        <div class="visualization-card radar-section">
-          <div class="section-title">
-            <h2>明十三陵综合影响力评估</h2>
-            <div class="divider"></div>
-            <p class="section-description">基于多维度价值的深入分析</p>
-          </div>
-          <!-- <RadarChartBoard class="radar-container" /> -->
-           <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
-        </div>
+    <div class="single-column-layout">
 
-        <div class="visualization-card philosophy-section">
-          <div class="section-title">
-            <h2>明十三陵的营建哲学与秩序</h2>
-            <div class="divider"></div>
-          </div>
-          <div class="philosophy-card">
-            <div class="philosophy-item">
-              <div class="icon-circle">
-                <i class="icon">⛰️</i>
-              </div>
-              <h3>风水选址的自然之道</h3>
-              <p>
-                十三陵依山傍水，坐北朝南，严格遵循“风水宝地”原则，体现了古代帝王对天人合一、永固江山的追求。
-              </p>
-            </div>
-            <div class="philosophy-item">
-              <div class="icon-circle">
-                <i class="icon">📐</i>
-              </div>
-              <h3>严谨布局的皇家礼制</h3>
-              <p>
-                神道、碑亭、大红门等建筑按中轴线层层递进，构建了宏伟的陵寝体系，彰显皇权的威严与等级。
-              </p>
-            </div>
-          </div>
-          <div class="philosophy-card">
-            <div class="philosophy-item">
-              <div class="icon-circle">
-                <i class="icon">🏛️</i>
-              </div>
-              <h3>精湛的建筑技艺与文化内涵</h3>
-              <p>
-                陵墓的砖石结构、斗拱彩绘、神兽雕刻等无不体现明代高超的建筑工艺和深厚的丧葬文化。
-              </p>
-            </div>
-            <div class="philosophy-item">
-              <div class="icon-circle">
-                <i class="icon">📜</i>
-              </div>
-              <h3>独特的地宫文化与历史印记</h3>
-              <p>
-                如定陵地宫的发掘，揭示了明代皇陵的真实面貌和丰富的随葬品，为历史研究提供了宝贵实证。
-              </p>
-            </div>
-          </div>
-          <div class="cosmos-chart">
-            <div ref="imperialPhilosophyChart" class="chart-box"></div>
-          </div>
+      <div class="chart-card radar-section">
+        <div class="section-title">
+          <h2>明十三陵综合影响力评估</h2>
+          <div class="divider"></div>
+          <p class="section-description">基于多维度价值的深入分析</p>
+        </div>
+        <div class="radar-wrapper">
+          <RadarChartBoard class="radar-container" :currentLandmark="currentLandmark" />
         </div>
       </div>
 
-      <div class="side-panel">
-        <div class="metrics-card global-impact">
-          <h3 class="metrics-title">明十三陵的当代与全球影响力</h3>
-          <div class="impact-grid">
-            <div class="impact-item">
-              <div class="impact-value">800万+</div>
-              <div class="impact-label">年均游客量</div>
-            </div>
-            <div class="impact-item">
-              <div class="impact-value">20+</div>
-              <div class="impact-label">国际合作考古项目</div>
-            </div>
-            <div class="impact-item">
-              <div class="impact-value">100+</div>
-              <div class="impact-label">文创产品系列</div>
-            </div>
-            <div class="impact-item">
-              <div class="impact-value">500+</div>
-              <div class="impact-label">年度学术研究成果</div>
-            </div>
-          </div>
-          <div class="chart-container">
-            <div ref="contemporaryInfluenceChart" class="chart-box"></div>
-          </div>
+      <div class="chart-card">
+        <div class="section-title">
+          <h2>明十三陵的营建哲学构成</h2>
+          <div class="divider"></div>
         </div>
-
-        <div class="impact-dimension">
-          <h3><i class="icon">🏛️</i> 对世界文化遗产保护的贡献</h3>
-          <div class="dimension-content">
-            <p>明十三陵作为世界文化遗产，为全球遗产保护提供了典范：</p>
-            <ul>
-              <li>保护修复实践：陵墓本体的保护和修复技术</li>
-              <li>遗产监测管理：先进的数字化监测与管理系统</li>
-              <li>国际交流合作：参与世界遗产地保护的国际会议与项目</li>
-            </ul>
-            <div class="chart-container">
-              <div ref="heritageContributionChart" class="chart-box"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="impact-dimension">
-          <h3><i class="icon">📚</i> 对明史与丧葬文化研究的推动</h3>
-          <div class="dimension-content">
-            <p>十三陵的考古发现和陵寝规制，极大地丰富了相关研究：</p>
-            <ul>
-              <li>明史研究新视角：地宫出土文物补充史料空白</li>
-              <li>中国陵寝制度范本：研究帝王丧葬礼制的重要实物</li>
-              <li>多元文化融合见证：体现儒释道思想在陵寝建筑中的融合</li>
-            </ul>
-            <div class="chart-container">
-              <div ref="researchImpactChart" class="chart-box"></div>
-              '
-            </div>
-          </div>
-        </div>
+        <div ref="imperialPhilosophyChart" class="chart-box-wide"></div>
       </div>
+
+      <div class="chart-card">
+        <div class="section-title">
+          <h2>明十三陵的当代与全球影响力</h2>
+          <div class="divider"></div>
+        </div>
+
+        <div class="impact-grid-horizontal">
+          <div class="impact-item">
+            <div class="impact-value">800万+</div>
+            <div class="impact-label">年均游客量</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-value">20+</div>
+            <div class="impact-label">国际合作考古项目</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-value">100+</div>
+            <div class="impact-label">文创产品系列</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-value">500+</div>
+            <div class="impact-label">年度学术研究成果</div>
+          </div>
+        </div>
+
+        <div ref="contemporaryInfluenceChart" class="chart-box-wide"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-title">
+          <h2>对世界文化遗产保护的贡献</h2>
+          <div class="divider"></div>
+        </div>
+        <div ref="heritageContributionChart" class="chart-box-wide"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-title">
+          <h2>对明史与丧葬文化研究的推动</h2>
+          <div class="divider"></div>
+        </div>
+        <div ref="researchImpactChart" class="chart-box-wide"></div>
+      </div>
+
     </div>
 
     <div class="dashboard-footer">
@@ -143,176 +88,105 @@ import * as echarts from "echarts";
 import RadarChartBoard from "../RadarChartBoard.vue";
 
 const router = useRouter();
-
-// 返回门户主页
+const currentLandmark = "明十三陵";
 
 // ECharts图表引用
-const imperialPhilosophyChart = ref(null); // 对应HTML中的 cosmosChart
-const heritageContributionChart = ref(null); // 对应HTML中的 archChart
-const researchImpactChart = ref(null); // 对应HTML中的 cultureChart
-const contemporaryInfluenceChart = ref(null); // 对应HTML中的 tourismChart
+const imperialPhilosophyChart = ref(null);
+const heritageContributionChart = ref(null);
+const researchImpactChart = ref(null);
+const contemporaryInfluenceChart = ref(null);
 
-// 初始化帝陵营建哲学环形图
+// --- 图表初始化逻辑 (配置保持不变，仅适配容器大小) ---
+
+// 1. 初始化帝陵营建哲学环形图
 const initImperialPhilosophyChart = () => {
-  if (!imperialPhilosophyChart.value) {
-    console.warn(
-      "ECharts container (imperialPhilosophyChart) not found in DOM. Chart might not display."
-    );
-    return;
-  }
-
-  let chartInstance = echarts.getInstanceByDom(imperialPhilosophyChart.value);
-  if (chartInstance) {
-    chartInstance.dispose();
-  }
-
-  chartInstance = echarts.init(imperialPhilosophyChart.value);
+  if (!imperialPhilosophyChart.value) return;
+  const chart = echarts.init(imperialPhilosophyChart.value);
 
   const option = {
-    title: {
-      text: "明十三陵营建哲学构成",
-      left: "center",
-      top: "5%",
-      textStyle: {
-        color: "#d4a76a",
-        fontSize: 22,
-        fontWeight: "bold",
-      },
-    },
-    tooltip: {
-      trigger: "item",
-      formatter: "{b}: {c} ({d}%)", // 显示名称、数值和百分比
-    },
+    tooltip: { trigger: "item", formatter: "{b}: {c} ({d}%)" },
     legend: {
-      orient: "vertical",
-      left: "left",
-      top: "center",
-      textStyle: {
-        color: "#b8a692",
-        fontSize: 14,
-      },
-      // 可以在这里自定义每个图例项
+      orient: "horizontal", // 改为水平，放到底部
+      bottom: "0",
+      left: "center",
+      textStyle: { color: "#b8a692", fontSize: 14 },
       data: ["风水堪舆", "皇家礼制", "文化象征"],
     },
-    color: ["#B26F4A", "#D4A76A", "#9C7C5C"], // 选用与主题相符的棕色/金色调
+    color: ["#B26F4A", "#D4A76A", "#9C7C5C"],
     series: [
       {
         name: "营建哲学",
         type: "pie",
-        radius: ["40%", "70%"], // 环形图的内外半径
-        center: ["55%", "50%"], // 调整中心点以避开左侧图例
-        avoidLabelOverlap: false,
+        radius: ["40%", "65%"],
+        center: ["50%", "45%"], // 居中
         label: {
           show: true,
-          position: "outside",
-          formatter: "{b}\n{d}%", // 显示名称和百分比
-          fontSize: 13,
+          formatter: "{b}\n{d}%",
           color: "#b8a692",
-          lineHeight: 18,
-        },
-        labelLine: {
-          show: true,
-          length: 15, // 引导线第一段长度
-          length2: 10, // 引导线第二段长度
-          lineStyle: {
-            color: "#8d6e63",
-          },
+          fontSize: 14
         },
         data: [
           { value: 40, name: "风水堪舆" },
           { value: 35, name: "皇家礼制" },
           { value: 25, name: "文化象征" },
         ],
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
-          },
-        },
       },
     ],
   };
-
-  chartInstance.setOption(option);
-  window.addEventListener("resize", () => chartInstance.resize());
+  chart.setOption(option);
+  window.addEventListener("resize", () => chart.resize());
 };
 
-// 初始化遗产保护贡献柱状图 (原 initArchChart)
+// 2. 初始化遗产保护贡献柱状图
 const initHeritageContributionChart = () => {
   if (heritageContributionChart.value) {
     const chart = echarts.init(heritageContributionChart.value);
-
     const option = {
-      title: {
-        text: "遗产保护与国际交流成就",
-        left: "center",
-        textStyle: {
-          color: "#d4a76a",
-          fontSize: 16,
-        },
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: { type: "shadow" },
-        formatter: "{b}<br/>{a0}: {c0}项<br/>{a1}: {c1}次",
-      },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
       legend: {
         data: ["保护修复项目", "国际交流活动"],
-        bottom: 0,
+        top: 0,
         textStyle: { color: "#b8a692" },
       },
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "15%",
-        containLabel: true,
-      },
+      grid: { left: "3%", right: "4%", bottom: "5%", top: "15%", containLabel: true },
       xAxis: {
         type: "category",
         data: ["陵墓本体", "环境风貌", "遗产监测", "考古研究", "文化传播"],
         axisLine: { lineStyle: { color: "#a1887f" } },
-        axisLabel: {
-          color: "#b8a692",
-          interval: 0, // 显示所有标签
-          rotate: 30, // 标签旋转
-        },
+        axisLabel: { color: "#b8a692", interval: 0, rotate: 0 }, // 空间足够，不旋转
       },
       yAxis: {
         type: "value",
-        name: "数量/项",
-        nameTextStyle: { color: "#b8a692" },
-        axisLine: { lineStyle: { color: "#b8a692" } },
-        splitLine: {
-          lineStyle: { color: "rgba(161, 136, 127, 0.1)", type: "dashed" },
-        },
+        axisLine: { show: false },
+        axisLabel: { color: "#b8a692" },
+        splitLine: { lineStyle: { color: "rgba(161, 136, 127, 0.1)", type: "dashed" } },
       },
       series: [
         {
           name: "保护修复项目",
           type: "bar",
-          barWidth: "35%",
+          barWidth: "25%",
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: "#B26F4A" }, // 深棕色
-              { offset: 1, color: "#D4A76A" }, // 浅棕色
+              { offset: 0, color: "#B26F4A" },
+              { offset: 1, color: "#D4A76A" },
             ]),
-            borderRadius: [5, 5, 0, 0],
+            borderRadius: [4, 4, 0, 0],
           },
-          data: [15, 12, 10, 8, 5], // 示例数据：修复项目数量
+          data: [15, 12, 10, 8, 5],
         },
         {
           name: "国际交流活动",
           type: "bar",
-          barWidth: "35%",
+          barWidth: "25%",
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: "#9C7C5C" }, // 灰棕色
-              { offset: 1, color: "#E6C68F" }, // 米黄色
+              { offset: 0, color: "#9C7C5C" },
+              { offset: 1, color: "#E6C68F" },
             ]),
-            borderRadius: [5, 5, 0, 0],
+            borderRadius: [4, 4, 0, 0],
           },
-          data: [10, 8, 7, 5, 12], // 示例数据：国际交流活动次数
+          data: [10, 8, 7, 5, 12],
         },
       ],
     };
@@ -321,50 +195,30 @@ const initHeritageContributionChart = () => {
   }
 };
 
-// 初始化学术研究推动图表 (原 initCultureChart)
+// 3. 初始化学术研究推动图表
 const initResearchImpactChart = () => {
   if (researchImpactChart.value) {
     const chart = echarts.init(researchImpactChart.value);
-
     const option = {
-      title: {
-        text: "明十三陵相关学术成果趋势",
-        left: "center",
-        textStyle: {
-          color: "#d4a76a",
-          fontSize: 16,
-        },
-      },
-      tooltip: {
-        trigger: "axis",
-        formatter: "年份: {b}<br/>论文数量: {c0}篇<br/>研究项目: {c1}项",
-      },
+      tooltip: { trigger: "axis" },
       legend: {
         data: ["论文数量", "研究项目"],
-        bottom: 0,
+        top: 0,
         textStyle: { color: "#b8a692" },
       },
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "15%",
-        containLabel: true,
-      },
+      grid: { left: "3%", right: "4%", bottom: "5%", top: "15%", containLabel: true },
       xAxis: {
         type: "category",
+        boundaryGap: false,
         data: ["1990", "1995", "2000", "2005", "2010", "2015", "2020", "2023"],
         axisLine: { lineStyle: { color: "#a1887f" } },
         axisLabel: { color: "#b8a692" },
       },
       yAxis: {
         type: "value",
-        name: "数量",
-        nameTextStyle: { color: "#b8a692" },
-        axisLine: { lineStyle: { color: "#a1887f" } },
+        axisLine: { show: false },
         axisLabel: { color: '#b8a692' },
-        splitLine: {
-          lineStyle: { color: "rgba(161, 136, 127, 0.1)", type: "dashed" },
-        },
+        splitLine: { lineStyle: { color: "rgba(161, 136, 127, 0.1)", type: "dashed" } },
       },
       series: [
         {
@@ -373,22 +227,15 @@ const initResearchImpactChart = () => {
           smooth: true,
           symbol: "circle",
           symbolSize: 8,
-          lineStyle: { width: 3, color: "#B26F4A" }, // 深棕色
+          lineStyle: { width: 3, color: "#B26F4A" },
           itemStyle: { color: "#B26F4A" },
           areaStyle: {
-            // 添加面积图效果
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: "rgba(178,111,74,0.3)", // 渐变色
-              },
-              {
-                offset: 1,
-                color: "rgba(178,111,74,0)",
-              },
+              { offset: 0, color: "rgba(178,111,74,0.3)" },
+              { offset: 1, color: "rgba(178,111,74,0)" },
             ]),
           },
-          data: [20, 45, 80, 150, 280, 450, 600, 750], // 示例数据
+          data: [20, 45, 80, 150, 280, 450, 600, 750],
         },
         {
           name: "研究项目",
@@ -396,22 +243,15 @@ const initResearchImpactChart = () => {
           smooth: true,
           symbol: "rect",
           symbolSize: 8,
-          lineStyle: { width: 3, color: "#9C7C5C" }, // 灰棕色
+          lineStyle: { width: 3, color: "#9C7C5C" },
           itemStyle: { color: "#9C7C5C" },
           areaStyle: {
-            // 添加面积图效果
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: "rgba(156,124,92,0.3)", // 渐变色
-              },
-              {
-                offset: 1,
-                color: "rgba(156,124,92,0)",
-              },
+              { offset: 0, color: "rgba(156,124,92,0.3)" },
+              { offset: 1, color: "rgba(156,124,92,0)" },
             ]),
           },
-          data: [5, 12, 25, 40, 70, 110, 160, 220], // 示例数据
+          data: [5, 12, 25, 40, 70, 110, 160, 220],
         },
       ],
     };
@@ -420,73 +260,44 @@ const initResearchImpactChart = () => {
   }
 };
 
-// 初始化当代影响力环形图 (原 initTourismChart)
+// 4. 初始化当代影响力环形图
 const initContemporaryInfluenceChart = () => {
   if (contemporaryInfluenceChart.value) {
     const chart = echarts.init(contemporaryInfluenceChart.value);
-
     const option = {
-    title: {
-        text: "十三陵游客构成",
-        left: "center",
-        top: "top",
-        textStyle: {
-          color: "#d4a76a",
-          fontSize: 16,
-        },
-    },
-    tooltip: {
-        trigger: "item",
-        formatter: "{b}: {c} ({d}%)",
-    },
-    legend: {
-        /* 此处修改: 改为水平布局，移动到图表下方 */
+      tooltip: { trigger: "item", formatter: "{b}: {c} ({d}%)" },
+      legend: {
         orient: 'horizontal',
-        top: 'bottom',
+        bottom: '0',
         left: 'center',
         textStyle: { color: "#b8a692" },
-        /* 此处修改: 在图例中直接显示百分比 */
-        formatter: function (name) {
-            const data = option.series[0].data;
-            const total = data.reduce((sum, item) => sum + item.value, 0);
-            const item = data.find(item => item.name === name);
-            const percent = ((item.value / total) * 100).toFixed(0);
-            return `${name} ${percent}%`;
-        }
-    },
-    color: ["#B26F4A", "#D4A76A", "#9C7C5C", "#E6C68F", "#F0E68C"],
-    series: [
+        itemGap: 15,
+        formatter: (name) => name
+      },
+      color: ["#B26F4A", "#D4A76A", "#9C7C5C", "#E6C68F", "#F0E68C"],
+      series: [
         {
-            name: "游客来源",
-            type: "pie",
-            radius: ["40%", "70%"],
-            /* 图表居中，因为不再需要为外部标签让位 */
-            center: ["50%", "50%"],
-            avoidLabelOverlap: false,
-            /* 隐藏外部标签和引导线 */
-            label: {
-                show: false,
-            },
-            labelLine: {
-                show: false,
-            },
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: "rgba(0, 0, 0, 0.5)",
-                },
-            },
-            data: [
-                { value: 65, name: "境内游客" },
-                { value: 15, name: "亚洲（非中国）" },
-                { value: 10, name: "欧洲" },
-                { value: 7, name: "北美洲" },
-                { value: 3, name: "其他地区" },
-            ],
+          name: "游客来源",
+          type: "pie",
+          radius: ["45%", "70%"],
+          center: ["50%", "45%"],
+          avoidLabelOverlap: false,
+          label: {
+            show: true,
+            formatter: "{d}%",
+            color: "#b8a692",
+            position: 'inside'
+          },
+          data: [
+            { value: 65, name: "境内" },
+            { value: 15, name: "亚洲" },
+            { value: 10, name: "欧洲" },
+            { value: 7, name: "北美" },
+            { value: 3, name: "其他" },
+          ],
         },
-    ],
-  };
+      ],
+    };
     chart.setOption(option);
     window.addEventListener("resize", () => chart.resize());
   }
@@ -498,17 +309,6 @@ onMounted(() => {
   initResearchImpactChart();
   initContemporaryInfluenceChart();
 });
-
-// onBeforeUnmount 钩子用于销毁图表实例，防止内存泄漏
-// import { onBeforeUnmount } from 'vue'; // 如果没有引入，需要引入
-// onBeforeUnmount(() => {
-//   if (chartInstance1) chartInstance1.dispose(); // 如果你的 chartInstance1 还在用的话
-//   if (imperialPhilosophyChart.value) echarts.getInstanceByDom(imperialPhilosophyChart.value)?.dispose();
-//   if (heritageContributionChart.value) echarts.getInstanceByDom(heritageContributionChart.value)?.dispose();
-//   if (researchImpactChart.value) echarts.getInstanceByDom(researchImpactChart.value)?.dispose();
-//   if (contemporaryInfluenceChart.value) echarts.getInstanceByDom(contemporaryInfluenceChart.value)?.dispose();
-// });
-const currentLandmark = "明十三陵"; // 定义当前页面的景点名称
 </script>
 
 <style scoped>
@@ -518,286 +318,173 @@ const currentLandmark = "明十三陵"; // 定义当前页面的景点名称
   background: linear-gradient(135deg, #f5f2e9 0%, #e8d8c3 100%);
   color: #e0d6c2;
   font-family: "Noto Serif SC", serif;
+  min-height: 100vh;
 }
 
 .dashboard-header {
-  padding: 2rem;
+  padding: 50px 20px 30px;
   text-align: center;
   position: relative;
-  border-bottom: 1px solid #f0dcdc;
-}
-
-.back-button {
-  position: absolute;
-  left: 2rem;
-  top: 2rem;
-  background: rgba(93, 75, 75, 0.5);
-  color: #e0d6c2;
-  border: 1px solid #7d6a6a;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.back-button:hover {
-  background: rgba(93, 75, 75, 0.8);
+  /* border-bottom: 1px solid rgba(139, 69, 19, 0.1); */
 }
 
 .dashboard-title {
   margin: 0.5rem 0 0 0;
-  font-size: 2rem;
-  color: #d4b483;
+  font-size: 2.2rem;
+  color: #8b4513;
+  /* 深棕色主题 */
+  font-weight: bold;
 }
 
 .dashboard-subtitle {
   margin: 0.5rem 0 0 0;
-  color: #b8a692;
+  color: #5a4a42;
   font-size: 1.1rem;
 }
 
-.dashboard-content {
-  display: flex;
-  flex: 1;
-  padding: 1.5rem;
-  gap: 1.5rem;
-}
-
-.main-visualization {
-  flex: 2;
+/* --- 核心布局：单列垂直流式布局 --- */
+.single-column-layout {
+  max-width: 1000px;
+  /* 限制最大宽度，保持整齐 */
+  margin: 0 auto 40px;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 35px;
+  /* 卡片间距 */
 }
 
-.side-panel {
-  flex: 1;
+/* --- 通用卡片样式 --- */
+.chart-card {
+  background: rgba(42, 34, 34, 0.85);
+  /* 深色半透明背景，突显历史感 */
+  border: 1px solid rgba(224, 189, 140, 0.2);
+  /* 金色边框 */
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  /* 内容居中 */
 }
 
-.visualization-card {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid #5d4b4b;
-  border-radius: 6px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.radar-section {
+  min-height: 550px;
+  /* 雷达图需要较高空间 */
+}
+
+.radar-wrapper {
+  width: 100%;
+  flex: 1;
+}
+
+.radar-container {
+  width: 100%;
+  height: 100%;
 }
 
 .section-title {
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
   text-align: center;
+  width: 100%;
 }
 
 .section-title h2 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 10px 0;
   font-size: 1.5rem;
-  color: #d4b483;
+  color: #d4a76a;
+  /* 亮金色标题 */
 }
 
 .divider {
-  height: 2px;
-  width: 80px;
+  height: 3px;
+  width: 60px;
   background: linear-gradient(90deg, #d4a76a, #8b4513);
   margin: 0 auto;
   border-radius: 2px;
 }
 
 .section-description {
-  margin: 0.5rem 0 0 0;
+  margin: 10px 0 0 0;
   color: #b8a692;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-.radar-container {
-  height: 100%;
-}
-
-.philosophy-card {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.philosophy-item {
-  /* background: rgba(255, 248, 225, 0.8); */
-  /* 背景色改为与右侧卡片一致的深灰褐色 */
-  background: rgba(42, 34, 34, 0.7);
-  border-radius: 6px;
-  padding: 1rem;
-  /* border: 1px solid #5d4b4b; */
-  /* 边框颜色调整以适应深色背景 */
-  border: 1px solid rgba(224, 189, 140, 0.15);
-}
-
-.icon-circle {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #d4a76a, #8b4513);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-}
-
-.icon-circle .icon {
-  font-size: 1.5rem;
-  color: #fff8e1;
-}
-
-.philosophy-item h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  /* color: #5a4a42; */
-  /* 标题文字改为亮金色 */
-  color: #d4a76a;
-  text-align: center;
-}
-
-.philosophy-item p {
-  margin: 0;
-  /* color: #5a4a42; */
-  /* 正文文字改为更亮的米色以保证清晰度 */
-  color: #D7C6B5;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* 图表容器 */
-.chart-box {
+/* --- 通用宽图表盒子 --- */
+.chart-box-wide {
   width: 100%;
-  height: 300px;
-  margin-top: 20px;
+  height: 350px;
+  /* background: rgba(255, 255, 255, 0.05); */
+  /* 可选：给图表区域加个微弱背景 */
+  border-radius: 8px;
 }
 
-.cosmos-chart,
-.chart-container {
-  /* background: rgba(255, 248, 225, 0.8); */
-  /* 图表容器背景色同步修改 */
-  background: rgba(42, 34, 34, 0.7);
-  border-radius: 15px;
-  padding: 20px;
-  /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.metrics-card {
-  background: rgba(42, 34, 34, 0.7);
-  border: 1px solid #5d4b4b;
-  border-radius: 6px;
-  padding: 1.5rem;
-}
-
-.metrics-title {
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
-  color: #d4b483;
-  text-align: center;
-  border-bottom: 1px solid #5d4b4b;
-  padding-bottom: 0.5rem;
-}
-
-.impact-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+/* --- 关键指标 (横向排列) --- */
+.impact-grid-horizontal {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .impact-item {
-  background: rgba(93, 75, 75, 0.3);
-  border-radius: 6px;
-  padding: 1rem;
+  flex: 1;
+  min-width: 180px;
+  background: rgba(93, 75, 75, 0.4);
+  border-radius: 8px;
+  padding: 15px;
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s;
+}
+
+.impact-item:hover {
+  transform: translateY(-3px);
+  background: rgba(93, 75, 75, 0.6);
 }
 
 .impact-value {
   font-size: 1.8rem;
   color: #d4a76a;
   font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .impact-label {
   font-size: 0.9rem;
-  color: #b8a692;
+  color: #e0d6c2;
+  opacity: 0.9;
 }
 
-.impact-dimension {
-  background: rgba(42, 34, 34, 0.7);
-  border: 1px solid #5d4b4b;
-  border-radius: 6px;
-  padding: 1.5rem;
-}
-
-.impact-dimension h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-  color: #d4b483;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.impact-dimension h3 .icon {
-  font-size: 1.2rem;
-}
-
-.dimension-content p {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.9rem;
-}
-
-.dimension-content ul {
-  margin: 0 0 1rem 0;
-  padding-left: 1.2rem;
-}
-
-.dimension-content li {
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
-}
-
+/* --- 页脚 --- */
 .dashboard-footer {
-  padding: 1.5rem;
+  padding: 40px 20px;
   text-align: center;
-  border-top: 1px solid #5d4b4b;
-  font-size: 0.9rem;
-  color: #b8a692;
+  /* border-top: 1px solid rgba(139, 69, 19, 0.2); */
+  font-size: 0.95rem;
+  color: #5a4a42;
+  margin-top: auto;
 }
 
-.dashboard-footer p:first-child {
-  margin-bottom: 0.5rem;
-  font-style: italic;
+.dashboard-footer p {
+  margin: 5px 0;
 }
 
-@media (max-width: 1200px) {
-  .dashboard-content {
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .impact-grid-horizontal {
     flex-direction: column;
   }
 
-  .philosophy-card {
-    grid-template-columns: 1fr;
+  .chart-card {
+    padding: 20px;
   }
 
-  .impact-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .impact-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .dashboard-header {
-    padding-top: 4rem;
-  }
-
-  .back-button {
-    top: 1rem;
-    left: 1rem;
+  .chart-box-wide {
+    height: 300px;
   }
 }
 </style>
